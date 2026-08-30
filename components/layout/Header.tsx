@@ -34,7 +34,7 @@ export default function Header() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem('mm-theme')
-    const initial = saved ? saved === 'dark' : false
+    const initial = saved === 'dark'
     setDark(initial)
     document.documentElement.dataset.theme = initial ? 'dark' : 'light'
   }, [])
@@ -47,7 +47,10 @@ export default function Header() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setMenuOpen(false); setSearchOpen(false); setLanguageOpen(false); setQuery('')
+        setMenuOpen(false)
+        setSearchOpen(false)
+        setLanguageOpen(false)
+        setQuery('')
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -82,7 +85,7 @@ export default function Header() {
         </Link>
 
         <div className="mm-header-tools">
-          <button className="mm-search-trigger" type="button" aria-label="Cari berita dan informasi" aria-expanded={searchOpen} onClick={() => { setMenuOpen(false); setSearchOpen(true) }}><Search size={21}/><span>Cari Berita</span></button>
+          <button className="mm-search-trigger" type="button" aria-label="Cari berita dan informasi" aria-expanded={searchOpen} onClick={() => { setMenuOpen(false); setLanguageOpen(false); setSearchOpen(true) }}><Search size={21}/><span>Cari Berita</span></button>
           <button className="mm-theme-toggle" type="button" aria-label={dark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'} aria-pressed={dark} onClick={toggleTheme}><span className="mm-theme-knob">{dark ? <Sun size={13}/> : <Moon size={13}/>}</span></button>
           <div className="mm-language">
             <button className="mm-language-btn" type="button" aria-label="Pilih bahasa" aria-expanded={languageOpen} onClick={() => setLanguageOpen((open) => !open)}><span className="mm-flag" aria-hidden="true">🇮🇩</span><ChevronDown size={17}/></button>
@@ -106,7 +109,7 @@ export default function Header() {
       </div>
     </header>
 
-    {menuOpen && <div className="mm-mobile-menu" id="mm-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu utama"><div className="container mm-mobile-inner"><p className="mm-mobile-label">Navigasi Miftahul Mubin</p>{primaryLinks.map(([label, href]) => <Link key={label} className={isActive(href) ? 'active' : ''} href={href} onClick={closeAll}><span>{label}</span><ChevronRight size={19}/></Link>)}<div className="mm-mobile-categories"><p>Kategori</p><div>{categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}</div></div></div></div>}
+    {menuOpen && <div className="mm-mobile-menu" id="mm-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu utama"><div className="container mm-mobile-inner"><p className="mm-mobile-label">Navigasi Miftahul Mubin</p>{primaryLinks.map(([label, href]) => <Link key={label} className={isActive(href) ? 'active' : ''} href={href} onClick={closeAll}><span>{label}</span><ChevronRight size={19}/></Link>)}<div className="mm-mobile-categories"><p>Kategori</p><div>{categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}</div></div><button className="mm-mobile-theme" type="button" onClick={toggleTheme}><span>{dark ? <Sun size={17}/> : <Moon size={17}/><span>{dark ? 'Mode terang' : 'Mode gelap'}</span></span><span aria-hidden="true">{dark ? '☀' : '◐'}</span></button></div></div>}
 
     {searchOpen && <div className="mm-search-overlay" role="dialog" aria-modal="true" aria-label="Pencarian"><div className="mm-search-panel"><div className="mm-search-head"><div><span className="eyebrow">Pencarian</span><h2>Cari informasi Miftahul Mubin</h2></div><button className="mm-close-btn" type="button" aria-label="Tutup pencarian" onClick={closeAll}><X size={21}/></button></div><label className="mm-search-field"><Search size={21}/><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari berita, kegiatan, atau artikel..."/></label><div className="mm-search-results" aria-live="polite">{!query && <p className="search-helper">Ketik kata kunci untuk mencari konten pada portal.</p>}{query && results.length === 0 && <p className="search-helper">Tidak ada hasil untuk “{query}”.</p>}{results.map((result) => <Link key={result.href + result.title} href={result.href} onClick={closeAll}><span><small>{result.category}</small>{result.title}</span><ChevronRight size={17}/></Link>)}</div></div></div>}
   </>
