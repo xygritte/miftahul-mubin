@@ -20,9 +20,9 @@ export default function FilterableNews({ items }: { items: NewsItem[] }) {
 
   return (
     <>
-      <div className="filter-row filter-row-interactive" role="tablist" aria-label="Filter berita">
+      <div className="filter-row filter-row-interactive" role="group" aria-label="Filter berita">
         {filters.map((item) => (
-          <button key={item} type="button" role="tab" aria-selected={filter === item} className={filter === item ? 'is-active' : ''} onClick={() => setFilter(item)}>
+          <button key={item} type="button" aria-pressed={filter === item} className={filter === item ? 'is-active' : ''} onClick={() => setFilter(item)}>
             {item}
           </button>
         ))}
