@@ -10,44 +10,70 @@ Referensi visual dan pola editorial: NU Online, tetapi identitas visual, konten,
 
 ## Fitur Utama
 
-### Publik
-- Beranda portal
-- Berita dan artikel
-- Kegiatan/agenda masjid
+### Fase 1 — Public Portal UI
+- Homepage editorial/news portal
+- Featured news dan berita terkini
+- Konten terpopuler
+- Pengumuman penting
+- Agenda kegiatan
+- Struktur kepengurusan
 - Konten keislaman dan khutbah
-- Pengumuman
-- Kepengurusan
-- Dokumentasi foto dan video
-- Transparansi keuangan
-- Profil dan sejarah masjid
+- Dokumentasi foto/video
+- Ringkasan transparansi keuangan
+- Profil masjid
 - Kontak dan lokasi
+- Search overlay berbasis dummy content
+- Responsive mobile/tablet/desktop
+- Mobile navigation
+- Accessibility dasar: skip link, focus state, semantic sections, keyboard Escape
 
-### Admin
-- Dashboard
-- Kelola berita
-- Kelola kegiatan
-- Kelola konten keislaman
-- Kelola dokumentasi
-- Kelola pengumuman
-- Kelola kepengurusan
-- Kelola transaksi keuangan
-- Kelola akun dan hak akses
-- Pengaturan identitas masjid
+### Tahap berikutnya
+- Halaman detail berita/kegiatan/keislaman
+- Supabase PostgreSQL
+- Authentication
+- Admin CMS
+- Storage media
+- Sistem keuangan lengkap
+- Audit log dan laporan PDF
 
 ## Rencana Teknologi
 
 - Next.js + TypeScript
-- Tailwind CSS
+- Tailwind CSS (direncanakan untuk komponen berikutnya)
 - Supabase PostgreSQL
 - Supabase Auth
 - Supabase Storage
-- Vercel
+- GitHub Pages untuk preview/static phase
+- Vercel dapat digunakan untuk deployment production ketika fitur server/database mulai diperlukan
+
+## Struktur Proyek
+
+```text
+app/
+  layout.tsx
+  page.tsx
+  globals.css
+components/
+  layout/
+    Header.tsx
+docs/
+  ARCHITECTURE.md
+  DATABASE-PLAN.md
+  DEVELOPMENT-ROADMAP.md
+  FEATURE-FLOW.md
+  UI-STRUCTURE.md
+lib/
+types/
+supabase/
+.github/workflows/
+  deploy.yml
+```
 
 ## Status Proyek
 
-Tahap saat ini: **Blueprint / Architecture**.
+**Fase 1 — Public Portal UI / Static Preview**
 
-Belum ada implementasi UI atau database. Lihat folder `docs/` untuk rancangan lengkap sebelum development dimulai.
+UI homepage sudah diimplementasikan dan dikonfigurasi untuk static export. Data masih berupa dummy content. Database, login, CMS, dan transaksi keuangan nyata belum terhubung.
 
 ## Dokumentasi
 
