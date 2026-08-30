@@ -23,6 +23,15 @@ const events = [
   { day: '07', month: 'SEP', title: 'Kajian Ahad Pagi', time: '07.30 WIB', place: 'Ruang Utama Masjid' },
 ]
 
+const management = [
+  { role: 'Ketua Takmir', name: 'H. Ahmad Fauzi' },
+  { role: 'Sekretaris', name: 'Muhammad Fikri' },
+  { role: 'Bendahara', name: 'Abdul Rahman' },
+  { role: 'Divisi Dakwah', name: 'Ust. Ahmad Hidayat' },
+  { role: 'Divisi Pendidikan', name: 'Nurul Huda' },
+  { role: 'Divisi Sosial', name: 'M. Rizki Pratama' },
+]
+
 function SectionHeader({ title, href = '#' }: { title: string; href?: string }) {
   return (
     <div className="section-head">
@@ -64,13 +73,13 @@ export default function Home() {
             <span><strong>Miftahul Mubin</strong><small>Masjid & Pusat Kegiatan Umat</small></span>
           </a>
           <nav className="desktop-nav">
-            <a className="active" href="#">Beranda</a><a href="#berita">Berita</a><a href="#keislaman">Keislaman</a><a href="#kegiatan">Kegiatan</a><a href="#keuangan">Keuangan</a><a href="#profil">Profil</a>
+            <a className="active" href="#">Beranda</a><a href="#berita">Berita</a><a href="#keislaman">Keislaman</a><a href="#kegiatan">Kegiatan</a><a href="#kepengurusan">Kepengurusan</a><a href="#keuangan">Keuangan</a><a href="#profil">Profil</a>
           </nav>
           <button className="search-btn" aria-label="Cari"><Search size={20} /></button>
         </div>
         <div className="category-bar">
           <div className="container category-scroll">
-            <a href="#">Pengumuman</a><a href="#">Khutbah</a><a href="#">Dokumentasi</a><a href="#">Kepengurusan</a><a href="#">Pendidikan</a><a href="#">Sosial</a>
+            <a href="#">Pengumuman</a><a href="#">Khutbah</a><a href="#dokumentasi">Dokumentasi</a><a href="#kepengurusan">Kepengurusan</a><a href="#">Pendidikan</a><a href="#">Sosial</a>
           </div>
         </div>
       </header>
@@ -107,6 +116,33 @@ export default function Home() {
           </div>
         </section>
 
+        <section id="kepengurusan" className="management-section">
+          <SectionHeader title="Struktur Kepengurusan" href="#kepengurusan" />
+          <div className="management-intro">
+            <div>
+              <span className="eyebrow">Pengurus Miftahul Mubin</span>
+              <h2>Melayani jamaah melalui kerja bersama.</h2>
+              <p>Struktur kepengurusan Miftahul Mubin menjadi bagian dari keterbukaan informasi masjid. Setiap bidang memiliki peran dalam mengelola ibadah, pendidikan, kegiatan sosial, dan pelayanan jamaah.</p>
+            </div>
+            <a href="#" className="read-link">Lihat kepengurusan lengkap <ChevronRight size={16} /></a>
+          </div>
+          <div className="management-tree">
+            <div className="management-lead">
+              <span className="management-avatar">AF</span>
+              <div><span>Ketua Takmir</span><strong>{management[0].name}</strong></div>
+            </div>
+            <div className="management-connector" aria-hidden="true" />
+            <div className="management-board">
+              {management.slice(1).map(member => (
+                <article className="management-card" key={member.role}>
+                  <span className="management-avatar small">{member.name.split(' ').map(part => part[0]).slice(0, 2).join('')}</span>
+                  <div><span>{member.role}</span><strong>{member.name}</strong></div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section id="keislaman" className="editorial-split">
           <div>
             <SectionHeader title="Keislaman" />
@@ -122,7 +158,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="media-section">
+        <section id="dokumentasi" className="media-section">
           <SectionHeader title="Dokumentasi" />
           <div className="media-grid">
             <a href="#" className="media-large"><img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80" alt="Dokumentasi kegiatan" /><span>Galeri Kajian Akbar Miftahul Mubin</span></a>
@@ -150,7 +186,7 @@ export default function Home() {
         <div className="container footer-grid">
           <div><div className="footer-brand">Miftahul Mubin</div><p>Portal informasi dan kegiatan Masjid Miftahul Mubin.</p></div>
           <div><h3>Navigasi</h3><a href="#">Berita</a><a href="#">Kegiatan</a><a href="#">Keislaman</a><a href="#">Keuangan</a></div>
-          <div><h3>Masjid</h3><a href="#">Profil</a><a href="#">Kepengurusan</a><a href="#">Dokumentasi</a><a href="#">Kontak</a></div>
+          <div><h3>Masjid</h3><a href="#">Profil</a><a href="#kepengurusan">Kepengurusan</a><a href="#dokumentasi">Dokumentasi</a><a href="#">Kontak</a></div>
           <div><h3>Hubungi Kami</h3><p>Jl. Masjid Miftahul Mubin<br />Ponorogo, Jawa Timur</p><p>info@miftahulmubin.id</p></div>
         </div>
         <div className="container footer-bottom"><span>© 2026 Miftahul Mubin. Semua hak dilindungi.</span><span>Dibangun untuk pelayanan umat.</span></div>
