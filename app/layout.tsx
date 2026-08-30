@@ -3,6 +3,7 @@ import './globals.css'
 import './polish.css'
 import './header-portal.css'
 import './theme-polish.css'
+import './assets-polish.css'
 
 export const metadata: Metadata = {
   title: {
