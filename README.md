@@ -4,81 +4,107 @@ Portal informasi dan sistem informasi Masjid Miftahul Mubin.
 
 ## Konsep
 
-Website dibangun dengan pendekatan portal berita/editorial: informasi masjid, berita, kegiatan, konten keislaman, dokumentasi, kepengurusan, dan transparansi keuangan berada dalam satu ekosistem.
+Website dibangun sebagai portal editorial masjid: berita, kegiatan, keislaman, dokumentasi, kepengurusan, transparansi keuangan, dan informasi profil tersedia melalui halaman terpisah.
 
 Referensi visual dan pola editorial: NU Online, tetapi identitas visual, konten, dan struktur Miftahul Mubin dibuat sendiri.
 
-## Fitur Utama
+## Public Portal
 
-### Fase 1 — Public Portal UI
-- Homepage editorial/news portal
-- Featured news dan berita terkini
-- Konten terpopuler
-- Pengumuman penting
-- Agenda kegiatan
-- Struktur kepengurusan
-- Konten keislaman dan khutbah
-- Dokumentasi foto/video
-- Ringkasan transparansi keuangan
+- Beranda / landing page
+- Berita + detail artikel
+- Kegiatan + detail agenda
+- Keislaman + detail artikel
+- Pengumuman
+- Kepengurusan
+- Keuangan
 - Profil masjid
+- Dokumentasi
 - Kontak dan lokasi
-- Search overlay berbasis dummy content
-- Responsive mobile/tablet/desktop
-- Mobile navigation
-- Accessibility dasar: skip link, focus state, semantic sections, keyboard Escape
+- Global search overlay
+- Responsive desktop/tablet/mobile
+- Accessible navigation dasar
+- 404 page
+- Sitemap dan robots metadata
 
-### Tahap berikutnya
-- Halaman detail berita/kegiatan/keislaman
-- Supabase PostgreSQL
-- Authentication
-- Admin CMS
-- Storage media
-- Sistem keuangan lengkap
-- Audit log dan laporan PDF
+## Status
 
-## Rencana Teknologi
+**Fase 1 — Public Portal / Static Preview: aktif dikembangkan**
 
-- Next.js + TypeScript
-- Tailwind CSS (direncanakan untuk komponen berikutnya)
-- Supabase PostgreSQL
-- Supabase Auth
-- Supabase Storage
-- GitHub Pages untuk preview/static phase
-- Vercel dapat digunakan untuk deployment production ketika fitur server/database mulai diperlukan
+Seluruh halaman publik menggunakan dummy content. Database, login, CMS, storage, dan transaksi keuangan nyata belum terhubung.
+
+## Route Map
+
+```text
+/                             Beranda
+/berita/                      Daftar berita
+/berita/[slug]/               Detail berita
+/keislaman/                   Daftar konten keislaman
+/keislaman/[slug]/            Detail konten keislaman
+/kegiatan/                    Daftar kegiatan
+/kegiatan/[slug]/             Detail kegiatan
+/kepengurusan/                Struktur pengurus
+/keuangan/                    Transparansi keuangan
+/profil/                      Profil masjid
+/dokumentasi/                 Arsip dokumentasi
+/pengumuman/                  Pengumuman resmi
+/kontak/                      Kontak dan lokasi
+```
 
 ## Struktur Proyek
 
 ```text
 app/
-  layout.tsx
   page.tsx
+  berita/
+    page.tsx
+    [slug]/page.tsx
+  keislaman/
+    page.tsx
+    [slug]/page.tsx
+  kegiatan/
+    page.tsx
+    [slug]/page.tsx
+  kepengurusan/page.tsx
+  keuangan/page.tsx
+  profil/page.tsx
+  dokumentasi/page.tsx
+  pengumuman/page.tsx
+  kontak/page.tsx
+  not-found.tsx
+  robots.ts
+  sitemap.ts
+  layout.tsx
   globals.css
 components/
+  content/
   layout/
-    Header.tsx
-docs/
-  ARCHITECTURE.md
-  DATABASE-PLAN.md
-  DEVELOPMENT-ROADMAP.md
-  FEATURE-FLOW.md
-  UI-STRUCTURE.md
 lib/
-types/
+  content.ts
+  islamic.ts
+docs/
 supabase/
+types/
 .github/workflows/
   deploy.yml
 ```
 
-## Status Proyek
+## Teknologi
 
-**Fase 1 — Public Portal UI / Static Preview**
+- Next.js + TypeScript
+- React
+- Lucide React
+- Static export untuk GitHub Pages (preview)
+- Supabase PostgreSQL/Auth/Storage direncanakan untuk fase CMS
+- Vercel direncanakan untuk production ketika membutuhkan runtime server
 
-UI homepage sudah diimplementasikan dan dikonfigurasi untuk static export. Data masih berupa dummy content. Database, login, CMS, dan transaksi keuangan nyata belum terhubung.
+## Roadmap
 
-## Dokumentasi
-
-- `docs/ARCHITECTURE.md` — arsitektur sistem dan modul
-- `docs/FEATURE-FLOW.md` — alur fitur publik dan admin
-- `docs/UI-STRUCTURE.md` — rancangan halaman dan struktur layout
-- `docs/DATABASE-PLAN.md` — rancangan entitas database
-- `docs/DEVELOPMENT-ROADMAP.md` — tahapan implementasi
+```text
+Public Portal
+   -> Detail Content
+   -> Supabase Database
+   -> Admin CMS
+   -> Finance + Audit
+   -> SEO/Security/Performance
+   -> Production
+```
