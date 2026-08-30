@@ -8,14 +8,13 @@ import { news } from '@/lib/content'
 import { islamicItems } from '@/lib/islamic'
 
 const primaryLinks = [
-  ['Beranda', '/'], ['Warta', '/berita/'], ['Kegiatan', '/kegiatan/'], ['Keislaman', '/keislaman/'],
-  ['Opini', '/keislaman/'], ['Kepengurusan', '/kepengurusan/'], ['Hikmah', '/keislaman/'],
-  ['Dokumentasi', '/dokumentasi/'], ['Keuangan', '/keuangan/'], ['Profil', '/profil/'], ['Lainnya', '/kontak/'],
+  ['Beranda', '/'], ['Berita', '/berita/'], ['Keislaman', '/keislaman/'], ['Kegiatan', '/kegiatan/'],
+  ['Kepengurusan', '/kepengurusan/'], ['Keuangan', '/keuangan/'], ['Profil', '/profil/'], ['Kontak', '/kontak/'],
 ] as const
 
 const categoryLinks = [
-  ['Pengumuman', '/pengumuman/'], ['Kajian', '/kegiatan/'], ['Khutbah', '/keislaman/'], ['Pendidikan', '/kegiatan/'],
-  ['Sosial', '/kegiatan/'], ['Pemuda', '/kegiatan/'], ['Dokumentasi', '/dokumentasi/'],
+  ['Pengumuman', '/pengumuman/'], ['Khutbah', '/keislaman/'], ['Dokumentasi', '/dokumentasi/'],
+  ['Kepengurusan', '/kepengurusan/'], ['Pendidikan', '/kegiatan/'], ['Sosial', '/kegiatan/'],
 ] as const
 
 const searchItems = [
@@ -71,7 +70,7 @@ export default function Header() {
     <div className="mm-utility-bar">
       <div className="container mm-utility-inner">
         <span>Portal Informasi Masjid Miftahul Mubin</span>
-        <div className="mm-utility-right"><span>Kontak Pengurus</span><span aria-hidden="true">•</span><time dateTime="2026-08-30">Minggu, 30 Agustus 2026</time></div>
+        <div className="mm-utility-right"><Link href="/kontak/">Kontak Pengurus</Link><span aria-hidden="true">•</span><time dateTime="2026-08-30">Minggu, 30 Agustus 2026</time></div>
       </div>
     </div>
 
