@@ -24,7 +24,7 @@ const searchItems = [
   { title: 'Laporan Keuangan dan Transparansi Bulan Agustus', href: '/keuangan/', category: 'Keuangan' },
 ]
 
-const logoSrc = 'https://raw.githubusercontent.com/xygritte/miftahul-mubin/main/logo.png'
+const logoSrc = 'https://raw.githubusercontent.com/xygritte/miftahul-mubin/main/logo.svg'
 
 export default function Header() {
   const pathname = usePathname() || '/'
