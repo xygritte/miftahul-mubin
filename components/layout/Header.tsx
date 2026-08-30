@@ -17,14 +17,25 @@ const primaryLinks = [
 
 const categoryLinks = [
   ['Pengumuman', '/pengumuman/'],
-  ['Khutbah', '/keislaman/?kategori=khutbah'],
+  ['Khutbah', '/keislaman/'],
   ['Dokumentasi', '/dokumentasi/'],
   ['Kepengurusan', '/kepengurusan/'],
-  ['Pendidikan', '/kegiatan/?kategori=pendidikan'],
-  ['Sosial', '/kegiatan/?kategori=sosial'],
+  ['Pendidikan', '/kegiatan/'],
+  ['Sosial', '/kegiatan/'],
 ] as const
 
-export default function Header({ searchItems }: { searchItems: string[] }) {
+const searchItems = [
+  'Miftahul Mubin Gelar Kajian Akbar untuk Jamaah dan Warga Sekitar',
+  'Menjaga Ukhuwah di Tengah Kesibukan Kehidupan',
+  'Program Santunan Miftahul Mubin Kembali Digelar',
+  'Pendaftaran Relawan Kegiatan Sosial Masjid Dibuka',
+  'Kelas Al-Qur’an untuk Anak dan Remaja Dimulai September',
+  'Jadwal Kajian Miftahul Mubin Bulan September',
+  'Laporan Keuangan dan Transparansi Bulan Agustus',
+  'Jadwal Imam dan Khatib Jumat',
+]
+
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -37,9 +48,7 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setMenuOpen(false)
-        setSearchOpen(false)
-        setQuery('')
+        setMenuOpen(false); setSearchOpen(false); setQuery('')
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -47,12 +56,7 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
   }, [])
 
   const results = searchItems.filter((item) => item.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 6)
-
-  const closeAll = () => {
-    setMenuOpen(false)
-    setSearchOpen(false)
-    setQuery('')
-  }
+  const closeAll = () => { setMenuOpen(false); setSearchOpen(false); setQuery('') }
 
   return (
     <>
@@ -63,65 +67,28 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
           <span className="utility-right"><span>30 Agustus 2026</span><span aria-hidden="true">•</span><Link href="/kontak/">Kontak Pengurus</Link></span>
         </div>
       </div>
-
       <header className="site-header">
         <div className="container header-main">
           <Link href="/" className="brand" aria-label="Miftahul Mubin, kembali ke beranda">
             <span className="brand-mark" aria-hidden="true">MM</span>
             <span><strong>Miftahul Mubin</strong><small>Masjid & Pusat Kegiatan Umat</small></span>
           </Link>
-
           <nav className="desktop-nav" aria-label="Navigasi utama">
             {primaryLinks.map(([label, href]) => <Link key={label} className={label === 'Beranda' ? 'active' : ''} href={href}>{label}</Link>)}
           </nav>
-
           <div className="header-actions">
             <button className="search-btn" type="button" aria-label="Buka pencarian" aria-expanded={searchOpen} onClick={() => { setMenuOpen(false); setSearchOpen(true) }}><Search size={20} /></button>
-            <button className="menu-btn" type="button" aria-label={menuOpen ? 'Tutup menu' : 'Buka menu'} aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={() => { setSearchOpen(false); setMenuOpen((open) => !open) }}>
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            <button className="menu-btn" type="button" aria-label={menuOpen ? 'Tutup menu' : 'Buka menu'} aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={() => { setSearchOpen(false); setMenuOpen((open) => !open) }}>{menuOpen ? <X size={24} /> : <Menu size={24} />}</button>
           </div>
         </div>
-
         <div className="category-bar">
           <nav className="container category-scroll" aria-label="Kategori">
             {categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}
           </nav>
         </div>
       </header>
-
-      {menuOpen && (
-        <div className="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu utama">
-          <div className="mobile-menu-inner container">
-            <p className="mobile-menu-label">Menu Miftahul Mubin</p>
-            {primaryLinks.map(([label, href]) => <Link key={label} className="mobile-menu-link" href={href} onClick={closeAll}>{label}<span aria-hidden="true">›</span></Link>)}
-            <div className="mobile-menu-categories">
-              <p>Kategori</p>
-              {categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {searchOpen && (
-        <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Pencarian">
-          <div className="search-panel">
-            <div className="search-panel-head">
-              <div><span className="eyebrow">Pencarian</span><h2>Cari informasi Miftahul Mubin</h2></div>
-              <button className="close-btn" type="button" aria-label="Tutup pencarian" onClick={closeAll}><X size={22} /></button>
-            </div>
-            <label className="search-field">
-              <Search size={21} aria-hidden="true" />
-              <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari berita, kegiatan, atau artikel..." />
-            </label>
-            <div className="search-results" aria-live="polite">
-              {!query && <p className="search-helper">Ketik kata kunci untuk mencari konten pada portal.</p>}
-              {query && results.length === 0 && <p className="search-helper">Tidak ada hasil untuk “{query}”.</p>}
-              {results.map((result) => <Link key={result} href="/berita/" onClick={closeAll}><span>{result}</span><span aria-hidden="true">›</span></Link>)}
-            </div>
-          </div>
-        </div>
-      )}
+      {menuOpen && <div className="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu utama"><div className="mobile-menu-inner container"><p className="mobile-menu-label">Menu Miftahul Mubin</p>{primaryLinks.map(([label, href]) => <Link key={label} className="mobile-menu-link" href={href} onClick={closeAll}>{label}<span aria-hidden="true">›</span></Link>)}<div className="mobile-menu-categories"><p>Kategori</p>{categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}</div></div></div>}
+      {searchOpen && <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Pencarian"><div className="search-panel"><div className="search-panel-head"><div><span className="eyebrow">Pencarian</span><h2>Cari informasi Miftahul Mubin</h2></div><button className="close-btn" type="button" aria-label="Tutup pencarian" onClick={closeAll}><X size={22} /></button></div><label className="search-field"><Search size={21} aria-hidden="true" /><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari berita, kegiatan, atau artikel..." /></label><div className="search-results" aria-live="polite">{!query && <p className="search-helper">Ketik kata kunci untuk mencari konten pada portal.</p>}{query && results.length === 0 && <p className="search-helper">Tidak ada hasil untuk “{query}”.</p>}{results.map((result) => <Link key={result} href="/berita/" onClick={closeAll}><span>{result}</span><span aria-hidden="true">›</span></Link>)}</div></div></div>}
     </>
   )
 }
