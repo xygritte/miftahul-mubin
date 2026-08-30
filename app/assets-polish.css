@@ -1,0 +1,66 @@
+/* Asset integration: use the repository's official logo and hero artwork. */
+:root {
+  --mm-asset-logo-max: 340px;
+  --mm-asset-hero-overlay: rgba(4, 39, 31, .46);
+}
+
+.mm-brand {
+  min-width: 0;
+  align-items: center;
+}
+
+.mm-brand-logo {
+  display: block;
+  width: min(var(--mm-asset-logo-max), 31vw);
+  height: auto;
+  max-height: 86px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.home-hero {
+  background-image:
+    linear-gradient(90deg, var(--mm-asset-hero-overlay) 0%, rgba(4,39,31,.22) 55%, rgba(4,39,31,.55) 100%),
+    url('https://raw.githubusercontent.com/xygritte/miftahul-mubin/main/hero-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.home-hero::before,
+.home-hero::after {
+  opacity: .35;
+}
+
+.home-hero-copy h1,
+.home-hero h1 {
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .16);
+}
+
+html[data-theme='dark'] .home-hero {
+  background-image:
+    linear-gradient(90deg, rgba(1,15,12,.62) 0%, rgba(1,15,12,.42) 55%, rgba(1,15,12,.68) 100%),
+    url('https://raw.githubusercontent.com/xygritte/miftahul-mubin/main/hero-bg.png');
+}
+
+@media (max-width: 930px) {
+  .mm-brand-logo {
+    width: min(280px, 31vw);
+    max-height: 68px;
+  }
+}
+
+@media (max-width: 700px) {
+  .mm-brand-logo {
+    width: 190px;
+    max-width: 45vw;
+    max-height: 48px;
+  }
+}
+
+@media (max-width: 420px) {
+  .mm-brand-logo {
+    width: 160px;
+    max-width: 43vw;
+  }
+}
