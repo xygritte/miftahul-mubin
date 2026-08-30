@@ -41,7 +41,6 @@ body {
   transition: background-color .18s ease, color .18s ease;
 }
 
-/* Generic surfaces and typography */
 html[data-theme='dark'] .inner-page,
 html[data-theme='dark'] .page-space {
   background: linear-gradient(180deg, #111815 0, #0d1311 340px);
@@ -131,7 +130,6 @@ html[data-theme='dark'] .search-results a:hover {
   color: var(--mm-green);
 }
 
-/* Header and global chrome */
 html[data-theme='dark'] .mm-utility-bar,
 html[data-theme='dark'] .mm-header,
 html[data-theme='dark'] .mm-secondary-row,
@@ -205,7 +203,6 @@ html[data-theme='dark'] .mm-search-field input {
   color: var(--mm-text-strong);
 }
 
-/* Editorial content */
 html[data-theme='dark'] .news-page-card p,
 html[data-theme='dark'] .editorial-card p,
 html[data-theme='dark'] .event-card p,
@@ -247,11 +244,7 @@ html[data-theme='dark'] .event-card:hover {
   border-color: var(--mm-line-strong);
 }
 
-/* Finance */
-html[data-theme='dark'] th {
-  background: var(--mm-surface-2);
-}
-
+html[data-theme='dark'] th { background: var(--mm-surface-2); }
 html[data-theme='dark'] .finance-in { color: #67d3ad; }
 html[data-theme='dark'] .finance-out { color: #ee8f8f; }
 html[data-theme='dark'] .finance-period span,
@@ -263,21 +256,9 @@ html[data-theme='dark'] .gallery-page article > div > span {
   color: var(--mm-gold);
 }
 
-html[data-theme='dark'] .event-status {
-  border-color: var(--mm-line-strong);
-}
+html[data-theme='dark'] .event-status { border-color: var(--mm-line-strong); }
 
-/* Buttons and controls */
-html[data-theme='dark'] .report-button {
-  background: var(--mm-surface);
-  color: var(--mm-green);
-  border-color: var(--mm-line-strong);
-}
-
-html[data-theme='dark'] .report-button:hover {
-  background: #1c2924;
-}
-
+html[data-theme='dark'] .report-button,
 html[data-theme='dark'] .search-btn,
 html[data-theme='dark'] .menu-btn,
 html[data-theme='dark'] .close-btn {
@@ -286,55 +267,47 @@ html[data-theme='dark'] .close-btn {
   border-color: var(--mm-line-strong);
 }
 
-/* Profile / contact / gallery */
+html[data-theme='dark'] .report-button:hover { background: #1c2924; }
+
 html[data-theme='dark'] .profile-visual,
-html[data-theme='dark'] .map-placeholder {
-  background: #10211b;
-}
-
-html[data-theme='dark'] .profile-facts > div {
-  border-color: var(--mm-line);
-}
-
+html[data-theme='dark'] .map-placeholder { background: #10211b; }
+html[data-theme='dark'] .profile-facts > div { border-color: var(--mm-line); }
 html[data-theme='dark'] .profile-facts span,
 html[data-theme='dark'] .management-card span,
 html[data-theme='dark'] .management-card strong,
-html[data-theme='dark'] .gallery-page article small {
-  color: var(--mm-muted);
-}
+html[data-theme='dark'] .gallery-page article small { color: var(--mm-muted); }
+html[data-theme='dark'] .management-card { background: var(--mm-surface-2); border-color: var(--mm-line); }
 
-html[data-theme='dark'] .management-card {
-  background: var(--mm-surface-2);
-  border-color: var(--mm-line);
-}
-
-/* Footer */
-html[data-theme='dark'] .site-footer {
-  background: #07110e;
-  color: #dce8e2;
-}
-
+html[data-theme='dark'] .site-footer { background: #07110e; color: #dce8e2; }
 html[data-theme='dark'] .footer-grid p,
 html[data-theme='dark'] .footer-grid a,
-html[data-theme='dark'] .footer-bottom {
-  color: #93a59d;
-}
+html[data-theme='dark'] .footer-bottom { color: #93a59d; }
+html[data-theme='dark'] .footer-grid a:hover { color: #fff; }
 
-html[data-theme='dark'] .footer-grid a:hover {
-  color: #fff;
-}
-
-/* Hero remains intentionally dark, independent of theme */
+/* The hero has its own dark editorial palette in both modes. */
 .home-hero,
-html[data-theme='dark'] .home-hero {
-  color: #fff;
-}
+html[data-theme='dark'] .home-hero { color: #fff; }
 
-/* Mobile */
+/* Mobile theme control */
+.mm-mobile-theme {
+  width: 100%;
+  margin-top: 28px;
+  padding: 14px 15px;
+  border: 1px solid var(--mm-line);
+  border-radius: 8px;
+  background: var(--mm-surface);
+  color: var(--mm-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.mm-mobile-theme-label { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 700; }
+.mm-mobile-theme-state { color: var(--mm-muted); font-size: 14px; }
+html[data-theme='dark'] .mm-mobile-theme { border-color: var(--mm-line); background: var(--mm-surface-2); color: var(--mm-text); }
+
 @media (max-width: 700px) {
-  html[data-theme='dark'] .mm-mobile-menu-btn {
-    background: var(--mm-surface);
-  }
+  html[data-theme='dark'] .mm-mobile-menu-btn { background: var(--mm-surface); }
 }
 
 @media (prefers-reduced-motion: reduce) {
