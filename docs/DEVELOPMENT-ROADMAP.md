@@ -1,6 +1,6 @@
 # Miftahul Mubin — Development Roadmap
 
-## Phase 0 — Blueprint (current)
+## Phase 0 — Blueprint ✅
 
 - Product concept
 - Public/admin feature flow
@@ -9,29 +9,46 @@
 - Database plan
 - Permission model
 
-## Phase 1 — Foundation
+## Phase 1 — Foundation ✅
 
-1. Bootstrap Next.js + TypeScript project.
-2. Configure Tailwind CSS and global design tokens.
-3. Create root layout, header, footer, navigation, mobile navigation.
-4. Create reusable editorial components.
-5. Establish environment configuration for Supabase.
+- Bootstrap Next.js + TypeScript.
+- Configure static export for GitHub Pages.
+- Create root layout, shared header, footer, navigation, mobile navigation.
+- Create responsive design tokens and editorial styles.
+- Add accessible search overlay and mobile menu.
+- Establish reusable page shell and page-intro components.
 
-**Output:** navigable static portal shell.
+**Output:** working static website foundation.
 
-## Phase 2 — Public Portal
+## Phase 1B — Multi-page Public Portal ✅
 
-1. Home editorial layout.
-2. News listing + detail.
-3. Keislaman listing + detail.
-4. Events listing + detail.
-5. Announcements.
-6. Management page.
-7. Profile/contact.
-8. Documentation gallery.
-9. Search.
+The public website is now separated into dedicated pages instead of one long homepage:
 
-**Output:** public portal with complete navigation and responsive layout.
+- `/` — landing page / Beranda
+- `/berita/` — berita dan informasi
+- `/keislaman/` — artikel, kajian, khutbah
+- `/kegiatan/` — agenda dan program
+- `/kepengurusan/` — struktur pengurus
+- `/keuangan/` — transparansi keuangan
+- `/profil/` — profil masjid
+- `/dokumentasi/` — galeri kegiatan
+- `/pengumuman/` — pengumuman resmi
+- `/kontak/` — kontak dan lokasi
+
+All pages share the same header/footer system and responsive editorial visual language.
+
+**Output:** complete static public portal with separate routes.
+
+## Phase 2 — Public Content Expansion
+
+1. News listing + detail pages.
+2. Keislaman listing + detail pages.
+3. Events listing + detail pages.
+4. Search results page.
+5. Rich gallery/video pages.
+6. Real mosque identity, address, contacts, management data, and content.
+
+**Output:** complete public content experience.
 
 ## Phase 3 — Supabase + CMS
 
@@ -75,13 +92,11 @@
 ## Recommended Order
 
 ```text
-Foundation
-   -> Public UI
+Static multi-page portal
+   -> Real content
    -> Database
    -> Admin CMS
    -> Finance
    -> Security/SEO
    -> Production
 ```
-
-Do not build payment/donation gateway or native mobile apps until the core portal and data model are stable.
