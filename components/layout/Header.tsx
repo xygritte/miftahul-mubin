@@ -72,13 +72,6 @@ export default function Header() {
   return <>
     <a className="skip-link" href="#main-content">Lewati ke konten utama</a>
 
-    <div className="mm-utility-bar">
-      <div className="container mm-utility-inner">
-        <span>Portal Informasi Masjid Miftahul Mubin</span>
-        <div className="mm-utility-right"><Link href="/kontak/">Kontak Pengurus</Link><span aria-hidden="true">•</span><time dateTime="2026-08-30">Minggu, 30 Agustus 2026</time></div>
-      </div>
-    </div>
-
     <header className="mm-header">
       <div className="container mm-header-top">
         <Link href="/" className="mm-brand" aria-label="Miftahul Mubin, kembali ke beranda">
