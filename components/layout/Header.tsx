@@ -31,7 +31,7 @@ const searchItems = [
   { title: 'Hubungi Pengurus Miftahul Mubin', href: '/kontak/', category: 'Kontak' },
 ]
 
-const logoSrc = 'https://raw.githubusercontent.com/xygritte/miftahul-mubin/main/logo.png'
+const logoSrc = '/miftahul-mubin/logo.svg'
 
 function formatToday() {
   return new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())
@@ -62,10 +62,7 @@ export default function Header() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setMenuOpen(false)
-        setSearchOpen(false)
-        setLanguageOpen(false)
-        setQuery('')
+        setMenuOpen(false); setSearchOpen(false); setLanguageOpen(false); setQuery('')
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -73,8 +70,11 @@ export default function Header() {
   }, [])
 
   const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href.replace(/\/$/, ''))
-  const normalizedQuery = query.trim().toLowerCase()
-  const results = useMemo(() => normalizedQuery ? searchItems.filter((item) => `${item.title} ${item.category}`.toLowerCase().includes(normalizedQuery)).slice(0, 10) : [], [normalizedQuery])
+  const results = useMemo(() => searchItems.filter((item) => {
+    const q = query.trim().toLowerCase()
+    if (!q) return false
+    return `${item.title} ${item.category}`.toLowerCase().includes(q)
+  }).slice(0, 10), [query])
   const closeAll = () => { setMenuOpen(false); setSearchOpen(false); setLanguageOpen(false); setQuery('') }
   const toggleTheme = () => {
     const next = !dark
@@ -85,15 +85,13 @@ export default function Header() {
 
   return <>
     <a className="skip-link" href="#main-content">Lewati ke konten utama</a>
-
     <header className="mm-header">
       <div className="container mm-header-top">
         <Link href="/" className="mm-brand" aria-label="Miftahul Mubin, kembali ke beranda">
           <img className="mm-brand-logo" src={logoSrc} alt="Miftahul Mubin" />
         </Link>
-
         <div className="mm-header-tools">
-          <button className="mm-search-trigger" type="button" aria-label="Cari berita dan informasi" aria-expanded={searchOpen} onClick={() => { setMenuOpen(false); setLanguageOpen(false); setSearchOpen(true) }}><Search size={21}/><span>Cari Berita</span></button>
+          <button className="mm-search-trigger" type="button" aria-label="Cari informasi" aria-expanded={searchOpen} onClick={() => { setMenuOpen(false); setLanguageOpen(false); setSearchOpen(true) }}><Search size={21}/><span>Cari Berita</span></button>
           <button className="mm-theme-toggle" type="button" aria-label={dark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'} aria-pressed={dark} onClick={toggleTheme}><span className="mm-theme-knob">{dark ? <Sun size={13}/> : <Moon size={13}/>}</span></button>
           <div className="mm-language">
             <button className="mm-language-btn" type="button" aria-label="Pilih bahasa" aria-expanded={languageOpen} onClick={() => setLanguageOpen((open) => !open)}><span className="mm-flag" aria-hidden="true">🇮🇩</span><ChevronDown size={17}/></button>
@@ -102,23 +100,19 @@ export default function Header() {
           <button className="mm-mobile-menu-btn" type="button" aria-label={menuOpen ? 'Tutup menu' : 'Buka menu'} aria-expanded={menuOpen} aria-controls="mm-mobile-menu" onClick={() => { setSearchOpen(false); setLanguageOpen(false); setMenuOpen((open) => !open) }}>{menuOpen ? <X size={23}/> : <Menu size={23}/>}</button>
         </div>
       </div>
-
       <div className="container mm-primary-wrap">
         <nav className="mm-primary-nav" aria-label="Navigasi utama">
           {primaryLinks.map(([label, href]) => <Link key={label} className={isActive(href) ? 'active' : ''} href={href}>{label}</Link>)}
         </nav>
       </div>
-
       <div className="mm-secondary-row">
         <div className="container mm-secondary-inner">
           <nav className="mm-secondary-nav" aria-label="Kategori portal">{categoryLinks.map(([label, href]) => <Link key={label} href={href}>{label}</Link>)}</nav>
-          <time className="mm-date" dateTime={new Date().toISOString().slice(0, 10)}>{today}</time>
+          <time className="mm-date" dateTime={new Date().toISOString().slice(0, 10)}>{today || 'Hari ini'}</time>
         </div>
       </div>
     </header>
-
     {menuOpen && <div className="mm-mobile-menu" id="mm-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu utama"><div className="container mm-mobile-inner"><p className="mm-mobile-label">Navigasi Miftahul Mubin</p>{primaryLinks.map(([label, href]) => <Link key={label} className={isActive(href) ? 'active' : ''} href={href} onClick={closeAll}><span>{label}</span><ChevronRight size={19}/></Link>)}<div className="mm-mobile-categories"><p>Kategori</p><div>{categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}</div></div><button className="mm-mobile-theme" type="button" onClick={toggleTheme}><span>{dark ? <Sun size={17}/> : <Moon size={17}/>}<span>{dark ? 'Mode terang' : 'Mode gelap'}</span></span><span aria-hidden="true">{dark ? '☀' : '◐'}</span></button></div></div>}
-
-    {searchOpen && <div className="mm-search-overlay" role="dialog" aria-modal="true" aria-label="Pencarian"><div className="mm-search-panel"><div className="mm-search-head"><div><span className="eyebrow">Pencarian</span><h2>Cari informasi Miftahul Mubin</h2></div><button className="mm-close-btn" type="button" aria-label="Tutup pencarian" onClick={closeAll}><X size={21}/></button></div><label className="mm-search-field"><Search size={21}/><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari berita, kegiatan, atau artikel..."/></label><div className="mm-search-results" aria-live="polite">{!query && <div className="search-helper search-suggestions"><span>Contoh pencarian</span><div><button type="button" onClick={() => setQuery('kajian')}>Kajian</button><button type="button" onClick={() => setQuery('keuangan')}>Keuangan</button><button type="button" onClick={() => setQuery('pengurus')}>Pengurus</button></div></div>}{query && results.length === 0 && <p className="search-helper">Tidak ada hasil untuk “{query}”.</p>}{results.map((result) => <Link key={result.href + result.title} href={result.href} onClick={closeAll}><span><small>{result.category}</small>{result.title}</span><ChevronRight size={17}/></Link>)}</div></div></div>}
+    {searchOpen && <div className="mm-search-overlay" role="dialog" aria-modal="true" aria-label="Pencarian"><div className="mm-search-panel"><div className="mm-search-head"><div><span className="eyebrow">Pencarian</span><h2>Cari informasi Miftahul Mubin</h2></div><button className="mm-close-btn" type="button" aria-label="Tutup pencarian" onClick={closeAll}><X size={21}/></button></div><label className="mm-search-field"><Search size={21}/><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari berita, kegiatan, pengumuman, atau informasi..."/></label><div className="mm-search-results" aria-live="polite">{!query && <p className="search-helper">Cari berita, kegiatan, keislaman, pengurus, keuangan, atau halaman portal lainnya.</p>}{query && results.length === 0 && <p className="search-helper">Tidak ada hasil untuk “{query}”.</p>}{results.map((result) => <Link key={result.href + result.title} href={result.href} onClick={closeAll}><span><small>{result.category}</small>{result.title}</span><ChevronRight size={17}/></Link>)}</div></div></div>}
   </>
 }
