@@ -256,7 +256,7 @@ html[data-theme='dark'] .home-hero {
 }
 
 html[data-theme='dark'] .mm-brand-logo {
-  filter: brightness(1.02) contrast(1.03);
+  filter: invert(1);
 }
 
 html[data-theme='dark'] .mm-secondary-nav a + a::before {
