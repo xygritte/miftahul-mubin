@@ -66,6 +66,24 @@ button { font:inherit; }
 .event-card h3 { font-size:16px; margin:6px 0 12px; }
 .event-card p { margin:6px 0; color:var(--muted); font-size:11px; display:flex; align-items:center; gap:6px; }
 
+.management-section { margin-top:4px; }
+.management-intro { display:grid; grid-template-columns:1.4fr .6fr; gap:30px; align-items:end; margin-bottom:22px; }
+.management-intro h2 { font-family:'Playfair Display',serif; font-size:29px; line-height:1.18; margin:7px 0 8px; max-width:620px; }
+.management-intro p { color:var(--muted); font-size:13px; line-height:1.7; max-width:720px; margin:0; }
+.management-intro .read-link { justify-self:end; margin-bottom:2px; }
+.management-tree { background:#fff; border:1px solid var(--line); padding:28px; }
+.management-lead { width:min(330px,100%); margin:0 auto; display:flex; align-items:center; gap:14px; padding:15px 17px; border:1px solid #cfdad5; border-top:3px solid var(--green); box-shadow:0 7px 20px rgba(8,61,49,.06); }
+.management-lead > div,.management-card > div { min-width:0; }
+.management-lead span:not(.management-avatar),.management-card span:not(.management-avatar) { display:block; color:var(--green); font-size:10px; text-transform:uppercase; font-weight:700; letter-spacing:.04em; }
+.management-lead strong,.management-card strong { display:block; margin-top:4px; font-size:14px; }
+.management-avatar { flex:0 0 48px; width:48px; height:48px; border-radius:50%; display:grid; place-items:center; background:#e7f0ec; color:var(--green); font-size:13px; font-weight:700; }
+.management-avatar.small { flex-basis:38px; width:38px; height:38px; font-size:11px; }
+.management-connector { height:24px; width:1px; background:#b8c8c1; margin:0 auto; position:relative; }
+.management-connector::after { content:''; position:absolute; bottom:0; left:50%; width:min(760px, calc(100vw - 120px)); max-width:760px; transform:translateX(-50%); height:1px; background:#b8c8c1; }
+.management-board { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; position:relative; }
+.management-card { background:var(--canvas); border:1px solid var(--line); padding:15px 13px; display:flex; align-items:center; gap:10px; min-height:82px; position:relative; }
+.management-card::before { content:''; position:absolute; width:1px; height:12px; background:#b8c8c1; top:-13px; left:50%; }
+
 .editorial-split { display:grid; grid-template-columns:1.4fr .8fr; gap:28px; align-items:start; }
 .islamic-feature { display:grid; grid-template-columns:1.05fr 1fr; gap:20px; background:#fff; padding:12px; border:1px solid var(--line); }
 .islamic-feature img { height:100%; min-height:240px; width:100%; object-fit:cover; }
@@ -120,6 +138,10 @@ button { font:inherit; }
   .popular-grid { grid-template-columns:repeat(2,1fr); }
   .popular-item { border-bottom:1px solid var(--line); padding-block:14px; }
   .events-grid { grid-template-columns:1fr; }
+  .management-intro { grid-template-columns:1fr; }
+  .management-intro .read-link { justify-self:start; }
+  .management-board { grid-template-columns:repeat(3,1fr); }
+  .management-connector::after { width:calc(100vw - 120px); }
   .islamic-list { margin-top:0; }
   .media-grid { grid-template-columns:1fr 1fr; }
   .media-large { grid-column:1/-1; min-height:260px !important; }
@@ -142,6 +164,11 @@ button { font:inherit; }
   .popular-item { border-right:0; }
   .section-head { margin-top:38px; }
   .section-head h2 { font-size:23px; }
+  .management-tree { padding:18px 12px; }
+  .management-lead { width:100%; }
+  .management-board { grid-template-columns:1fr; gap:10px; }
+  .management-connector::after { display:none; }
+  .management-card::before { display:none; }
   .islamic-feature { grid-template-columns:1fr; }
   .islamic-feature img { min-height:190px; }
   .media-grid { grid-template-columns:1fr; }
