@@ -31,7 +31,7 @@ const searchItems = [
   { title: 'Hubungi Pengurus Miftahul Mubin', href: '/kontak/', category: 'Kontak' },
 ]
 
-const logoSrc = '/miftahul-mubin/logo.png'
+const logoSrc = '/miftahul-mubin/logo.svg'
 
 function formatToday() {
   return new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())
