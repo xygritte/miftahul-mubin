@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import './polish.css'
 import './header-portal.css'
+import './theme-polish.css'
 
 export const metadata: Metadata = {
   title: {
@@ -31,14 +32,14 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: '#083d31',
-  colorScheme: 'light',
+  colorScheme: 'light dark',
   width: 'device-width',
   initialScale: 1,
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <body>{children}</body>
     </html>
   )
