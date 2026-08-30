@@ -1,14 +1,38 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import './polish.css'
 
 export const metadata: Metadata = {
-  title: 'Miftahul Mubin — Portal Masjid',
-  description: 'Portal informasi, kegiatan, berita, dan transparansi Masjid Miftahul Mubin.',
+  title: {
+    default: 'Miftahul Mubin — Portal Masjid',
+    template: '%s — Miftahul Mubin',
+  },
+  description: 'Portal informasi, kegiatan, berita, keislaman, kepengurusan, dokumentasi, dan transparansi Masjid Miftahul Mubin.',
+  applicationName: 'Miftahul Mubin',
+  keywords: ['Miftahul Mubin', 'masjid', 'berita masjid', 'kegiatan masjid', 'keislaman', 'transparansi masjid'],
+  authors: [{ name: 'Miftahul Mubin' }],
+  creator: 'Miftahul Mubin',
+  metadataBase: new URL('https://xygritte.github.io/miftahul-mubin/'),
+  alternates: { canonical: './' },
+  openGraph: {
+    type: 'website',
+    locale: 'id_ID',
+    siteName: 'Miftahul Mubin',
+    title: 'Miftahul Mubin — Portal Masjid',
+    description: 'Portal informasi dan kegiatan Masjid Miftahul Mubin.',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Miftahul Mubin — Portal Masjid',
+    description: 'Portal informasi dan kegiatan Masjid Miftahul Mubin.',
+  },
 }
 
 export const viewport: Viewport = {
   themeColor: '#083d31',
   colorScheme: 'light',
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
