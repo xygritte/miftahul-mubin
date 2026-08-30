@@ -1,4 +1,5 @@
-import { CalendarDays, ChevronRight, Clock3, MapPin, Search, WalletCards } from 'lucide-react'
+import { ChevronRight, Clock3, MapPin, Megaphone, WalletCards } from 'lucide-react'
+import Header from '../components/layout/Header'
 
 const news = [
   { category: 'Kegiatan Masjid', title: 'Miftahul Mubin Gelar Kajian Akbar untuk Jamaah dan Warga Sekitar', date: '30 Agustus 2026', image: 'https://images.unsplash.com/photo-1542816417-0983676b0c9f?auto=format&fit=crop&w=1200&q=80' },
@@ -24,19 +25,21 @@ const events = [
 ]
 
 const management = [
-  { role: 'Ketua Takmir', name: 'H. Ahmad Fauzi' },
-  { role: 'Sekretaris', name: 'Muhammad Fikri' },
-  { role: 'Bendahara', name: 'Abdul Rahman' },
-  { role: 'Divisi Dakwah', name: 'Ust. Ahmad Hidayat' },
-  { role: 'Divisi Pendidikan', name: 'Nurul Huda' },
-  { role: 'Divisi Sosial', name: 'M. Rizki Pratama' },
+  { role: 'Ketua Takmir', name: 'H. Ahmad Fauzi', initials: 'AF' },
+  { role: 'Sekretaris', name: 'Muhammad Fikri', initials: 'MF' },
+  { role: 'Bendahara', name: 'Abdul Rahman', initials: 'AR' },
+  { role: 'Divisi Dakwah', name: 'Ust. Ahmad Hidayat', initials: 'AH' },
+  { role: 'Divisi Pendidikan', name: 'Nurul Huda', initials: 'NH' },
+  { role: 'Divisi Sosial', name: 'M. Rizki Pratama', initials: 'RP' },
 ]
 
-function SectionHeader({ title, href = '#' }: { title: string; href?: string }) {
+const searchItems = [...popular, ...news.map((item) => item.title)]
+
+function SectionHeader({ title, href }: { title: string; href?: string }) {
   return (
     <div className="section-head">
       <h2>{title}</h2>
-      <a href={href}>Lihat semua <ChevronRight size={17} /></a>
+      {href && <a href={href}>Lihat semua <ChevronRight size={17} /></a>}
     </div>
   )
 }
@@ -44,13 +47,13 @@ function SectionHeader({ title, href = '#' }: { title: string; href?: string }) 
 function NewsCard({ item, featured = false }: { item: (typeof news)[number]; featured?: boolean }) {
   return (
     <article className={featured ? 'news-card featured' : 'news-card'}>
-      <a href="#" className="news-image-wrap">
+      <a href="#berita" className="news-image-wrap" aria-label={`Baca ${item.title}`}>
         <img src={item.image} alt={item.title} className="news-image" />
         <span className="tag">{item.category}</span>
       </a>
       <div className="news-body">
         <span className="meta">{item.date}</span>
-        <h3><a href="#">{item.title}</a></h3>
+        <h3><a href="#berita">{item.title}</a></h3>
       </div>
     </article>
   )
@@ -58,97 +61,75 @@ function NewsCard({ item, featured = false }: { item: (typeof news)[number]; fea
 
 export default function Home() {
   return (
-    <main>
-      <div className="utility-bar">
-        <div className="container utility-inner">
-          <span>Portal Informasi Masjid Miftahul Mubin</span>
-          <span className="utility-right"><span>Senin, 30 Agustus 2026</span><span>•</span><span>Kontak Pengurus</span></span>
-        </div>
-      </div>
-
-      <header className="site-header">
-        <div className="container header-main">
-          <a href="#" className="brand" aria-label="Miftahul Mubin">
-            <span className="brand-mark">MM</span>
-            <span><strong>Miftahul Mubin</strong><small>Masjid & Pusat Kegiatan Umat</small></span>
-          </a>
-          <nav className="desktop-nav">
-            <a className="active" href="#">Beranda</a><a href="#berita">Berita</a><a href="#keislaman">Keislaman</a><a href="#kegiatan">Kegiatan</a><a href="#kepengurusan">Kepengurusan</a><a href="#keuangan">Keuangan</a><a href="#profil">Profil</a>
-          </nav>
-          <button className="search-btn" aria-label="Cari"><Search size={20} /></button>
-        </div>
-        <div className="category-bar">
-          <div className="container category-scroll">
-            <a href="#">Pengumuman</a><a href="#">Khutbah</a><a href="#dokumentasi">Dokumentasi</a><a href="#kepengurusan">Kepengurusan</a><a href="#">Pendidikan</a><a href="#">Sosial</a>
-          </div>
-        </div>
-      </header>
+    <main id="main-content">
+      <Header searchItems={searchItems} />
 
       <div className="container page-space">
-        <section className="headline-grid">
+        <section className="headline-grid" aria-labelledby="headline-title">
+          <h1 id="headline-title" className="visually-hidden">Informasi terbaru Masjid Miftahul Mubin</h1>
           <NewsCard item={news[0]} featured />
           <div className="headline-side"><NewsCard item={news[1]} /><NewsCard item={news[2]} /></div>
         </section>
 
-        <section className="popular-strip">
-          <SectionHeader title="Terpopuler" />
+        <section id="pengumuman" className="announcement-strip" aria-label="Pengumuman penting">
+          <div className="announcement-icon"><Megaphone size={19} /></div>
+          <div><span>Pengumuman</span><strong>Jadwal kajian dan agenda September telah diperbarui.</strong></div>
+          <a href="#kegiatan" className="announcement-link">Lihat agenda <ChevronRight size={16} /></a>
+        </section>
+
+        <section className="popular-strip" aria-labelledby="popular-title">
+          <SectionHeader title="Terpopuler" href="#berita" />
           <div className="popular-grid">
-            {popular.map((item, index) => (
-              <a href="#" className="popular-item" key={item}><span>{String(index + 1).padStart(2, '0')}</span><strong>{item}</strong></a>
-            ))}
+            {popular.map((item, index) => <a href="#berita" className="popular-item" key={item}><span>{String(index + 1).padStart(2, '0')}</span><strong>{item}</strong></a>)}
           </div>
         </section>
 
-        <section id="berita">
-          <SectionHeader title="Berita Terkini" />
+        <section id="berita" aria-labelledby="berita-title">
+          <SectionHeader title="Berita Terkini" href="#berita" />
           <div className="news-grid">{news.slice(1).map(item => <NewsCard key={item.title} item={item} />)}</div>
         </section>
 
-        <section id="kegiatan" className="events-section">
-          <SectionHeader title="Agenda Terdekat" />
+        <section id="kegiatan" className="events-section" aria-labelledby="kegiatan-title">
+          <SectionHeader title="Agenda Terdekat" href="#kegiatan" />
           <div className="events-grid">
             {events.map(event => (
               <article className="event-card" key={event.title}>
                 <div className="event-date"><strong>{event.day}</strong><span>{event.month}</span></div>
-                <div><span className="event-label">Akan Datang</span><h3>{event.title}</h3><p><Clock3 size={15} /> {event.time}</p><p><MapPin size={15} /> {event.place}</p></div>
+                <div><span className="event-label">Akan Datang</span><h3>{event.title}</h3><p><Clock3 size={15} aria-hidden="true" /> {event.time}</p><p><MapPin size={15} aria-hidden="true" /> {event.place}</p></div>
               </article>
             ))}
           </div>
         </section>
 
-        <section id="kepengurusan" className="management-section">
+        <section id="kepengurusan" className="management-section" aria-labelledby="management-title">
           <SectionHeader title="Struktur Kepengurusan" href="#kepengurusan" />
           <div className="management-intro">
             <div>
               <span className="eyebrow">Pengurus Miftahul Mubin</span>
-              <h2>Melayani jamaah melalui kerja bersama.</h2>
-              <p>Struktur kepengurusan Miftahul Mubin menjadi bagian dari keterbukaan informasi masjid. Setiap bidang memiliki peran dalam mengelola ibadah, pendidikan, kegiatan sosial, dan pelayanan jamaah.</p>
+              <h2 id="management-title">Melayani jamaah melalui kerja bersama.</h2>
+              <p>Struktur kepengurusan menjadi bagian dari keterbukaan informasi masjid. Setiap bidang memiliki peran dalam ibadah, pendidikan, kegiatan sosial, dan pelayanan jamaah.</p>
             </div>
-            <a href="#" className="read-link">Lihat kepengurusan lengkap <ChevronRight size={16} /></a>
+            <a href="#kepengurusan" className="read-link">Lihat kepengurusan lengkap <ChevronRight size={16} /></a>
           </div>
           <div className="management-tree">
             <div className="management-lead">
-              <span className="management-avatar">AF</span>
-              <div><span>Ketua Takmir</span><strong>{management[0].name}</strong></div>
+              <span className="management-avatar">{management[0].initials}</span>
+              <div><span>{management[0].role}</span><strong>{management[0].name}</strong></div>
             </div>
             <div className="management-connector" aria-hidden="true" />
             <div className="management-board">
-              {management.slice(1).map(member => (
-                <article className="management-card" key={member.role}>
-                  <span className="management-avatar small">{member.name.split(' ').map(part => part[0]).slice(0, 2).join('')}</span>
-                  <div><span>{member.role}</span><strong>{member.name}</strong></div>
-                </article>
-              ))}
+              {management.slice(1).map(member => <article className="management-card" key={member.role}><span className="management-avatar small">{member.initials}</span><div><span>{member.role}</span><strong>{member.name}</strong></div></article>)}
             </div>
           </div>
+          <p className="demo-note">Data pengurus di atas merupakan data contoh untuk Fase 1 dan akan dikelola melalui dashboard pada fase berikutnya.</p>
         </section>
 
-        <section id="keislaman" className="editorial-split">
+        <section id="keislaman" className="editorial-split" aria-labelledby="keislaman-title">
           <div>
-            <SectionHeader title="Keislaman" />
+            <SectionHeader title="Keislaman" href="#keislaman" />
             <article className="islamic-feature">
-              <img src="https://images.unsplash.com/photo-1594156596782-656c93e4d504?auto=format&fit=crop&w=1200&q=80" alt="Masjid dan kegiatan keislaman" />
-              <div><span className="tag green">Artikel</span><h3>Menjadikan Masjid sebagai Pusat Ilmu dan Pembinaan Umat</h3><p>Ruang masjid bukan hanya tempat beribadah, tetapi juga tempat tumbuhnya ilmu, kepedulian, dan kebersamaan.</p><a href="#" className="read-link">Baca selengkapnya <ChevronRight size={16} /></a></div>
+              <img src="https://images.unsplash.com/photo-1594156596782-656c93e4d504?auto=format&fit=crop&w=1200&q=80" alt="Masjid untuk kegiatan keislaman" />
+              <div><span className="tag green">Artikel</span><h3 id="keislaman-title">Menjadikan Masjid sebagai Pusat Ilmu dan Pembinaan Umat</h3><p>Ruang masjid bukan hanya tempat beribadah, tetapi juga tempat tumbuhnya ilmu, kepedulian, dan kebersamaan.</p><a href="#keislaman" className="read-link">Baca selengkapnya <ChevronRight size={16} /></a></div>
             </article>
           </div>
           <div className="islamic-list">
@@ -158,38 +139,44 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="dokumentasi" className="media-section">
-          <SectionHeader title="Dokumentasi" />
+        <section id="dokumentasi" className="media-section" aria-labelledby="dokumentasi-title">
+          <SectionHeader title="Dokumentasi" href="#dokumentasi" />
           <div className="media-grid">
-            <a href="#" className="media-large"><img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80" alt="Dokumentasi kegiatan" /><span>Galeri Kajian Akbar Miftahul Mubin</span></a>
-            <a href="#" className="media-item"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80" alt="Kegiatan pemuda" /><span>Kegiatan Pemuda Masjid</span></a>
-            <a href="#" className="media-item"><img src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=800&q=80" alt="Kegiatan sosial" /><span>Penyaluran Bantuan Sosial</span></a>
+            <a href="#dokumentasi" className="media-large"><img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80" alt="Dokumentasi Kajian Akbar Miftahul Mubin" /><span id="dokumentasi-title">Galeri Kajian Akbar Miftahul Mubin</span></a>
+            <a href="#dokumentasi" className="media-item"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80" alt="Kegiatan pemuda masjid" /><span>Kegiatan Pemuda Masjid</span></a>
+            <a href="#dokumentasi" className="media-item"><img src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=800&q=80" alt="Penyaluran bantuan sosial" /><span>Penyaluran Bantuan Sosial</span></a>
           </div>
         </section>
 
-        <section id="keuangan" className="finance-section">
-          <div className="finance-copy"><span className="eyebrow">Transparansi</span><h2>Keuangan Masjid</h2><p>Laporan ringkas keuangan Miftahul Mubin sebagai bentuk keterbukaan kepada jamaah dan masyarakat.</p><a href="#" className="button-link">Lihat laporan lengkap <ChevronRight size={17} /></a></div>
+        <section id="keuangan" className="finance-section" aria-labelledby="finance-title">
+          <div className="finance-copy"><span className="eyebrow">Transparansi</span><h2 id="finance-title">Keuangan Masjid</h2><p>Laporan ringkas keuangan Miftahul Mubin sebagai bentuk keterbukaan kepada jamaah dan masyarakat.</p><a href="#keuangan-detail" className="button-link">Lihat laporan lengkap <ChevronRight size={17} /></a></div>
           <div className="finance-cards">
-            <div><WalletCards size={22} /><span>Total Pemasukan</span><strong>Rp 12.500.000</strong></div>
-            <div><WalletCards size={22} /><span>Total Pengeluaran</span><strong>Rp 7.200.000</strong></div>
-            <div className="balance"><WalletCards size={22} /><span>Saldo</span><strong>Rp 15.300.000</strong></div>
+            <div><WalletCards size={22} aria-hidden="true" /><span>Total Pemasukan</span><strong>Rp 12.500.000</strong></div>
+            <div><WalletCards size={22} aria-hidden="true" /><span>Total Pengeluaran</span><strong>Rp 7.200.000</strong></div>
+            <div className="balance"><WalletCards size={22} aria-hidden="true" /><span>Saldo</span><strong>Rp 15.300.000</strong></div>
           </div>
         </section>
+        <div id="keuangan-detail" className="finance-detail-note">Preview Fase 1: detail transaksi, grafik, dan unduhan laporan akan tersedia setelah modul keuangan terhubung ke database.</div>
 
-        <section id="profil" className="about-section">
-          <div><span className="eyebrow">Tentang Masjid</span><h2>Miftahul Mubin</h2><p>Miftahul Mubin hadir sebagai pusat ibadah, pembelajaran, pelayanan, dan kegiatan sosial untuk masyarakat sekitar.</p><a href="#" className="read-link">Mengenal lebih dekat <ChevronRight size={16} /></a></div>
+        <section id="profil" className="about-section" aria-labelledby="profil-title">
+          <div><span className="eyebrow">Tentang Masjid</span><h2 id="profil-title">Miftahul Mubin</h2><p>Miftahul Mubin hadir sebagai pusat ibadah, pembelajaran, pelayanan, dan kegiatan sosial untuk masyarakat sekitar.</p><a href="#kontak" className="read-link">Mengenal lebih dekat <ChevronRight size={16} /></a></div>
           <div className="about-stat"><strong>2026</strong><span>Periode informasi</span></div><div className="about-stat"><strong>24+</strong><span>Kegiatan tahun ini</span></div>
+        </section>
+
+        <section id="kontak" className="contact-section" aria-labelledby="contact-title">
+          <div><span className="eyebrow">Hubungi Masjid</span><h2 id="contact-title">Miftahul Mubin di tengah masyarakat.</h2><p>Informasi alamat, kontak pengurus, dan layanan masjid akan dikelola secara terpusat pada versi final.</p></div>
+          <div className="contact-list"><div><strong>Lokasi</strong><span>Jl. Masjid Miftahul Mubin, Ponorogo</span></div><div><strong>Email</strong><span>info@miftahulmubin.id</span></div><div><strong>Layanan</strong><span>Informasi kegiatan & kepengurusan</span></div></div>
         </section>
       </div>
 
       <footer className="site-footer">
         <div className="container footer-grid">
           <div><div className="footer-brand">Miftahul Mubin</div><p>Portal informasi dan kegiatan Masjid Miftahul Mubin.</p></div>
-          <div><h3>Navigasi</h3><a href="#">Berita</a><a href="#">Kegiatan</a><a href="#">Keislaman</a><a href="#">Keuangan</a></div>
-          <div><h3>Masjid</h3><a href="#">Profil</a><a href="#kepengurusan">Kepengurusan</a><a href="#dokumentasi">Dokumentasi</a><a href="#">Kontak</a></div>
-          <div><h3>Hubungi Kami</h3><p>Jl. Masjid Miftahul Mubin<br />Ponorogo, Jawa Timur</p><p>info@miftahulmubin.id</p></div>
+          <div><h3>Navigasi</h3><a href="#berita">Berita</a><a href="#kegiatan">Kegiatan</a><a href="#keislaman">Keislaman</a><a href="#keuangan">Keuangan</a></div>
+          <div><h3>Masjid</h3><a href="#profil">Profil</a><a href="#kepengurusan">Kepengurusan</a><a href="#dokumentasi">Dokumentasi</a><a href="#kontak">Kontak</a></div>
+          <div><h3>Informasi</h3><p>Portal ini masih dalam tahap Fase 1. Data yang tampil merupakan data contoh untuk pengembangan antarmuka.</p></div>
         </div>
-        <div className="container footer-bottom"><span>© 2026 Miftahul Mubin. Semua hak dilindungi.</span><span>Dibangun untuk pelayanan umat.</span></div>
+        <div className="container footer-bottom"><span>© 2026 Miftahul Mubin. Semua hak dilindungi.</span><a href="#top">Kembali ke atas ↑</a></div>
       </footer>
     </main>
   )
