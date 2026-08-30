@@ -1,26 +1,27 @@
 'use client'
 
+import Link from 'next/link'
 import { Menu, Search, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const primaryLinks = [
-  ['Beranda', '#top'],
-  ['Berita', '#berita'],
-  ['Keislaman', '#keislaman'],
-  ['Kegiatan', '#kegiatan'],
-  ['Kepengurusan', '#kepengurusan'],
-  ['Keuangan', '#keuangan'],
-  ['Profil', '#profil'],
-  ['Kontak', '#kontak'],
+  ['Beranda', '/'],
+  ['Berita', '/berita/'],
+  ['Keislaman', '/keislaman/'],
+  ['Kegiatan', '/kegiatan/'],
+  ['Kepengurusan', '/kepengurusan/'],
+  ['Keuangan', '/keuangan/'],
+  ['Profil', '/profil/'],
+  ['Kontak', '/kontak/'],
 ] as const
 
 const categoryLinks = [
-  ['Pengumuman', '#pengumuman'],
-  ['Khutbah', '#keislaman'],
-  ['Dokumentasi', '#dokumentasi'],
-  ['Kepengurusan', '#kepengurusan'],
-  ['Pendidikan', '#kegiatan'],
-  ['Sosial', '#kegiatan'],
+  ['Pengumuman', '/pengumuman/'],
+  ['Khutbah', '/keislaman/?kategori=khutbah'],
+  ['Dokumentasi', '/dokumentasi/'],
+  ['Kepengurusan', '/kepengurusan/'],
+  ['Pendidikan', '/kegiatan/?kategori=pendidikan'],
+  ['Sosial', '/kegiatan/?kategori=sosial'],
 ] as const
 
 export default function Header({ searchItems }: { searchItems: string[] }) {
@@ -56,22 +57,22 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
   return (
     <>
       <a className="skip-link" href="#main-content">Lewati ke konten utama</a>
-      <div className="utility-bar" id="top">
+      <div className="utility-bar">
         <div className="container utility-inner">
           <span>Portal Informasi Masjid Miftahul Mubin</span>
-          <span className="utility-right"><span>30 Agustus 2026</span><span aria-hidden="true">•</span><a href="#kontak">Kontak Pengurus</a></span>
+          <span className="utility-right"><span>30 Agustus 2026</span><span aria-hidden="true">•</span><Link href="/kontak/">Kontak Pengurus</Link></span>
         </div>
       </div>
 
       <header className="site-header">
         <div className="container header-main">
-          <a href="#top" className="brand" aria-label="Miftahul Mubin, kembali ke beranda">
+          <Link href="/" className="brand" aria-label="Miftahul Mubin, kembali ke beranda">
             <span className="brand-mark" aria-hidden="true">MM</span>
             <span><strong>Miftahul Mubin</strong><small>Masjid & Pusat Kegiatan Umat</small></span>
-          </a>
+          </Link>
 
           <nav className="desktop-nav" aria-label="Navigasi utama">
-            {primaryLinks.map(([label, href]) => <a key={label} className={label === 'Beranda' ? 'active' : ''} href={href}>{label}</a>)}
+            {primaryLinks.map(([label, href]) => <Link key={label} className={label === 'Beranda' ? 'active' : ''} href={href}>{label}</Link>)}
           </nav>
 
           <div className="header-actions">
@@ -84,7 +85,7 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
 
         <div className="category-bar">
           <nav className="container category-scroll" aria-label="Kategori">
-            {categoryLinks.map(([label, href]) => <a key={label} href={href} onClick={closeAll}>{label}</a>)}
+            {categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}
           </nav>
         </div>
       </header>
@@ -93,10 +94,10 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
         <div className="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu utama">
           <div className="mobile-menu-inner container">
             <p className="mobile-menu-label">Menu Miftahul Mubin</p>
-            {primaryLinks.map(([label, href]) => <a key={label} className="mobile-menu-link" href={href} onClick={closeAll}>{label}<span aria-hidden="true">›</span></a>)}
+            {primaryLinks.map(([label, href]) => <Link key={label} className="mobile-menu-link" href={href} onClick={closeAll}>{label}<span aria-hidden="true">›</span></Link>)}
             <div className="mobile-menu-categories">
               <p>Kategori</p>
-              {categoryLinks.map(([label, href]) => <a key={label} href={href} onClick={closeAll}>{label}</a>)}
+              {categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}
             </div>
           </div>
         </div>
@@ -116,7 +117,7 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
             <div className="search-results" aria-live="polite">
               {!query && <p className="search-helper">Ketik kata kunci untuk mencari konten pada portal.</p>}
               {query && results.length === 0 && <p className="search-helper">Tidak ada hasil untuk “{query}”.</p>}
-              {results.map((result) => <a key={result} href="#berita" onClick={closeAll}><span>{result}</span><span aria-hidden="true">›</span></a>)}
+              {results.map((result) => <Link key={result} href="/berita/" onClick={closeAll}><span>{result}</span><span aria-hidden="true">›</span></Link>)}
             </div>
           </div>
         </div>
