@@ -1,0 +1,342 @@
+/* Global theme system for Miftahul Mubin. Loaded after base and polish styles. */
+
+:root {
+  --mm-bg: #f6f8f6;
+  --mm-surface: #ffffff;
+  --mm-surface-2: #fbfcfb;
+  --mm-text: #17211d;
+  --mm-text-strong: #10201a;
+  --mm-muted: #697570;
+  --mm-line: #e1e8e4;
+  --mm-line-strong: #cad7d1;
+  --mm-green: #0d5c48;
+  --mm-green-dark: #083d31;
+  --mm-gold: #b79652;
+  --mm-overlay: rgba(8, 24, 20, .62);
+  --mm-shadow: rgba(8, 61, 49, .08);
+}
+
+html[data-theme='dark'] {
+  --mm-bg: #0d1311;
+  --mm-surface: #151d1a;
+  --mm-surface-2: #19231f;
+  --mm-text: #e5eeea;
+  --mm-text-strong: #f4f8f6;
+  --mm-muted: #a5b3ad;
+  --mm-line: #2a3732;
+  --mm-line-strong: #3a4943;
+  --mm-green: #43a98f;
+  --mm-green-dark: #8ed0bd;
+  --mm-gold: #d6b56d;
+  --mm-overlay: rgba(0, 0, 0, .72);
+  --mm-shadow: rgba(0, 0, 0, .24);
+}
+
+html { color-scheme: light; }
+html[data-theme='dark'] { color-scheme: dark; }
+
+body {
+  background: var(--mm-bg);
+  color: var(--mm-text);
+  transition: background-color .18s ease, color .18s ease;
+}
+
+/* Generic surfaces and typography */
+html[data-theme='dark'] .inner-page,
+html[data-theme='dark'] .page-space {
+  background: linear-gradient(180deg, #111815 0, #0d1311 340px);
+}
+
+html[data-theme='dark'] .news-card,
+html[data-theme='dark'] .home-highlight,
+html[data-theme='dark'] .home-featured-news,
+html[data-theme='dark'] .popular-strip,
+html[data-theme='dark'] .service-card,
+html[data-theme='dark'] .event-card,
+html[data-theme='dark'] .news-page-card,
+html[data-theme='dark'] .org-tree-page,
+html[data-theme='dark'] .finance-summary-page > div,
+html[data-theme='dark'] .finance-table-wrap,
+html[data-theme='dark'] .contact-card,
+html[data-theme='dark'] .profile-panel,
+html[data-theme='dark'] .profile-feature,
+html[data-theme='dark'] .profile-columns article,
+html[data-theme='dark'] .contact-card-page,
+html[data-theme='dark'] .notice-list article,
+html[data-theme='dark'] .gallery-page article,
+html[data-theme='dark'] .map-placeholder,
+html[data-theme='dark'] .finance-note,
+html[data-theme='dark'] .event-list-page .event-row,
+html[data-theme='dark'] .article-sidebar,
+html[data-theme='dark'] .article-detail,
+html[data-theme='dark'] .event-detail,
+html[data-theme='dark'] .detail-related,
+html[data-theme='dark'] .detail-meta,
+html[data-theme='dark'] .search-panel {
+  background: var(--mm-surface);
+  color: var(--mm-text);
+  border-color: var(--mm-line);
+  box-shadow: 0 10px 30px var(--mm-shadow);
+}
+
+html[data-theme='dark'] h1,
+html[data-theme='dark'] h2,
+html[data-theme='dark'] h3,
+html[data-theme='dark'] h4,
+html[data-theme='dark'] strong,
+html[data-theme='dark'] th,
+html[data-theme='dark'] td,
+html[data-theme='dark'] label {
+  color: var(--mm-text-strong);
+}
+
+html[data-theme='dark'] p,
+html[data-theme='dark'] small,
+html[data-theme='dark'] .meta,
+html[data-theme='dark'] .eyebrow,
+html[data-theme='dark'] .search-helper,
+html[data-theme='dark'] .page-intro p {
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] .section-head,
+html[data-theme='dark'] .home-section-heading,
+html[data-theme='dark'] .editorial-list,
+html[data-theme='dark'] .event-list-page,
+html[data-theme='dark'] .home-latest-list,
+html[data-theme='dark'] .finance-table-wrap,
+html[data-theme='dark'] th,
+html[data-theme='dark'] td,
+html[data-theme='dark'] .notice-list article,
+html[data-theme='dark'] .gallery-page article,
+html[data-theme='dark'] .role-note,
+html[data-theme='dark'] .profile-columns,
+html[data-theme='dark'] .contact-grid-page {
+  border-color: var(--mm-line);
+}
+
+html[data-theme='dark'] .section-head,
+html[data-theme='dark'] .home-section-heading {
+  border-bottom-color: var(--mm-green-dark);
+}
+
+html[data-theme='dark'] a:hover,
+html[data-theme='dark'] .read-link,
+html[data-theme='dark'] .home-links a,
+html[data-theme='dark'] .news-page-card a,
+html[data-theme='dark'] .editorial-card a,
+html[data-theme='dark'] .contact-card-page span,
+html[data-theme='dark'] .event-details span,
+html[data-theme='dark'] .search-results a:hover {
+  color: var(--mm-green);
+}
+
+/* Header and global chrome */
+html[data-theme='dark'] .mm-utility-bar,
+html[data-theme='dark'] .mm-header,
+html[data-theme='dark'] .mm-secondary-row,
+html[data-theme='dark'] .mm-language-menu,
+html[data-theme='dark'] .mm-mobile-menu {
+  background: var(--mm-surface);
+  border-color: var(--mm-line);
+}
+
+html[data-theme='dark'] .mm-brand-mark {
+  background: #16201c;
+  border-color: var(--mm-green);
+}
+
+html[data-theme='dark'] .mm-brand-copy strong,
+html[data-theme='dark'] .mm-brand-copy small,
+html[data-theme='dark'] .mm-secondary-nav a,
+html[data-theme='dark'] .mm-date,
+html[data-theme='dark'] .mm-language-btn,
+html[data-theme='dark'] .mm-header-tools button,
+html[data-theme='dark'] .mm-mobile-inner > a,
+html[data-theme='dark'] .mm-mobile-label,
+html[data-theme='dark'] .mm-mobile-categories p {
+  color: var(--mm-text);
+}
+
+html[data-theme='dark'] .mm-secondary-nav a:hover,
+html[data-theme='dark'] .mm-mobile-categories a,
+html[data-theme='dark'] .mm-mobile-inner > a.active {
+  color: var(--mm-green);
+}
+
+html[data-theme='dark'] .mm-search-trigger {
+  background: #202a26;
+  color: #acbbb5;
+}
+
+html[data-theme='dark'] .mm-search-trigger:hover {
+  background: #26332e;
+  color: #d8e1dd;
+}
+
+html[data-theme='dark'] .mm-language-menu button:hover,
+html[data-theme='dark'] .mm-language-menu button.active {
+  background: #20302a;
+  color: var(--mm-green);
+}
+
+html[data-theme='dark'] .mm-language-menu button,
+html[data-theme='dark'] .mm-close-btn,
+html[data-theme='dark'] .mm-mobile-menu-btn,
+html[data-theme='dark'] .mm-search-field {
+  border-color: var(--mm-line-strong);
+}
+
+html[data-theme='dark'] .mm-mobile-menu {
+  background: rgba(13, 19, 17, .98);
+}
+
+html[data-theme='dark'] .mm-search-overlay {
+  background: var(--mm-overlay);
+}
+
+html[data-theme='dark'] .mm-search-panel {
+  box-shadow: 0 30px 90px rgba(0,0,0,.42);
+}
+
+html[data-theme='dark'] .mm-search-head h2,
+html[data-theme='dark'] .mm-search-results a,
+html[data-theme='dark'] .mm-search-field input {
+  color: var(--mm-text-strong);
+}
+
+/* Editorial content */
+html[data-theme='dark'] .news-page-card p,
+html[data-theme='dark'] .editorial-card p,
+html[data-theme='dark'] .event-card p,
+html[data-theme='dark'] .profile-feature p,
+html[data-theme='dark'] .profile-columns p,
+html[data-theme='dark'] .contact-card-page p,
+html[data-theme='dark'] .notice-list article p,
+html[data-theme='dark'] .map-placeholder p,
+html[data-theme='dark'] .role-note p,
+html[data-theme='dark'] .home-featured-news p,
+html[data-theme='dark'] .service-card p,
+html[data-theme='dark'] .finance-note p {
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] .latest-number,
+html[data-theme='dark'] .popular-item span,
+html[data-theme='dark'] .editorial-number {
+  color: #71847c;
+}
+
+html[data-theme='dark'] .filter-row span {
+  background: var(--mm-surface);
+  border-color: var(--mm-line);
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] .filter-row span:first-child {
+  background: var(--mm-green);
+  color: #061410;
+  border-color: var(--mm-green);
+}
+
+html[data-theme='dark'] .service-card:hover,
+html[data-theme='dark'] .home-highlight:hover,
+html[data-theme='dark'] .news-page-card:hover,
+html[data-theme='dark'] .event-card:hover {
+  background: #19241f;
+  border-color: var(--mm-line-strong);
+}
+
+/* Finance */
+html[data-theme='dark'] th {
+  background: var(--mm-surface-2);
+}
+
+html[data-theme='dark'] .finance-in { color: #67d3ad; }
+html[data-theme='dark'] .finance-out { color: #ee8f8f; }
+html[data-theme='dark'] .finance-period span,
+html[data-theme='dark'] .event-status,
+html[data-theme='dark'] .event-label,
+html[data-theme='dark'] .contact-card-page span,
+html[data-theme='dark'] .notice-list article > div > span,
+html[data-theme='dark'] .gallery-page article > div > span {
+  color: var(--mm-gold);
+}
+
+html[data-theme='dark'] .event-status {
+  border-color: var(--mm-line-strong);
+}
+
+/* Buttons and controls */
+html[data-theme='dark'] .report-button {
+  background: var(--mm-surface);
+  color: var(--mm-green);
+  border-color: var(--mm-line-strong);
+}
+
+html[data-theme='dark'] .report-button:hover {
+  background: #1c2924;
+}
+
+html[data-theme='dark'] .search-btn,
+html[data-theme='dark'] .menu-btn,
+html[data-theme='dark'] .close-btn {
+  background: var(--mm-surface);
+  color: var(--mm-text);
+  border-color: var(--mm-line-strong);
+}
+
+/* Profile / contact / gallery */
+html[data-theme='dark'] .profile-visual,
+html[data-theme='dark'] .map-placeholder {
+  background: #10211b;
+}
+
+html[data-theme='dark'] .profile-facts > div {
+  border-color: var(--mm-line);
+}
+
+html[data-theme='dark'] .profile-facts span,
+html[data-theme='dark'] .management-card span,
+html[data-theme='dark'] .management-card strong,
+html[data-theme='dark'] .gallery-page article small {
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] .management-card {
+  background: var(--mm-surface-2);
+  border-color: var(--mm-line);
+}
+
+/* Footer */
+html[data-theme='dark'] .site-footer {
+  background: #07110e;
+  color: #dce8e2;
+}
+
+html[data-theme='dark'] .footer-grid p,
+html[data-theme='dark'] .footer-grid a,
+html[data-theme='dark'] .footer-bottom {
+  color: #93a59d;
+}
+
+html[data-theme='dark'] .footer-grid a:hover {
+  color: #fff;
+}
+
+/* Hero remains intentionally dark, independent of theme */
+.home-hero,
+html[data-theme='dark'] .home-hero {
+  color: #fff;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  html[data-theme='dark'] .mm-mobile-menu-btn {
+    background: var(--mm-surface);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body { transition: none; }
+}
