@@ -4,6 +4,7 @@ import './polish.css'
 import './header-portal.css'
 import './theme-polish.css'
 import './assets-polish.css'
+import './quality-polish.css'
 
 export const metadata: Metadata = {
   title: {
