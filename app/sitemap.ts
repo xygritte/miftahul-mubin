@@ -2,6 +2,8 @@ import type { MetadataRoute } from 'next'
 import { news, events } from '@/lib/content'
 import { islamicItems } from '@/lib/islamic'
 
+export const dynamic = 'force-static'
+
 const base = 'https://xygritte.github.io/miftahul-mubin'
 
 export default function sitemap(): MetadataRoute.Sitemap {
