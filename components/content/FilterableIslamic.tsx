@@ -13,9 +13,9 @@ export default function FilterableIslamic({ items }: { items: IslamicItem[] }) {
 
   return (
     <>
-      <div className="filter-row filter-row-interactive" role="tablist" aria-label="Filter materi keislaman">
+      <div className="filter-row filter-row-interactive" role="group" aria-label="Filter materi keislaman">
         {filters.map((item) => (
-          <button key={item} type="button" role="tab" aria-selected={filter === item} className={filter === item ? 'is-active' : ''} onClick={() => setFilter(item)}>
+          <button key={item} type="button" aria-pressed={filter === item} className={filter === item ? 'is-active' : ''} onClick={() => setFilter(item)}>
             {item}
           </button>
         ))}
