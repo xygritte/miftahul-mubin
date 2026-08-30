@@ -33,6 +33,18 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
     return () => { document.body.style.overflow = '' }
   }, [menuOpen, searchOpen])
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+        setSearchOpen(false)
+        setQuery('')
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
   const results = searchItems.filter((item) => item.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 6)
 
   const closeAll = () => {
@@ -63,8 +75,8 @@ export default function Header({ searchItems }: { searchItems: string[] }) {
           </nav>
 
           <div className="header-actions">
-            <button className="search-btn" type="button" aria-label="Buka pencarian" aria-expanded={searchOpen} onClick={() => setSearchOpen(true)}><Search size={20} /></button>
-            <button className="menu-btn" type="button" aria-label={menuOpen ? 'Tutup menu' : 'Buka menu'} aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={() => setMenuOpen((open) => !open)}>
+            <button className="search-btn" type="button" aria-label="Buka pencarian" aria-expanded={searchOpen} onClick={() => { setMenuOpen(false); setSearchOpen(true) }}><Search size={20} /></button>
+            <button className="menu-btn" type="button" aria-label={menuOpen ? 'Tutup menu' : 'Buka menu'} aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={() => { setSearchOpen(false); setMenuOpen((open) => !open) }}>
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
