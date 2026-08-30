@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import './polish.css'
+import './header-portal.css'
 
 export const metadata: Metadata = {
   title: {
