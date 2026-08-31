@@ -1,7 +1,7 @@
-import { createClient, type SupabaseClientOptions } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from './publicConfig'
 
-const noStoreFetch: SupabaseClientOptions<'public'>['global']['fetch'] = async (input, init) => {
+const noStoreFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const request = new Request(input, init)
   const isRestRequest = request.url.includes('/rest/v1/')
 
@@ -13,7 +13,7 @@ const noStoreFetch: SupabaseClientOptions<'public'>['global']['fetch'] = async (
   return fetch(url, {
     ...init,
     headers: {
-      ...(init?.headers ?? {}),
+      ...new Headers(init?.headers ?? {}),
       'Cache-Control': 'no-store, no-cache, max-age=0',
       Pragma: 'no-cache',
     },
