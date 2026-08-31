@@ -33,11 +33,22 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Prepare public assets
+        run: |
+          test -f hero-bg.png
+          cp hero-bg.png public/hero-bg.png
+          test -f public/logo.svg
+
       - name: TypeScript check
         run: npm run typecheck
 
       - name: Build static site
         run: npm run build
+
+      - name: Verify embedded assets
+        run: |
+          test -f out/hero-bg.png
+          test -f out/logo.svg
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
