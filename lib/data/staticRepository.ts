@@ -14,6 +14,27 @@ import type {
 } from '@/types/content'
 import type { PublicContentRepository } from './repository'
 
+const monthLookup: Record<string, string> = {
+  januari: '01', februari: '02', maret: '03', april: '04', mei: '05', juni: '06',
+  juli: '07', agustus: '08', september: '09', oktober: '10', november: '11', desember: '12',
+}
+
+function parseLegacyDate(value: string): string | null {
+  const match = value.toLowerCase().match(/(\d{1,2})\s+([a-z]+)\s+(\d{4})/)
+  if (!match) return null
+  return `${match[3]}-${monthLookup[match[2]] ?? '01'}-${match[1].padStart(2, '0')}T08:00:00+07:00`
+}
+
+function parseIndonesianDate(value: string): string {
+  const parsed = parseLegacyDate(value)
+  return parsed ? parsed.slice(0, 10) : '1970-01-01'
+}
+
+function parseTime(value: string): string {
+  const match = value.match(/(\d{1,2})\.(\d{2})/)
+  return match ? `${match[1].padStart(2, '0')}:${match[2]}` : '00:00'
+}
+
 const announcements: AnnouncementRecord[] = [
   { title: 'Pendaftaran Relawan Kegiatan Sosial Masjid Dibuka', content: 'Pendaftaran relawan dibuka bagi jamaah dan masyarakat yang ingin terlibat dalam kegiatan sosial masjid.', status: 'published', publishedAt: '2026-08-24T08:00:00+07:00' },
   { title: 'Jadwal Kajian Rutin Bulan September', content: 'Jadwal kajian rutin bulan September tersedia untuk jamaah.', status: 'published', publishedAt: '2026-08-28T08:00:00+07:00' },
@@ -58,10 +79,6 @@ const staticFinanceTransactions: FinanceTransaction[] = [
 ]
 
 const newsRecords: NewsRecord[] = news.map((item, index) => ({ id: `static-news-${index + 1}`, slug: item.slug, title: item.title, excerpt: item.excerpt, content: item.content, thumbnailUrl: item.image, category: item.category, status: 'published', publishedAt: parseLegacyDate(item.date), viewCount: Math.max(0, 180 - index * 17) }))
-const monthLookup: Record<string, string> = { januari: '01', februari: '02', maret: '03', april: '04', mei: '05', juni: '06', juli: '07', agustus: '08', september: '09', oktober: '10', november: '11', desember: '12' }
-function parseLegacyDate(value: string): string | null { const m = value.toLowerCase().match(/(\d{1,2})\s+([a-z]+)\s+(\d{4})/); if (!m) return null; return `${m[3]}-${monthLookup[m[2]] ?? '01'}-${m[1].padStart(2, '0')}T08:00:00+07:00` }
-function parseIndonesianDate(value: string): string { const parsed = parseLegacyDate(value); return parsed ? parsed.slice(0, 10) : '1970-01-01' }
-function parseTime(value: string): string { const match = value.match(/(\d{1,2})\.(\d{2})/); return match ? `${match[1].padStart(2, '0')}:${match[2]}` : '00:00' }
 const eventRecords: EventRecord[] = events.map((item, index) => ({ id: `static-event-${index + 1}`, slug: item.slug, title: item.title, description: item.description, eventDate: parseIndonesianDate(item.date), startTime: parseTime(item.time), location: item.place, status: 'published', category: item.category }))
 const islamicRecords: IslamicItemRecord[] = islamicItems.map((item, index) => ({ id: `static-islamic-${index + 1}`, slug: item.slug, category: item.category, title: item.title, date: item.date, excerpt: item.excerpt, content: item.content, status: 'published', publishedAt: parseLegacyDate(item.date) }))
 
