@@ -30,6 +30,9 @@ jobs:
           node-version: 22
           package-manager-cache: false
 
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
@@ -51,13 +54,16 @@ jobs:
       - name: Build static site
         run: npm run build
 
-      - name: Verify embedded assets
+      - name: Verify Pages output
         run: |
+          test -f out/index.html
           test -f out/hero-bg.png
           test -f out/logo.svg
+          test -d out/_next
+          test -f out/404.html || test -f out/_not-found/index.html
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./out
 
