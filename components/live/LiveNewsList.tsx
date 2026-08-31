@@ -20,11 +20,12 @@ type NewsRow = {
   view_count: number | null
   created_at: string | null
   updated_at: string | null
-  categories?: { name: string } | null
+  categories?: { name: string } | { name: string }[] | null
 }
 
 function mapNewsRow(row: NewsRow): NewsRecord {
   const content = Array.isArray(row.content) ? row.content : row.content.split(/\n\s*\n/).filter(Boolean)
+  const category = Array.isArray(row.categories) ? row.categories[0]?.name : row.categories?.name
   return {
     id: row.id,
     slug: row.slug,
@@ -32,7 +33,7 @@ function mapNewsRow(row: NewsRow): NewsRecord {
     excerpt: row.excerpt,
     content,
     thumbnailUrl: row.thumbnail_url,
-    category: row.categories?.name ?? 'Berita',
+    category: category ?? 'Berita',
     status: row.status,
     publishedAt: row.published_at,
     viewCount: row.view_count ?? 0,
@@ -56,27 +57,26 @@ async function fetchNews(): Promise<NewsItem[] | null> {
 
 export default function LiveNewsList({ initialItems }: { initialItems: NewsItem[] }) {
   const [items, setItems] = useState(initialItems)
-
   const refresh = useCallback(async () => {
     const next = await fetchNews()
-    if (next) setItems(next)
+    if (next !== null) setItems(next)
   }, [])
 
   useEffect(() => {
     let active = true
     const runRefresh = async () => {
       const next = await fetchNews()
-      if (active && next) setItems(next)
+      if (active && next !== null) setItems(next)
     }
-
     void runRefresh()
 
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') void refresh()
-    }
-    window.addEventListener('focus', handleVisibility)
-    document.addEventListener('visibilitychange', handleVisibility)
-    const interval = window.setInterval(() => void runRefresh(), 30000)
+    const onFocus = () => { void refresh() }
+    const onVisibility = () => { if (document.visibilityState === 'visible') void refresh() }
+    const onPageShow = () => { void refresh() }
+    window.addEventListener('focus', onFocus)
+    window.addEventListener('pageshow', onPageShow)
+    document.addEventListener('visibilitychange', onVisibility)
+    const interval = window.setInterval(() => void refresh(), 15000)
 
     const channel = supabase
       .channel('public-news-live')
@@ -85,8 +85,9 @@ export default function LiveNewsList({ initialItems }: { initialItems: NewsItem[
 
     return () => {
       active = false
-      window.removeEventListener('focus', handleVisibility)
-      document.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('focus', onFocus)
+      window.removeEventListener('pageshow', onPageShow)
+      document.removeEventListener('visibilitychange', onVisibility)
       window.clearInterval(interval)
       void supabase.removeChannel(channel)
     }
