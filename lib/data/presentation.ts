@@ -4,6 +4,9 @@ import type { EventRecord, IslamicItemRecord, NewsRecord } from '@/types/content
 
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
 const WEEKDAYS = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+const BASE_PATH = process.env.GITHUB_ACTIONS === 'true' ? '/miftahul-mubin' : ''
+
+const sitePath = (path: string) => `${BASE_PATH}${path.startsWith('/') ? path : `/${path}`}`
 
 export function formatIndonesianDate(value: string | null | undefined, withWeekday = true): string {
   if (!value) return '—'
@@ -40,7 +43,7 @@ export function newsRecordToLegacy(item: NewsRecord): NewsItem {
     category: item.category,
     title: item.title,
     date: formatIndonesianDate(item.publishedAt ?? item.createdAt ?? null, false),
-    image: item.thumbnailUrl ?? '/miftahul-mubin/hero-bg.png',
+    image: item.thumbnailUrl ?? sitePath('/hero-bg.png'),
     excerpt: item.excerpt,
     content: item.content,
   }
@@ -76,14 +79,14 @@ type SearchEntry = { title: string; href: string; category: string }
 
 export function buildSearchEntries(news: NewsRecord[], islamic: IslamicItemRecord[], events: EventRecord[]): SearchEntry[] {
   return [
-    ...news.map((item) => ({ title: item.title, href: `/berita/${item.slug}/`, category: item.category })),
-    ...islamic.map((item) => ({ title: item.title, href: `/keislaman/${item.slug}/`, category: item.category })),
-    ...events.map((item) => ({ title: item.title, href: `/kegiatan/${item.slug}/`, category: item.category })),
-    { title: 'Pengumuman Miftahul Mubin', href: '/pengumuman/', category: 'Pengumuman' },
-    { title: 'Struktur Kepengurusan Masjid Miftahul Mubin', href: '/kepengurusan/', category: 'Kepengurusan' },
-    { title: 'Profil dan Sejarah Masjid Miftahul Mubin', href: '/profil/', category: 'Profil' },
-    { title: 'Dokumentasi Kegiatan Miftahul Mubin', href: '/dokumentasi/', category: 'Dokumentasi' },
-    { title: 'Transparansi Keuangan Masjid Miftahul Mubin', href: '/keuangan/', category: 'Keuangan' },
-    { title: 'Hubungi Pengurus Miftahul Mubin', href: '/kontak/', category: 'Kontak' },
+    ...news.map((item) => ({ title: item.title, href: sitePath(`/berita/${item.slug}/`), category: item.category })),
+    ...islamic.map((item) => ({ title: item.title, href: sitePath(`/keislaman/${item.slug}/`), category: item.category })),
+    ...events.map((item) => ({ title: item.title, href: sitePath(`/kegiatan/${item.slug}/`), category: item.category })),
+    { title: 'Pengumuman Miftahul Mubin', href: sitePath('/pengumuman/'), category: 'Pengumuman' },
+    { title: 'Struktur Kepengurusan Masjid Miftahul Mubin', href: sitePath('/kepengurusan/'), category: 'Kepengurusan' },
+    { title: 'Profil dan Sejarah Masjid Miftahul Mubin', href: sitePath('/profil/'), category: 'Profil' },
+    { title: 'Dokumentasi Kegiatan Miftahul Mubin', href: sitePath('/dokumentasi/'), category: 'Dokumentasi' },
+    { title: 'Transparansi Keuangan Masjid Miftahul Mubin', href: sitePath('/keuangan/'), category: 'Keuangan' },
+    { title: 'Hubungi Pengurus Miftahul Mubin', href: sitePath('/kontak/'), category: 'Kontak' },
   ]
 }
