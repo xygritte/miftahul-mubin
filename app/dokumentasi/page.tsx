@@ -1,6 +1,6 @@
 import SiteShell from '@/components/layout/SiteShell'
 import PageIntro from '@/components/content/PageIntro'
-import FilterableDocumentation from '@/components/content/FilterableDocumentation'
+import LiveDocumentation from '@/components/live/LiveDocumentation'
 import { contentRepository } from '@/lib/data'
 
 export default async function DokumentasiPage() {
@@ -12,6 +12,6 @@ export default async function DokumentasiPage() {
 
   return <SiteShell><main id="main-content" className="inner-page"><div className="container">
     <PageIntro eyebrow="Arsip Kegiatan" title="Dokumentasi" description={album?.title ? `${album.title} dan arsip momen pelayanan jamaah Masjid Miftahul Mubin.` : 'Kumpulan foto kegiatan dan momen pelayanan jamaah Masjid Miftahul Mubin.'} />
-    <FilterableDocumentation items={items} />
+    <LiveDocumentation initialItems={items} />
   </div></main></SiteShell>
 }
