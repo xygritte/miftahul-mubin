@@ -1,10 +1,15 @@
-import { staticRepository } from './staticRepository'
 import type { PublicContentRepository } from './repository'
+import { staticRepository } from './staticRepository'
+import { supabaseRepository } from './supabaseRepository'
 
 /**
  * Single entry point for public content access.
- * Replace staticRepository with a Supabase implementation when the backend is connected.
+ * Supabase becomes the source of truth when its public client variables exist;
+ * static data remains available as a safe local/preview fallback.
  */
-export const contentRepository: PublicContentRepository = staticRepository
+export const contentRepository: PublicContentRepository =
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    ? supabaseRepository
+    : staticRepository
 
 export type { PublicContentRepository } from './repository'
