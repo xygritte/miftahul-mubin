@@ -7,10 +7,7 @@ const noStoreFetch = async (input: RequestInfo | URL, init?: RequestInit): Promi
 
   if (!isRestRequest) return fetch(request)
 
-  const url = new URL(request.url)
-  url.searchParams.set('_ts', Date.now().toString())
-
-  return fetch(url, {
+  return fetch(request, {
     ...init,
     headers: {
       ...new Headers(init?.headers ?? {}),
