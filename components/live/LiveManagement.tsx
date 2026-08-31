@@ -4,8 +4,38 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import type { ManagementMember, ManagementPeriod } from '@/types/content'
 
+type ManagementPeriodRow = {
+  id: string
+  name: string
+  start_date: string
+  end_date: string | null
+  is_active: boolean
+  created_at: string | null
+  updated_at: string | null
+}
+
+type ManagementMemberRow = {
+  id: string
+  period_id: string | null
+  name: string
+  position: string
+  department: string | null
+  sort_order: number
+  photo_url: string | null
+  created_at: string | null
+  updated_at: string | null
+}
+
+function mapPeriod(row: ManagementPeriodRow): ManagementPeriod {
+  return { id: row.id, name: row.name, startDate: row.start_date, endDate: row.end_date, isActive: row.is_active }
+}
+
+function mapMember(row: ManagementMemberRow): ManagementMember {
+  return { id: row.id, periodId: row.period_id ?? undefined, name: row.name, position: row.position, photoUrl: row.photo_url, sortOrder: row.sort_order }
+}
+
 function initials(name: string) {
-  return name.split(/\s+/).filter(Boolean).slice(0,2).map((part) => part[0]?.toUpperCase()).join('') || 'MM'
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || 'MM'
 }
 
 export default function LiveManagement({ initialPeriod, initialMembers }: { initialPeriod: ManagementPeriod | null; initialMembers: ManagementMember[] }) {
@@ -15,12 +45,12 @@ export default function LiveManagement({ initialPeriod, initialMembers }: { init
     let active = true
     async function refresh() {
       if (!supabase) return
-      const { data: periods, error: periodError } = await supabase.from('management_periods').select('id,name,start_date,end_date,is_active,created_at,updated_at').order('start_date',{ascending:false})
+      const { data: periods, error: periodError } = await supabase.from('management_periods').select('id,name,start_date,end_date,is_active,created_at,updated_at').order('start_date', { ascending: false })
       if (periodError) return
-      const nextPeriod = ((periods ?? []) as ManagementPeriod[]).find((item) => item.isActive) ?? ((periods ?? []) as ManagementPeriod[])[0] ?? null
+      const nextPeriod = (periods ?? []).map((row) => mapPeriod(row as ManagementPeriodRow)).find((item) => item.isActive) ?? (periods ?? []).map((row) => mapPeriod(row as ManagementPeriodRow))[0] ?? null
       if (!nextPeriod) { if (active) { setPeriod(null); setMembers([]) }; return }
-      const { data: memberData, error: memberError } = await supabase.from('management_members').select('id,period_id,name,position,department,sort_order,photo_url,created_at,updated_at').eq('period_id',nextPeriod.id).order('sort_order',{ascending:true})
-      if (!memberError && active) { setPeriod(nextPeriod); setMembers((memberData ?? []) as ManagementMember[]) }
+      const { data: memberData, error: memberError } = await supabase.from('management_members').select('id,period_id,name,position,department,sort_order,photo_url,created_at,updated_at').eq('period_id', nextPeriod.id).order('sort_order', { ascending: true })
+      if (!memberError && active) { setPeriod(nextPeriod); setMembers(((memberData ?? []) as ManagementMemberRow[]).map(mapMember)) }
     }
     void refresh()
     return () => { active = false }
