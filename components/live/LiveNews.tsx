@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { newsRecordToLegacy } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
+import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { NewsRecord } from '@/types/content'
 import type { NewsItem } from '@/lib/content'
 
@@ -11,23 +12,20 @@ type Props = { initialItems: NewsItem[] }
 
 export default function LiveNews({ initialItems }: Props) {
   const [items, setItems] = useState(initialItems)
-
-  useEffect(() => {
-    let active = true
-    async function refresh() {
-      if (!supabase) return
-      const { data, error } = await supabase
-        .from('news')
-        .select('id,title,slug,excerpt,content,thumbnail_url,category_id,status,published_at,view_count,created_at,updated_at,categories(name)')
-        .eq('status', 'published')
-        .not('published_at', 'is', null)
-        .lte('published_at', new Date().toISOString())
-        .order('published_at', { ascending: false })
-      if (!error && active) setItems(((data ?? []) as unknown as NewsRecord[]).map(newsRecordToLegacy))
-    }
-    void refresh()
-    return () => { active = false }
+  const refresh = useCallback(async () => {
+    if (!supabase) return
+    const { data, error } = await supabase
+      .from('news')
+      .select('id,title,slug,excerpt,content,thumbnail_url,category_id,status,published_at,view_count,created_at,updated_at,categories(name)')
+      .eq('status', 'published')
+      .not('published_at', 'is', null)
+      .lte('published_at', new Date().toISOString())
+      .order('published_at', { ascending: false })
+    if (!error) setItems(((data ?? []) as unknown as NewsRecord[]).map(newsRecordToLegacy))
   }, [])
+
+  useEffect(() => { void refresh() }, [refresh])
+  useRealtimeRefresh('news', refresh)
 
   if (!items.length) return <div className="empty-state"><strong>Belum ada berita</strong><p>Belum tersedia berita yang dipublikasikan.</p></div>
   const [featured, ...latest] = items
