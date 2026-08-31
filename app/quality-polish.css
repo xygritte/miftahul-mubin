@@ -18,7 +18,11 @@ body { min-width: 320px; overflow-x: hidden; }
 button, a, input { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid var(--mm-focus); outline-offset: 3px; }
 
-/* Keep all content surfaces coherent with the theme instead of mixing hard-coded whites. */
+.page-intro { position: relative; padding-top: 72px; }
+.page-intro-rule { width: 46px; height: 3px; background: var(--mm-gold); margin-bottom: 17px; }
+.page-intro h1 { text-wrap: balance; letter-spacing: -.025em; }
+.page-intro p { max-width: 700px; text-wrap: pretty; }
+
 .news-card,
 .home-highlight,
 .home-featured-news,
@@ -178,6 +182,7 @@ html[data-theme='dark'] .filter-row-interactive button { background: var(--mm-su
 html[data-theme='dark'] .filter-row-interactive button:hover { color: var(--mm-green-deep); border-color: var(--mm-green); }
 html[data-theme='dark'] .filter-row-interactive button.is-active { background: var(--mm-green); color: #07120e; border-color: var(--mm-green); }
 html[data-theme='dark'] .gallery-image-wrap { background: #111916; }
+html[data-theme='dark'] .page-intro-rule { background: #d7b66e; }
 
 /* Backend-ready states. */
 [data-loading='true'] { cursor: progress; }
@@ -191,6 +196,7 @@ html[data-theme='dark'] .gallery-image-wrap { background: #111916; }
 @media (max-width: 700px) {
   html { scroll-padding-top: 110px; }
   .container { width: min(100% - 28px, 1180px); }
+  .page-intro { padding-top: 48px; }
   .gallery-page { grid-template-columns: 1fr; gap: 14px; }
   .gallery-card h2 { font-size: 18px; }
   .event-row { grid-template-columns: 58px minmax(0, 1fr); padding: 18px 14px; }
