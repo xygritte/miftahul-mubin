@@ -1,65 +1,48 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, ExternalLink, FileDown } from 'lucide-react'
 import { formatIndonesianDate } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
+import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { FinancePeriod, FinanceTransaction } from '@/types/content'
 
-type FinancePeriodRow = {
-  id: string
-  year: number
-  month: number
-  name: string | null
-  opening_balance: number
-  published_at: string | null
-  is_published: boolean
-  created_at: string | null
-  updated_at: string | null
-}
-
-type FinanceTransactionRow = {
-  id: string
-  period_id: string | null
-  transaction_date: string
-  description: string
-  type: 'income' | 'expense'
-  amount: number
-  category_id: string
-  proof_url: string | null
-  published_at: string | null
-  created_at: string | null
-  updated_at: string | null
-  status: 'draft' | 'published' | 'archived'
-}
-
-function mapPeriod(row: FinancePeriodRow): FinancePeriod {
-  return { id: row.id, year: row.year, month: row.month, openingBalance: row.opening_balance, publishedAt: row.published_at, createdAt: row.created_at ?? undefined, updatedAt: row.updated_at ?? undefined }
-}
-function mapTransaction(row: FinanceTransactionRow): FinanceTransaction {
-  return { id: row.id, periodId: row.period_id, transactionDate: row.transaction_date, description: row.description, type: row.type, amount: row.amount, categoryId: row.category_id, proofUrl: row.proof_url, status: row.status, createdAt: row.created_at ?? undefined, updatedAt: row.updated_at ?? undefined }
-}
+type FinancePeriodRow = { id: string; year: number; month: number; opening_balance: number; published_at: string | null; created_at: string | null; updated_at: string | null }
+type FinanceTransactionRow = { id: string; period_id: string | null; transaction_date: string; description: string; type: 'income' | 'expense'; amount: number; category_id: string | null; proof_url: string | null; created_at: string | null; updated_at: string | null; status: 'draft' | 'published' | 'archived' }
+function mapPeriod(row: FinancePeriodRow): FinancePeriod { return { id: row.id, year: row.year, month: row.month, openingBalance: Number(row.opening_balance), publishedAt: row.published_at, createdAt: row.created_at ?? undefined, updatedAt: row.updated_at ?? undefined } }
+function mapTransaction(row: FinanceTransactionRow): FinanceTransaction { return { id: row.id, periodId: row.period_id, transactionDate: row.transaction_date, description: row.description, type: row.type, amount: Number(row.amount), categoryId: row.category_id ?? '', proofUrl: row.proof_url, status: row.status, createdAt: row.created_at ?? undefined, updatedAt: row.updated_at ?? undefined } }
 const rupiah = (value: number) => `Rp ${value.toLocaleString('id-ID')}`
 const monthName = (month: number) => new Intl.DateTimeFormat('id-ID', { month: 'long' }).format(new Date(2026, month - 1, 1))
 
 export default function LiveFinance({ initialPeriod, initialTransactions }: { initialPeriod: FinancePeriod | null; initialTransactions: FinanceTransaction[] }) {
   const [period, setPeriod] = useState(initialPeriod)
   const [transactions, setTransactions] = useState(initialTransactions)
-  useEffect(() => {
-    let active = true
-    async function refresh() {
-      if (!supabase) return
-      const { data: periods, error: periodError } = await supabase.from('finance_periods').select('id,year,month,name,opening_balance,published_at,is_published,created_at,updated_at').eq('is_published', true).not('published_at', 'is', null).lte('published_at', new Date().toISOString()).order('year', { ascending: false }).order('month', { ascending: false }).limit(1)
-      if (periodError) return
-      const nextPeriod = (periods ?? []).map(mapPeriod)[0] ?? null
-      if (!nextPeriod) { if (active) { setPeriod(null); setTransactions([]) }; return }
-      const { data, error } = await supabase.from('finance_transactions').select('id,period_id,transaction_date,description,type,amount,category_id,proof_url,published_at,created_at,updated_at,status').eq('period_id', nextPeriod.id).eq('status', 'published').order('transaction_date', { ascending: false })
-      if (!error && active) { setPeriod(nextPeriod); setTransactions(((data ?? []) as FinanceTransactionRow[]).map(mapTransaction)) }
-    }
-    void refresh()
-    return () => { active = false }
+  const refresh = useCallback(async () => {
+    const { data: periods, error: periodError } = await supabase
+      .from('finance_periods')
+      .select('id,year,month,opening_balance,published_at,created_at,updated_at')
+      .not('published_at', 'is', null)
+      .lte('published_at', new Date().toISOString())
+      .order('year', { ascending: false })
+      .order('month', { ascending: false })
+      .limit(1)
+    if (periodError) return
+    const nextPeriod = (periods ?? []).map((row) => mapPeriod(row as FinancePeriodRow))[0] ?? null
+    if (!nextPeriod?.id) { setPeriod(null); setTransactions([]); return }
+    const { data, error } = await supabase
+      .from('finance_transactions')
+      .select('id,period_id,transaction_date,description,type,amount,category_id,proof_url,created_at,updated_at,status')
+      .eq('period_id', nextPeriod.id)
+      .eq('status', 'published')
+      .order('transaction_date', { ascending: false })
+    if (!error) { setPeriod(nextPeriod); setTransactions((data ?? []).map((row) => mapTransaction(row as FinanceTransactionRow))) }
   }, [])
+
+  useEffect(() => { void refresh() }, [refresh])
+  useRealtimeRefresh('finance_periods', refresh)
+  useRealtimeRefresh('finance_transactions', refresh)
+
   const income = useMemo(() => transactions.filter((item) => item.type === 'income').reduce((sum, item) => sum + item.amount, 0), [transactions])
   const expense = useMemo(() => transactions.filter((item) => item.type === 'expense').reduce((sum, item) => sum + item.amount, 0), [transactions])
   const closingBalance = period ? period.openingBalance + income - expense : 0
