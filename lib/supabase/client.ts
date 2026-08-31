@@ -3,25 +3,21 @@ import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL, isSupabaseConfigured } from './
 
 const noStoreFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const request = new Request(input, init)
-  const isRestRequest = request.url.includes('/rest/v1/')
+  if (!request.url.includes('/rest/v1/')) return fetch(request)
 
-  if (!isRestRequest) return fetch(request)
+  const headers = new Headers(request.headers)
+  headers.set('Cache-Control', 'no-store, no-cache, max-age=0')
+  headers.set('Pragma', 'no-cache')
 
-  return fetch(request, {
-    ...init,
-    headers: {
-      ...new Headers(init?.headers ?? {}),
-      'Cache-Control': 'no-store, no-cache, max-age=0',
-      Pragma: 'no-cache',
-    },
+  return fetch(new Request(request, {
+    headers,
     cache: 'no-store',
-  })
+  }))
 }
 
 // Keep client creation safe during static builds where public Supabase
-// environment variables may be absent. The app still exposes the real
-// configuration state through `isSupabaseConfigured`; runtime operations
-// should guard against a missing configuration before making requests.
+// environment variables may be absent. Runtime requests use the real
+// configuration injected by the deployment environment.
 const clientUrl = SUPABASE_URL || 'https://placeholder.supabase.co'
 const clientKey = SUPABASE_PUBLISHABLE_KEY || 'placeholder-publishable-key'
 
