@@ -5,267 +5,31 @@
   --mm-asset-hero-overlay-mid: rgba(3, 30, 24, .28);
   --mm-asset-hero-overlay-right: rgba(3, 30, 24, .38);
 }
-
-/* Official logo: use the supplied artwork as the sole brand mark. */
-.mm-brand {
-  min-width: 0;
-  align-items: center;
-  flex: 0 0 auto;
-}
-
-.mm-brand-logo {
-  display: block;
-  width: min(var(--mm-asset-logo-width), 29vw);
-  height: 82px;
-  max-height: 82px;
-  object-fit: contain;
-  object-position: left center;
-  transform: scale(1.15);
-  transform-origin: left center;
-}
-
-/* More restrained editorial header proportions. */
-.mm-header-top {
-  min-height: 102px;
-  gap: 28px;
-}
-
-.mm-header-tools {
-  gap: 12px;
-}
-
-.mm-search-trigger {
-  width: min(360px, 32vw);
-  min-height: 46px;
-}
-
-.mm-primary-nav {
-  min-height: 52px;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  border-radius: 8px 8px 0 0;
-}
-
-.mm-primary-nav a {
-  min-height: 52px;
-  font-size: 13px;
-  padding-inline: 8px;
-}
-
-.mm-primary-nav a::after {
-  left: 28%;
-  right: 28%;
-  height: 3px;
-}
-
-.mm-secondary-inner {
-  min-height: 47px;
-}
-
-.mm-secondary-nav {
-  gap: 21px;
-}
-
-.mm-secondary-nav a {
-  font-size: 13px;
-  position: relative;
-}
-
-.mm-secondary-nav a + a::before {
-  content: '';
-  width: 1px;
-  height: 12px;
-  background: var(--mm-header-line);
-  position: absolute;
-  left: -11px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* Hero: preserve the supplied mosque image while protecting copy readability. */
-.home-hero {
-  background-image:
-    linear-gradient(90deg,
-      var(--mm-asset-hero-overlay-left) 0%,
-      var(--mm-asset-hero-overlay-mid) 54%,
-      var(--mm-asset-hero-overlay-right) 100%),
-    url('https://raw.githubusercontent.com/xygritte/miftahul-mubin/main/hero-bg.png');
-  background-size: cover;
-  background-position: center 48%;
-  background-repeat: no-repeat;
-}
-
-.home-hero::before,
-.home-hero::after {
-  opacity: .18;
-}
-
-.home-hero-grid {
-  gap: 58px;
-}
-
-.home-hero-copy {
-  max-width: 730px;
-}
-
-.home-hero h1 {
-  font-size: clamp(46px, 6.3vw, 72px);
-  line-height: 1.02;
-  margin-top: 8px;
-  text-shadow: 0 3px 18px rgba(0, 0, 0, .28);
-}
-
-.home-hero p {
-  max-width: 650px;
-  font-size: 16px;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, .22);
-}
-
-.home-hero-card {
-  background: rgba(7, 35, 29, .72);
-  border-color: rgba(255,255,255,.2);
-  box-shadow: 0 20px 50px rgba(0,0,0,.14);
-}
-
-.hero-secondary {
-  background: rgba(0,0,0,.12);
-  border-color: rgba(255,255,255,.34);
-}
-
-@media (max-width: 1120px) {
-  .mm-brand-logo {
-    width: min(300px, 31vw);
-  }
-
-  .mm-header-top {
-    min-height: 96px;
-  }
-
-  .mm-primary-nav a {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 930px) {
-  .mm-header-top {
-    min-height: 88px;
-  }
-
-  .mm-brand-logo {
-    width: min(270px, 34vw);
-    height: 70px;
-    max-height: 70px;
-    transform: scale(1.1);
-  }
-
-  .mm-primary-nav {
-    grid-template-columns: repeat(8, minmax(0,1fr));
-  }
-
-  .mm-primary-nav a:nth-child(n+9) {
-    display: none;
-  }
-
-  .mm-search-trigger {
-    width: 230px;
-  }
-}
-
-@media (max-width: 700px) {
-  .mm-header-top {
-    min-height: 72px;
-    padding-block: 8px;
-  }
-
-  .mm-brand-logo {
-    width: 175px;
-    max-width: 52vw;
-    height: 52px;
-    max-height: 52px;
-    transform: scale(1.06);
-  }
-
-  .mm-header-tools {
-    gap: 6px;
-  }
-
-  .mm-primary-wrap {
-    display: none;
-  }
-
-  .mm-secondary-row {
-    border-top: 1px solid var(--mm-header-line);
-  }
-
-  .mm-secondary-inner {
-    min-height: 39px;
-    padding-inline: 14px;
-  }
-
-  .mm-secondary-nav {
-    gap: 18px;
-  }
-
-  .mm-secondary-nav a {
-    font-size: 11px;
-  }
-
-  .mm-secondary-nav a + a::before {
-    display: none;
-  }
-
-  .home-hero {
-    min-height: 610px;
-    background-position: 61% center;
-  }
-
-  .home-hero-grid {
-    gap: 28px;
-  }
-
-  .home-hero h1 {
-    font-size: clamp(45px, 13vw, 62px);
-  }
-
-  .home-hero p {
-    font-size: 14px;
-    max-width: 560px;
-  }
-
-  .home-hero-card {
-    max-width: 440px;
-    padding: 20px;
-  }
-}
-
-@media (max-width: 420px) {
-  .mm-brand-logo {
-    width: 150px;
-    max-width: 49vw;
-  }
-
-  .home-hero {
-    min-height: 650px;
-    background-position: 62% center;
-  }
-}
-
-html[data-theme='dark'] .home-hero {
-  background-image:
-    linear-gradient(90deg, rgba(1, 13, 10, .66) 0%, rgba(1, 13, 10, .45) 54%, rgba(1, 13, 10, .64) 100%),
-    url('https://raw.githubusercontent.com/xygritte/miftahul-mubin/main/hero-bg.png');
-}
-
-html[data-theme='dark'] .mm-brand-logo {
-  filter: invert(1);
-}
-
-html[data-theme='dark'] .mm-secondary-nav a + a::before {
-  background: #2a3732;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .mm-brand-logo,
-  .home-hero {
-    transition: none !important;
-  }
-}
+.mm-brand { min-width: 0; align-items: center; flex: 0 0 auto; }
+.mm-brand-logo { display: block; width: min(var(--mm-asset-logo-width), 29vw); height: 82px; max-height: 82px; object-fit: contain; object-position: left center; transform: scale(1.15); transform-origin: left center; }
+.mm-header-top { min-height: 102px; gap: 28px; }
+.mm-header-tools { gap: 12px; }
+.mm-search-trigger { width: min(360px, 32vw); min-height: 46px; }
+.mm-primary-nav { min-height: 52px; grid-template-columns: repeat(8, minmax(0, 1fr)); border-radius: 8px 8px 0 0; }
+.mm-primary-nav a { min-height: 52px; font-size: 13px; padding-inline: 8px; }
+.mm-primary-nav a::after { left: 28%; right: 28%; height: 3px; }
+.mm-secondary-inner { min-height: 47px; }
+.mm-secondary-nav { gap: 21px; }
+.mm-secondary-nav a { font-size: 13px; position: relative; }
+.mm-secondary-nav a + a::before { content: ''; width: 1px; height: 12px; background: var(--mm-header-line); position: absolute; left: -11px; top: 50%; transform: translateY(-50%); }
+.home-hero { background-image: linear-gradient(90deg,var(--mm-asset-hero-overlay-left) 0%,var(--mm-asset-hero-overlay-mid) 54%,var(--mm-asset-hero-overlay-right) 100%), url('/miftahul-mubin/hero-bg.png'); background-size: cover; background-position: center 48%; background-repeat: no-repeat; }
+.home-hero::before,.home-hero::after { opacity: .18; }
+.home-hero-grid { gap: 58px; }
+.home-hero-copy { max-width: 730px; }
+.home-hero h1 { font-size: clamp(46px, 6.3vw, 72px); line-height: 1.02; margin-top: 8px; text-shadow: 0 3px 18px rgba(0,0,0,.28); }
+.home-hero p { max-width: 650px; font-size: 16px; text-shadow: 0 1px 10px rgba(0,0,0,.22); }
+.home-hero-card { background: rgba(7,35,29,.72); border-color: rgba(255,255,255,.2); box-shadow: 0 20px 50px rgba(0,0,0,.14); }
+.hero-secondary { background: rgba(0,0,0,.12); border-color: rgba(255,255,255,.34); }
+@media (max-width:1120px){.mm-brand-logo{width:min(300px,31vw)}.mm-header-top{min-height:96px}.mm-primary-nav a{font-size:12px}}
+@media (max-width:930px){.mm-header-top{min-height:88px}.mm-brand-logo{width:min(270px,34vw);height:70px;max-height:70px;transform:scale(1.1)}.mm-primary-nav{grid-template-columns:repeat(8,minmax(0,1fr))}.mm-search-trigger{width:230px}}
+@media (max-width:700px){.mm-header-top{min-height:72px;padding-block:8px}.mm-brand-logo{width:175px;max-width:52vw;height:52px;max-height:52px;transform:scale(1.06)}.mm-header-tools{gap:6px}.mm-primary-wrap{display:none}.mm-secondary-row{border-top:1px solid var(--mm-header-line)}.mm-secondary-inner{min-height:39px;padding-inline:14px}.mm-secondary-nav{gap:18px}.mm-secondary-nav a{font-size:11px}.mm-secondary-nav a+a::before{display:none}.home-hero{min-height:610px;background-position:61% center}.home-hero-grid{gap:28px}.home-hero h1{font-size:clamp(45px,13vw,62px)}.home-hero p{font-size:14px;max-width:560px}.home-hero-card{max-width:440px;padding:20px}}
+@media (max-width:420px){.mm-brand-logo{width:150px;max-width:49vw}.home-hero{min-height:650px;background-position:62% center}}
+html[data-theme='dark'] .home-hero{background-image:linear-gradient(90deg,rgba(1,13,10,.66) 0%,rgba(1,13,10,.45) 54%,rgba(1,13,10,.64) 100%),url('/miftahul-mubin/hero-bg.png')}
+html[data-theme='dark'] .mm-brand-logo{filter:invert(1)}
+html[data-theme='dark'] .mm-secondary-nav a+a::before{background:#2a3732}
+@media (prefers-reduced-motion:reduce){.mm-brand-logo,.home-hero{transition:none!important}}
