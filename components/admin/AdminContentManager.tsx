@@ -5,7 +5,7 @@ import { Edit3, Eye, FilePlus2, Loader2, Search, Trash2, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 
 type Mode = 'islamic' | 'events' | 'announcements' | 'management' | 'documentation' | 'finance'
-type StandardMode = 'islamic' | 'events' | 'announcements'
+type StandardMode = Mode
 type Row = Record<string, any>
 type Category = { id: string; name: string; slug: string }
 
