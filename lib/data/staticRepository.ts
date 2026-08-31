@@ -22,12 +22,12 @@ const monthLookup: Record<string, string> = {
 function parseLegacyDate(value: string): string | null {
   const match = value.toLowerCase().match(/(\d{1,2})\s+([a-z]+)\s+(\d{4})/)
   if (!match) return null
-  return `${match[3]}-${monthLookup[match[2]] ?? '01'}-${match[1].padStart(2, '0')}T08:00:00+07:00`
+  const [, day, monthName, year] = match
+  return `${year}-${monthLookup[monthName] ?? '01'}-${day.padStart(2, '0')}T08:00:00+07:00`
 }
 
 function parseIndonesianDate(value: string): string {
-  const parsed = parseLegacyDate(value)
-  return parsed ? parsed.slice(0, 10) : '1970-01-01'
+  return parseLegacyDate(value)?.slice(0, 10) ?? '1970-01-01'
 }
 
 function parseTime(value: string): string {
@@ -78,9 +78,42 @@ const staticFinanceTransactions: FinanceTransaction[] = [
   { id: 'static-fin-06', periodId: staticFinancePeriod.id, transactionDate: '2026-09-10', type: 'expense', categoryId: 'expense-maintenance', description: 'Perawatan fasilitas', amount: 500_000, status: 'published' },
 ]
 
-const newsRecords: NewsRecord[] = news.map((item, index) => ({ id: `static-news-${index + 1}`, slug: item.slug, title: item.title, excerpt: item.excerpt, content: item.content, thumbnailUrl: item.image, category: item.category, status: 'published', publishedAt: parseLegacyDate(item.date), viewCount: Math.max(0, 180 - index * 17) }))
-const eventRecords: EventRecord[] = events.map((item, index) => ({ id: `static-event-${index + 1}`, slug: item.slug, title: item.title, description: item.description, eventDate: parseIndonesianDate(item.date), startTime: parseTime(item.time), location: item.place, status: 'published', category: item.category }))
-const islamicRecords: IslamicItemRecord[] = islamicItems.map((item, index) => ({ id: `static-islamic-${index + 1}`, slug: item.slug, category: item.category, title: item.title, date: item.date, excerpt: item.excerpt, content: item.content, status: 'published', publishedAt: parseLegacyDate(item.date) }))
+const newsRecords: NewsRecord[] = news.map((item, index) => ({
+  id: `static-news-${index + 1}`,
+  slug: item.slug,
+  title: item.title,
+  excerpt: item.excerpt,
+  content: item.content,
+  thumbnailUrl: item.image,
+  category: item.category,
+  status: 'published',
+  publishedAt: parseLegacyDate(item.date),
+  viewCount: Math.max(0, 180 - index * 17),
+}))
+
+const eventRecords: EventRecord[] = events.map((item, index) => ({
+  id: `static-event-${index + 1}`,
+  slug: item.slug,
+  title: item.title,
+  description: item.description,
+  eventDate: parseIndonesianDate(item.date),
+  startTime: parseTime(item.time),
+  location: item.place,
+  status: 'published',
+  category: item.category,
+}))
+
+const islamicRecords: IslamicItemRecord[] = islamicItems.map((item, index) => ({
+  id: `static-islamic-${index + 1}`,
+  slug: item.slug,
+  category: item.category,
+  title: item.title,
+  date: item.date,
+  excerpt: item.excerpt,
+  content: item.content,
+  status: 'published',
+  publishedAt: parseLegacyDate(item.date),
+}))
 
 export const staticRepository: PublicContentRepository = {
   async listNews() { return newsRecords },
