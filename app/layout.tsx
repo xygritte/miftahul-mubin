@@ -7,6 +7,7 @@ import './assets-polish.css'
 import './quality-polish.css'
 import './mobile-polish.css'
 import './popular-polish.css'
+import './embed-polish.css'
 import './admin.css'
 
 export const metadata: Metadata = {
