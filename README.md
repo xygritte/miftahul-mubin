@@ -16,11 +16,11 @@ Referensi visual dan pola editorial: NU Online, tetapi identitas visual, konten,
 - Keislaman + detail artikel
 - Pengumuman
 - Kepengurusan
-- Keuangan
+- Keuangan publik
 - Profil masjid
 - Dokumentasi
 - Kontak dan lokasi
-- Global search overlay
+- Global search overlay berbasis repository
 - Responsive desktop/tablet/mobile
 - Accessible navigation dasar
 - 404 page
@@ -28,9 +28,9 @@ Referensi visual dan pola editorial: NU Online, tetapi identitas visual, konten,
 
 ## Status
 
-**Fase 1 — Public Portal / Static Preview: aktif dikembangkan**
+**Fase 2 — Public Portal + Supabase Data Foundation**
 
-Seluruh halaman publik menggunakan dummy content. Database, login, CMS, storage, dan transaksi keuangan nyata belum terhubung.
+Schema Supabase, RLS, seed data, repository contract, static fallback, dan Supabase public repository sudah tersedia. Halaman publik utama menggunakan `contentRepository` sebagai boundary data; GitHub Pages tetap menggunakan static export sehingga perubahan data Supabase setelah deployment memerlukan build/deploy berikutnya.
 
 ## Route Map
 
@@ -54,38 +54,22 @@ Seluruh halaman publik menggunakan dummy content. Database, login, CMS, storage,
 
 ```text
 app/
-  page.tsx
-  berita/
-    page.tsx
-    [slug]/page.tsx
-  keislaman/
-    page.tsx
-    [slug]/page.tsx
-  kegiatan/
-    page.tsx
-    [slug]/page.tsx
-  kepengurusan/page.tsx
-  keuangan/page.tsx
-  profil/page.tsx
-  dokumentasi/page.tsx
-  pengumuman/page.tsx
-  kontak/page.tsx
-  not-found.tsx
-  robots.ts
-  sitemap.ts
-  layout.tsx
-  globals.css
 components/
-  content/
-  layout/
 lib/
-  content.ts
-  islamic.ts
-docs/
+  content.ts                  Legacy static content source
+  islamic.ts                  Legacy Islamic content source
+  data/
+    repository.ts             Public content contract
+    staticRepository.ts       Local fallback implementation
+    supabaseRepository.ts     Supabase implementation
+    presentation.ts           Domain → UI adapters
+  supabase/
+    client.ts                 Browser-safe client for future auth/UI
+    server.ts                 Server/build-time public client
 supabase/
 types/
+docs/
 .github/workflows/
-  deploy.yml
 ```
 
 ## Teknologi
@@ -94,17 +78,20 @@ types/
 - React
 - Lucide React
 - Static export untuk GitHub Pages (preview)
-- Supabase PostgreSQL/Auth/Storage direncanakan untuk fase CMS
-- Vercel direncanakan untuk production ketika membutuhkan runtime server
+- Supabase PostgreSQL/Auth/Storage
+- Repository/data adapter pattern
+- Vercel direncanakan untuk production ketika membutuhkan runtime server/ISR
 
 ## Roadmap
 
 ```text
 Public Portal
-   -> Detail Content
-   -> Supabase Database
+   -> Supabase Data Foundation
+   -> Full Public Data Migration
+   -> Authentication
    -> Admin CMS
+   -> Storage + Media
    -> Finance + Audit
    -> SEO/Security/Performance
-   -> Production
+   -> Runtime Production / ISR
 ```
