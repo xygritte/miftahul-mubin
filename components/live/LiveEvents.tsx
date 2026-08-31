@@ -5,12 +5,26 @@ import FilterableEvents from '@/components/content/FilterableEvents'
 import { eventRecordToLegacy } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
-import type { EventRecord } from '@/types/content'
 import type { EventItem } from '@/lib/content'
+import type { EventStatus } from '@/types/content'
 
 type Props = { initialItems: EventItem[]; limit?: number }
 
-type EventRow = EventRecord & {
+type EventRow = {
+  id: string
+  slug: string
+  title: string
+  description: string
+  event_date: string
+  start_time: string
+  end_time: string | null
+  location: string
+  speaker: string | null
+  status: EventStatus
+  cover_url: string | null
+  category_id: string | null
+  created_at: string
+  updated_at: string
   categories?: { name: string } | { name: string }[] | null
 }
 
@@ -34,16 +48,16 @@ export default function LiveEvents({ initialItems, limit }: Props) {
         slug: item.slug,
         title: item.title,
         description: item.description,
-        eventDate: item.event_date as unknown as string,
-        startTime: item.start_time as unknown as string,
-        endTime: item.end_time as unknown as string | null,
+        eventDate: item.event_date,
+        startTime: item.start_time,
+        endTime: item.end_time,
         location: item.location,
         speaker: item.speaker,
         status: item.status,
         coverUrl: item.cover_url,
         category: category ?? 'Kegiatan',
-        createdAt: item.created_at as unknown as string,
-        updatedAt: item.updated_at as unknown as string,
+        createdAt: item.created_at,
+        updatedAt: item.updated_at,
       })
     })
     setItems(mapped)
