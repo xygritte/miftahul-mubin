@@ -1,7 +1,6 @@
-import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import SiteShell from '@/components/layout/SiteShell'
-import ArticleDetail from '@/components/content/ArticleDetail'
+import LiveArticleDetail from '@/components/live/LiveArticleDetail'
 import { contentRepository } from '@/lib/data'
 import { newsRecordToLegacy } from '@/lib/data/presentation'
 
@@ -21,6 +20,5 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BeritaDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const article = await contentRepository.getNewsBySlug(slug)
-  if (!article) notFound()
-  return <SiteShell><ArticleDetail article={newsRecordToLegacy(article)} /></SiteShell>
+  return <SiteShell><LiveArticleDetail slug={slug} initialArticle={article ? newsRecordToLegacy(article) : null} /></SiteShell>
 }
