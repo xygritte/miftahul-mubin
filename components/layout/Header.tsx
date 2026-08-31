@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { ChevronDown, ChevronRight, Menu, Moon, Search, Sun, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { events, news } from '@/lib/content'
-import { islamicItems } from '@/lib/islamic'
+
+type SearchEntry = { title: string; href: string; category: string }
 
 const primaryLinks = [
   ['Beranda', '/'], ['Berita', '/berita/'], ['Keislaman', '/keislaman/'], ['Kegiatan', '/kegiatan/'],
@@ -17,25 +17,13 @@ const categoryLinks = [
   ['Kepengurusan', '/kepengurusan/'], ['Pendidikan', '/kegiatan/'], ['Sosial', '/kegiatan/'],
 ] as const
 
-const searchItems = [
-  ...news.map((item) => ({ title: item.title, href: `/berita/${item.slug}/`, category: item.category })),
-  ...islamicItems.map((item) => ({ title: item.title, href: `/keislaman/${item.slug}/`, category: item.category })),
-  ...events.map((item) => ({ title: item.title, href: `/kegiatan/${item.slug}/`, category: item.category })),
-  { title: 'Pendaftaran Relawan Kegiatan Sosial', href: '/pengumuman/', category: 'Pengumuman' },
-  { title: 'Struktur Kepengurusan Masjid Miftahul Mubin', href: '/kepengurusan/', category: 'Kepengurusan' },
-  { title: 'Profil dan Sejarah Masjid Miftahul Mubin', href: '/profil/', category: 'Profil' },
-  { title: 'Dokumentasi Kegiatan Miftahul Mubin', href: '/dokumentasi/', category: 'Dokumentasi' },
-  { title: 'Transparansi Keuangan Masjid Miftahul Mubin', href: '/keuangan/', category: 'Keuangan' },
-  { title: 'Hubungi Pengurus Miftahul Mubin', href: '/kontak/', category: 'Kontak' },
-]
-
 const logoSrc = '/miftahul-mubin/logo.svg'
 
 function formatToday() {
   return new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())
 }
 
-export default function Header() {
+export default function Header({ searchItems }: { searchItems: SearchEntry[] }) {
   const pathname = usePathname() || '/'
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -68,11 +56,11 @@ export default function Header() {
   }, [])
 
   const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href.replace(/\/$/, ''))
-  const results = useMemo(() => searchItems.filter((item) => {
+  const results = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return false
-    return `${item.title} ${item.category}`.toLowerCase().includes(q)
-  }).slice(0, 10), [query])
+    if (!q) return []
+    return searchItems.filter((item) => `${item.title} ${item.category}`.toLowerCase().includes(q)).slice(0, 10)
+  }, [query, searchItems])
   const closeAll = () => { setMenuOpen(false); setSearchOpen(false); setLanguageOpen(false); setQuery('') }
   const toggleTheme = () => {
     const next = !dark
@@ -106,7 +94,7 @@ export default function Header() {
       <div className="mm-secondary-row">
         <div className="container mm-secondary-inner">
           <nav className="mm-secondary-nav" aria-label="Kategori portal">{categoryLinks.map(([label, href]) => <Link key={label} href={href}>{label}</Link>)}</nav>
-          <time className="mm-date" dateTime={new Date().toISOString().slice(0, 10)}>{today || 'Hari ini'}</time>
+          <time className="mm-date" dateTime={today ? new Date().toISOString().slice(0, 10) : undefined}>{today || 'Hari ini'}</time>
         </div>
       </div>
     </header>
