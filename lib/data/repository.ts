@@ -11,6 +11,7 @@ import type {
   NewsRecord,
 } from '@/types/content'
 
+/** UI-facing contract shared by mock and future Supabase repositories. */
 export type PublicContentRepository = {
   listNews(): Promise<NewsRecord[]>
   getNewsBySlug(slug: string): Promise<NewsRecord | null>
@@ -25,16 +26,4 @@ export type PublicContentRepository = {
   listMediaItems(albumId?: string): Promise<MediaItem[]>
   getPublishedFinancePeriod(year: number, month: number): Promise<FinancePeriod | null>
   listPublishedFinanceTransactions(periodId: string): Promise<FinanceTransaction[]>
-}
-
-export type IslamicItemRecord = {
-  id?: string
-  slug: string
-  category: string
-  title: string
-  date: string
-  excerpt: string
-  content: string[]
-  status?: 'draft' | 'published' | 'archived'
-  publishedAt?: string | null
 }
