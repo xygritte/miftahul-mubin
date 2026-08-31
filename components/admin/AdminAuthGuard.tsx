@@ -6,9 +6,8 @@ import { supabase } from '@/lib/supabase/client'
 
 const ALLOWED_ROLES = new Set(['super_admin', 'editor', 'treasurer', 'secretary'])
 
-type AdminAuthGuardProps = {
-  children: ReactNode
-}
+type AdminAuthGuardProps = { children: ReactNode }
+type RoleRow = { role_id: string; roles: { name: string } | Array<{ name: string }> | null }
 
 export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
   const router = useRouter()
@@ -18,27 +17,26 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
     let active = true
 
     async function checkAccess() {
-      const { data: { user } } = await supabase.auth.getUser()
+      if (!supabase) {
+        if (active) setState('denied')
+        return
+      }
 
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         if (active) router.replace('/admin/login/')
         return
       }
 
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role_id, roles(name)')
-        .eq('user_id', user.id)
-
+      const { data, error } = await supabase.from('user_roles').select('role_id, roles(name)').eq('user_id', user.id)
       if (error) {
         if (active) setState('denied')
         return
       }
 
-      const roles = (data ?? []).flatMap((row) => {
+      const roles = ((data ?? []) as unknown as RoleRow[]).flatMap((row) => {
         const relation = row.roles
-        if (Array.isArray(relation)) return relation.map((item) => item?.name).filter(Boolean)
-        return relation?.name ? [relation.name] : []
+        return Array.isArray(relation) ? relation.map((item) => item.name) : relation?.name ? [relation.name] : []
       })
 
       if (!roles.some((role) => ALLOWED_ROLES.has(role))) {
@@ -49,7 +47,12 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
       if (active) setState('authorized')
     }
 
-    checkAccess()
+    void checkAccess()
+
+    if (!supabase) {
+      return () => { active = false }
+    }
+
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) router.replace('/admin/login/')
     })
