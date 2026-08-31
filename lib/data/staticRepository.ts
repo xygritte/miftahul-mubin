@@ -72,17 +72,34 @@ const newsRecords: NewsRecord[] = news.map((item, index) => ({
   thumbnailUrl: item.image,
   category: item.category,
   status: 'published',
-  publishedAt: `${item.date}T08:00:00+07:00`,
+  publishedAt: null,
   viewCount: Math.max(0, 180 - index * 17),
 }))
+
+const monthLookup: Record<string, string> = {
+  'januari': '01', 'februari': '02', 'maret': '03', 'april': '04', 'mei': '05', 'juni': '06',
+  'juli': '07', 'agustus': '08', 'september': '09', 'oktober': '10', 'november': '11', 'desember': '12',
+}
+
+function parseIndonesianDate(value: string): string {
+  const match = value.toLowerCase().match(/(\d{1,2})\s+([a-z]+)\s+(\d{4})/)
+  if (!match) return '1970-01-01'
+  const [, day, monthName, year] = match
+  return `${year}-${monthLookup[monthName] ?? '01'}-${day.padStart(2, '0')}`
+}
+
+function parseTime(value: string): string {
+  const match = value.match(/(\d{1,2}\.\d{2})/)
+  return match ? match[1].replace('.', ':') : '00:00'
+}
 
 const eventRecords: EventRecord[] = events.map((item, index) => ({
   id: `static-event-${index + 1}`,
   slug: item.slug,
   title: item.title,
   description: item.description,
-  eventDate: item.slug.includes('06-september') ? '2026-09-06' : item.slug.match(/(\d{2})-september-2026/)?.[1] ? `2026-09-${item.slug.match(/(\d{2})-september-2026/)?.[1]}` : '2026-09-01',
-  startTime: item.time.replace(' WIB', ''),
+  eventDate: parseIndonesianDate(item.date),
+  startTime: parseTime(item.time),
   location: item.place,
   status: 'published',
   category: item.category,
@@ -97,7 +114,7 @@ const islamicRecords: IslamicItemRecord[] = islamicItems.map((item, index) => ({
   excerpt: item.excerpt,
   content: item.content,
   status: 'published',
-  publishedAt: `${item.date}T08:00:00+07:00`,
+  publishedAt: null,
 }))
 
 export const staticRepository: PublicContentRepository = {
