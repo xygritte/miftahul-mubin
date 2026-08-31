@@ -25,6 +25,18 @@ export type NewsRecord = {
   updatedAt?: string
 }
 
+export type IslamicItemRecord = {
+  id?: string
+  slug: string
+  category: string
+  title: string
+  date: string
+  excerpt: string
+  content: string[]
+  status: PublishStatus
+  publishedAt?: string | null
+}
+
 export type EventRecord = {
   id?: string
   slug: string
@@ -101,6 +113,7 @@ export type FinanceCategory = {
 
 export type FinanceTransaction = {
   id?: string
+  periodId?: string | null
   transactionDate: string
   type: FinanceType
   categoryId: string
