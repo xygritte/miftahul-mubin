@@ -16,6 +16,8 @@ concurrency:
 
 jobs:
   build:
+    environment:
+      name: github-pages
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -38,6 +40,12 @@ jobs:
           test -f hero-bg.png
           cp hero-bg.png public/hero-bg.png
           test -f public/logo.svg
+
+      - name: Validate Supabase configuration
+        run: |
+          test -n "$NEXT_PUBLIC_SUPABASE_URL" || { echo "NEXT_PUBLIC_SUPABASE_URL is missing from github-pages environment secrets"; exit 1; }
+          test -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" || { echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is missing from github-pages environment secrets"; exit 1; }
+          echo "Supabase environment variables are configured."
 
       - name: TypeScript check
         run: npm run typecheck
