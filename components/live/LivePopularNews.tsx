@@ -6,8 +6,16 @@ import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { NewsRecord } from '@/types/content'
 
-type NewsRow = NewsRecord & { category?: string | { name?: string | null } | null }
-function mapNewsRow(row: NewsRow): NewsRecord { return { ...row, category: typeof row.category === 'string' ? row.category : row.category?.name ?? 'Berita' } }
+type NewsCategoryRelation = { name: string | null }
+type NewsRow = Omit<NewsRecord, 'category'> & {
+  category?: string | null
+  categories?: NewsCategoryRelation | NewsCategoryRelation[] | null
+}
+
+function mapNewsRow(row: NewsRow): NewsRecord {
+  const category = Array.isArray(row.categories) ? row.categories[0]?.name : row.categories?.name
+  return { ...row, category: row.category ?? category ?? 'Berita' }
+}
 
 export default function LivePopularNews({ initialItems }: { initialItems: NewsRecord[] }) {
   const [items, setItems] = useState(initialItems)
