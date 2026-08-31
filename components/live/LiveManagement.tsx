@@ -1,62 +1,43 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
+import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { ManagementMember, ManagementPeriod } from '@/types/content'
 
-type ManagementPeriodRow = {
-  id: string
-  name: string
-  start_date: string
-  end_date: string | null
-  is_active: boolean
-  created_at: string | null
-  updated_at: string | null
-}
+type ManagementPeriodRow = { id: string; name: string; start_date: string; end_date: string | null; is_active: boolean }
+type ManagementMemberRow = { id: string; period_id: string | null; name: string; position: string; sort_order: number; photo_url: string | null; bio: string | null }
 
-type ManagementMemberRow = {
-  id: string
-  period_id: string | null
-  name: string
-  position: string
-  department: string | null
-  sort_order: number
-  photo_url: string | null
-  created_at: string | null
-  updated_at: string | null
-}
-
-function mapPeriod(row: ManagementPeriodRow): ManagementPeriod {
-  return { id: row.id, name: row.name, startDate: row.start_date, endDate: row.end_date, isActive: row.is_active }
-}
-
-function mapMember(row: ManagementMemberRow): ManagementMember {
-  return { id: row.id, periodId: row.period_id ?? undefined, name: row.name, position: row.position, photoUrl: row.photo_url, sortOrder: row.sort_order }
-}
-
-function initials(name: string) {
-  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || 'MM'
-}
+function mapPeriod(row: ManagementPeriodRow): ManagementPeriod { return { id: row.id, name: row.name, startDate: row.start_date, endDate: row.end_date, isActive: row.is_active } }
+function mapMember(row: ManagementMemberRow): ManagementMember { return { id: row.id, periodId: row.period_id ?? undefined, name: row.name, position: row.position, photoUrl: row.photo_url, bio: row.bio, sortOrder: row.sort_order } }
+function initials(name: string) { return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || 'MM' }
 
 export default function LiveManagement({ initialPeriod, initialMembers }: { initialPeriod: ManagementPeriod | null; initialMembers: ManagementMember[] }) {
   const [period, setPeriod] = useState(initialPeriod)
   const [members, setMembers] = useState(initialMembers)
-  useEffect(() => {
-    let active = true
-    async function refresh() {
-      if (!supabase) return
-      const { data: periods, error: periodError } = await supabase.from('management_periods').select('id,name,start_date,end_date,is_active,created_at,updated_at').order('start_date', { ascending: false })
-      if (periodError) return
-      const nextPeriod = (periods ?? []).map((row) => mapPeriod(row as ManagementPeriodRow)).find((item) => item.isActive) ?? (periods ?? []).map((row) => mapPeriod(row as ManagementPeriodRow))[0] ?? null
-      if (!nextPeriod) { if (active) { setPeriod(null); setMembers([]) }; return }
-      const { data: memberData, error: memberError } = await supabase.from('management_members').select('id,period_id,name,position,department,sort_order,photo_url,created_at,updated_at').eq('period_id', nextPeriod.id).order('sort_order', { ascending: true })
-      if (!memberError && active) { setPeriod(nextPeriod); setMembers(((memberData ?? []) as ManagementMemberRow[]).map(mapMember)) }
-    }
-    void refresh()
-    return () => { active = false }
+  const refresh = useCallback(async () => {
+    const { data: periods, error: periodError } = await supabase
+      .from('management_periods')
+      .select('id,name,start_date,end_date,is_active')
+      .order('start_date', { ascending: false })
+    if (periodError) return
+    const mappedPeriods = (periods ?? []).map((row) => mapPeriod(row as ManagementPeriodRow))
+    const nextPeriod = mappedPeriods.find((item) => item.isActive) ?? mappedPeriods[0] ?? null
+    if (!nextPeriod?.id) { setPeriod(null); setMembers([]); return }
+    const { data: memberData, error: memberError } = await supabase
+      .from('management_members')
+      .select('id,period_id,name,position,sort_order,photo_url,bio')
+      .eq('period_id', nextPeriod.id)
+      .order('sort_order', { ascending: true })
+    if (!memberError) { setPeriod(nextPeriod); setMembers((memberData ?? []).map((row) => mapMember(row as ManagementMemberRow))) }
   }, [])
+
+  useEffect(() => { void refresh() }, [refresh])
+  useRealtimeRefresh('management_periods', refresh)
+  useRealtimeRefresh('management_members', refresh)
+
   const lead = members[0]
-  if (!period || !members.length) return <div className="empty-state"><strong>Data kepengurusan belum tersedia</strong><p>Struktur pengurus aktif belum dipublikasikan.</p></div>
+  if (!period || !members.length || !lead) return <div className="empty-state"><strong>Data kepengurusan belum tersedia</strong><p>Struktur pengurus aktif belum dipublikasikan.</p></div>
   return <>
     <section className="org-tree-page"><article className="management-lead page-lead"><span className="management-avatar">{initials(lead.name)}</span><div><span>{lead.position}</span><strong>{lead.name}</strong></div></article><div className="org-connector"/><div className="org-grid">{members.slice(1).map((member) => <article className="management-card" key={member.id ?? member.name}><span className="management-avatar small">{initials(member.name)}</span><div><span>{member.position}</span><strong>{member.name}</strong></div></article>)}</div></section>
     <section className="role-note"><span className="eyebrow">Periode Aktif</span><h2>{period.name}</h2><p>Periode kepengurusan aktif digunakan sebagai acuan struktur pelayanan jamaah pada portal Miftahul Mubin.</p></section>
