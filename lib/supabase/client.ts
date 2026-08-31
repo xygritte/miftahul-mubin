@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from './publicConfig'
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL, isSupabaseConfigured } from './publicConfig'
 
 const noStoreFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const request = new Request(input, init)
@@ -18,8 +18,15 @@ const noStoreFetch = async (input: RequestInfo | URL, init?: RequestInit): Promi
   })
 }
 
+// Keep client creation safe during static builds where public Supabase
+// environment variables may be absent. The app still exposes the real
+// configuration state through `isSupabaseConfigured`; runtime operations
+// should guard against a missing configuration before making requests.
+const clientUrl = SUPABASE_URL || 'https://placeholder.supabase.co'
+const clientKey = SUPABASE_PUBLISHABLE_KEY || 'placeholder-publishable-key'
+
 /** Browser-safe Supabase client for Auth, admin interactions, public live data and Realtime. */
-export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+export const supabase = createClient(clientUrl, clientKey, {
   global: { fetch: noStoreFetch },
   auth: {
     persistSession: true,
@@ -28,4 +35,4 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   },
 })
 
-export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY)
+export { isSupabaseConfigured }
