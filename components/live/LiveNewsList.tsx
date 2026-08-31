@@ -1,29 +1,43 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import FilterableNews from '@/components/content/FilterableNews'
 import { newsRecordToLegacy } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import type { NewsRecord } from '@/types/content'
 import type { NewsItem } from '@/lib/content'
 
-type Row = NewsRecord & { categories?: { name: string } | null }
+type NewsRow = {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string | string[]
+  thumbnail_url: string | null
+  category_id: string | null
+  status: NewsRecord['status']
+  published_at: string | null
+  view_count: number | null
+  created_at: string | null
+  updated_at: string | null
+  categories?: { name: string } | null
+}
 
-function mapRow(row: Row): NewsRecord {
+function mapNewsRow(row: NewsRow): NewsRecord {
+  const content = Array.isArray(row.content) ? row.content : row.content.split(/\n\s*\n/).filter(Boolean)
   return {
     id: row.id,
     slug: row.slug,
     title: row.title,
     excerpt: row.excerpt,
-    content: row.content,
-    thumbnailUrl: row.thumbnailUrl ?? null,
-    category: row.categories?.name ?? row.category ?? 'Berita',
-    authorId: row.authorId ?? null,
+    content,
+    thumbnailUrl: row.thumbnail_url,
+    category: row.categories?.name ?? 'Berita',
     status: row.status,
-    publishedAt: row.publishedAt ?? null,
-    viewCount: row.viewCount ?? 0,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    publishedAt: row.published_at,
+    viewCount: row.view_count ?? 0,
+    createdAt: row.created_at ?? undefined,
+    updatedAt: row.updated_at ?? undefined,
   }
 }
 
@@ -37,31 +51,46 @@ async function fetchNews(): Promise<NewsItem[] | null> {
     .order('published_at', { ascending: false })
 
   if (error) return null
-  return ((data ?? []) as unknown as Row[]).map(mapRow).map(newsRecordToLegacy)
+  return ((data ?? []) as unknown as NewsRow[]).map(mapNewsRow).map(newsRecordToLegacy)
 }
 
 export default function LiveNewsList({ initialItems }: { initialItems: NewsItem[] }) {
   const [items, setItems] = useState(initialItems)
 
+  const refresh = useCallback(async () => {
+    const next = await fetchNews()
+    if (next) setItems(next)
+  }, [])
+
   useEffect(() => {
     let active = true
-    const refresh = async () => {
+    const runRefresh = async () => {
       const next = await fetchNews()
       if (active && next) setItems(next)
     }
 
-    void refresh()
+    void runRefresh()
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') void refresh()
+    }
+    window.addEventListener('focus', handleVisibility)
+    document.addEventListener('visibilitychange', handleVisibility)
+    const interval = window.setInterval(() => void runRefresh(), 30000)
 
     const channel = supabase
-      .channel('public-news-list')
+      .channel('public-news-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'news' }, () => { void refresh() })
       .subscribe()
 
     return () => {
       active = false
+      window.removeEventListener('focus', handleVisibility)
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.clearInterval(interval)
       void supabase.removeChannel(channel)
     }
-  }, [])
+  }, [refresh])
 
   return <FilterableNews items={items} />
 }
