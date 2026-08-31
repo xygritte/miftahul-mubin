@@ -5,6 +5,7 @@ import { Edit3, Eye, FilePlus2, Loader2, Search, Trash2, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 
 type Mode = 'islamic' | 'events' | 'announcements' | 'management' | 'documentation' | 'finance'
+type StandardMode = 'islamic' | 'events' | 'announcements'
 type Row = Record<string, any>
 type Category = { id: string; name: string; slug: string }
 
@@ -19,7 +20,6 @@ const configs = {
 
 function slugify(value: string) { return value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') }
 function errorMessage(error: any, label: string) { if (!error) return ''; if (error.code === '42501') return `Akun tidak memiliki izin untuk mengubah ${label}.`; if (error.code === '23505') return 'Data dengan nilai unik tersebut sudah ada.'; if (error.code === '23503') return 'Relasi data yang dipilih tidak valid.'; return `${label} gagal diproses.` }
-function isoDate(value?: string | null) { return value ? new Date(value).toISOString().slice(0, 16) : '' }
 
 export default function AdminContentManager({ mode }: { mode: Mode }) {
   if (mode === 'management') return <ManagementManager />
@@ -28,7 +28,7 @@ export default function AdminContentManager({ mode }: { mode: Mode }) {
   return <StandardManager mode={mode} />
 }
 
-function StandardManager({ mode }: { mode: 'islamic' | 'events' | 'announcements' }) {
+function StandardManager({ mode }: { mode: StandardMode }) {
   const cfg = configs[mode]
   const [rows, setRows] = useState<Row[]>([]), [categories, setCategories] = useState<Category[]>([]), [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true), [saving, setSaving] = useState(false), [deleting, setDeleting] = useState<string | null>(null)
