@@ -1,15 +1,14 @@
 import type { PublicContentRepository } from './repository'
 import { staticRepository } from './staticRepository'
-import { supabaseRepository } from './supabaseRepository'
+import { supabasePublicRepository } from './supabasePublicRepository'
 
 /**
  * Single entry point for public content access.
- * Supabase becomes the source of truth when its public client variables exist;
- * static data remains available as a safe local/preview fallback.
+ * The published portal uses Supabase as the source of truth; static data remains
+ * available only when the build explicitly opts into fallback mode.
  */
-export const contentRepository: PublicContentRepository =
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-    ? supabaseRepository
-    : staticRepository
+export const contentRepository: PublicContentRepository = supabasePublicRepository
+
+export const fallbackContentRepository: PublicContentRepository = staticRepository
 
 export type { PublicContentRepository } from './repository'
