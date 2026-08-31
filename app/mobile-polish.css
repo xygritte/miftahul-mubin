@@ -1,0 +1,302 @@
+/* Miftahul Mubin mobile system — intentionally scoped to <= 700px so desktop/tablet stay stable. */
+@media (max-width: 700px) {
+  :root {
+    --mm-mobile-gutter: 14px;
+    --mm-mobile-section: 42px;
+    --mm-mobile-radius: 10px;
+  }
+
+  html { scroll-padding-top: 106px; }
+  body { min-width: 0; overflow-x: hidden; }
+  .container { width: calc(100% - (var(--mm-mobile-gutter) * 2)); max-width: none; }
+
+  /* Header: compact, touch-friendly and visually quiet. */
+  .mm-header { position: sticky; top: 0; }
+  .mm-header-top {
+    min-height: 64px;
+    padding: 7px 0;
+    gap: 10px;
+  }
+  .mm-brand { min-width: 0; max-width: 58%; overflow: hidden; }
+  .mm-brand-logo {
+    width: min(164px, 48vw);
+    height: 46px;
+    max-height: 46px;
+    transform: none;
+    object-fit: contain;
+    object-position: left center;
+  }
+  .mm-header-tools { flex: 0 0 auto; gap: 6px; margin-left: auto; }
+  .mm-search-trigger,
+  .mm-mobile-menu-btn {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 10px;
+  }
+  .mm-search-trigger span { display: none; }
+  .mm-theme-toggle, .mm-language { display: none; }
+
+  .mm-secondary-row { box-shadow: 0 1px 0 rgba(0,0,0,.02); }
+  .mm-secondary-inner {
+    width: 100%;
+    min-height: 38px;
+    padding-inline: var(--mm-mobile-gutter);
+  }
+  .mm-secondary-nav {
+    width: 100%;
+    gap: 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 1px 0;
+  }
+  .mm-secondary-nav a { font-size: 11px; line-height: 1; padding: 12px 0; }
+  .mm-date { display: none; }
+
+  /* Mobile drawer behaves like a proper full-screen navigation surface. */
+  .mm-mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    padding: 0;
+    background: var(--mm-surface);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .mm-mobile-inner {
+    width: calc(100% - 28px);
+    padding: 84px 0 34px;
+  }
+  .mm-mobile-label { margin: 0 0 12px; }
+  .mm-mobile-inner > a {
+    min-height: 54px;
+    padding: 15px 0;
+    font-size: clamp(20px, 6vw, 25px);
+  }
+  .mm-mobile-categories { margin-top: 22px; }
+  .mm-mobile-categories a { margin-right: 14px; padding: 5px 0; }
+  .mm-mobile-theme { min-height: 50px; margin-top: 22px; }
+
+  /* Search: use almost the entire viewport, with no cramped desktop geometry. */
+  .mm-search-overlay {
+    padding: 68px 12px 14px;
+    background: rgba(6, 25, 20, .62);
+  }
+  .mm-search-panel {
+    width: 100%;
+    max-height: calc(100svh - 82px);
+    overflow: auto;
+    padding: 18px;
+    border-radius: 12px;
+  }
+  .mm-search-head { gap: 12px; }
+  .mm-search-head h2 { font-size: clamp(22px, 7vw, 27px); line-height: 1.12; margin: 6px 0 16px; }
+  .mm-search-field { min-height: 50px; }
+  .mm-search-results a { min-height: 50px; }
+
+  /* Hero: preserve the supplied image but reduce empty vertical space. */
+  .home-hero {
+    min-height: auto;
+    padding: 46px 0 72px;
+    background-position: 65% center;
+  }
+  .home-hero-grid { grid-template-columns: 1fr; gap: 24px; }
+  .home-hero-copy { max-width: none; }
+  .home-hero h1 {
+    font-size: clamp(43px, 13.5vw, 62px);
+    line-height: .98;
+    letter-spacing: -.045em;
+    max-width: 8ch;
+  }
+  .home-hero p {
+    font-size: 14px;
+    line-height: 1.65;
+    max-width: 34rem;
+  }
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-top: 21px;
+  }
+  .button-link, .hero-secondary {
+    min-height: 46px;
+    justify-content: center;
+    border-radius: 8px;
+  }
+  .home-hero-card {
+    width: 100%;
+    max-width: none;
+    padding: 18px;
+    border-radius: var(--mm-mobile-radius);
+    backdrop-filter: blur(8px);
+  }
+  .home-hero-card strong { font-size: 21px; margin: 16px 0 8px; }
+  .home-hero-card p { font-size: 11px; margin-bottom: 16px; }
+
+  /* Floating highlight cards become a readable vertical stack. */
+  .home-highlights {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: -28px;
+  }
+  .home-highlight {
+    padding: 18px;
+    border-radius: var(--mm-mobile-radius);
+  }
+  .home-highlight h2 { font-size: 20px; }
+  .home-highlight p { font-size: 12px; line-height: 1.6; }
+
+  /* Consistent mobile section rhythm. */
+  .home-agenda { padding-block: var(--mm-mobile-section); }
+  .home-section-heading, .section-head {
+    margin: 0 0 16px;
+    padding-bottom: 9px;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .home-section-heading h2, .section-head h2 { font-size: 22px; }
+  .section-head a, .home-section-heading > a { font-size: 10px; white-space: nowrap; }
+
+  /* News. */
+  .home-news-layout { grid-template-columns: 1fr; gap: 18px; }
+  .home-featured-news { grid-template-columns: 1fr; border-radius: var(--mm-mobile-radius); overflow: hidden; }
+  .home-news-image { aspect-ratio: 16 / 10; min-height: 0; }
+  .home-news-copy { padding: 18px; }
+  .home-news-copy h3 { font-size: 22px; line-height: 1.16; }
+  .home-news-copy p { font-size: 12px; line-height: 1.65; }
+  .home-latest-list { border-top: 0; }
+  .home-latest-item { grid-template-columns: 28px minmax(0,1fr) 15px; gap: 10px; padding: 14px 0; }
+  .home-latest-item h3 { font-size: 16px; line-height: 1.3; }
+
+  /* Four services: one card per row keeps labels and actions readable. */
+  .service-grid { grid-template-columns: 1fr; }
+  .service-card { min-height: 0; padding: 18px; grid-template-columns: 28px 1fr; }
+  .service-card h3 { font-size: 18px; }
+
+  /* Event cards. */
+  .events-grid { grid-template-columns: 1fr; gap: 10px; }
+  .event-card { padding: 15px; grid-template-columns: 50px minmax(0,1fr); gap: 12px; border-radius: var(--mm-mobile-radius); }
+  .event-date { padding-right: 10px; }
+  .event-date strong { font-size: 25px; }
+  .event-card h3 { font-size: 15px; margin: 5px 0 8px; }
+  .event-card p { font-size: 10px; }
+
+  /* Inner pages. */
+  .inner-page { min-height: 60vh; padding-bottom: 52px; }
+  .page-intro {
+    padding: 40px 0 28px;
+    max-width: none;
+  }
+  .page-intro:after { margin-top: 18px; }
+  .page-intro h1 { font-size: clamp(34px, 10vw, 44px); line-height: 1.02; }
+  .page-intro p { font-size: 13px; line-height: 1.65; }
+
+  .filter-row-interactive {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 -2px 18px;
+    padding: 2px 2px 5px;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .filter-row-interactive::-webkit-scrollbar { display: none; }
+  .filter-row-interactive button { min-height: 36px; padding: 7px 13px; font-size: 11px; flex: 0 0 auto; }
+
+  .news-page-grid { grid-template-columns: 1fr; gap: 14px; }
+  .news-page-card, .news-page-card.featured {
+    grid-template-columns: 1fr;
+    border-radius: var(--mm-mobile-radius);
+    overflow: hidden;
+  }
+  .news-page-card img { aspect-ratio: 16 / 10; min-height: 0; }
+  .news-page-card > div { padding: 17px; }
+  .news-page-card h2 { font-size: 20px; }
+  .news-page-card p { font-size: 12px; line-height: 1.6; }
+
+  .event-list-page { margin-inline: 0; }
+  .event-row {
+    grid-template-columns: 52px minmax(0,1fr);
+    gap: 12px;
+    padding: 16px 12px;
+  }
+  .event-row-content h2 { font-size: 18px; line-height: 1.25; }
+  .event-details { gap: 7px 12px; }
+  .event-status { grid-column: 2; justify-self: start; min-height: 32px; }
+
+  .editorial-card { grid-template-columns: 34px minmax(0,1fr); gap: 10px; padding: 20px 0; }
+  .editorial-card.lead { padding-block: 24px; }
+  .editorial-card h2 { font-size: 20px; line-height: 1.2; }
+  .editorial-card p { font-size: 12px; line-height: 1.65; }
+
+  .org-tree-page { padding: 18px 12px; border-radius: var(--mm-mobile-radius); }
+  .page-lead { width: 100%; }
+  .org-grid { grid-template-columns: 1fr; gap: 9px; }
+  .org-grid .management-card { min-height: 68px; padding: 12px; }
+  .org-connector:after { width: 1px; height: 16px; left: 50%; }
+  .role-note { margin-top: 28px; }
+  .role-note h2 { font-size: 27px; }
+
+  .finance-summary-page { grid-template-columns: 1fr 1fr; gap: 9px; }
+  .finance-summary-page > div { padding: 15px; min-width: 0; border-radius: 8px; }
+  .finance-summary-page span { font-size: 10px; }
+  .finance-summary-page strong { font-size: clamp(16px, 5vw, 20px); line-height: 1.15; overflow-wrap: anywhere; }
+  .finance-period { margin: 25px 0 10px; gap: 8px; }
+  .finance-period strong { font-size: 19px; }
+  .finance-period > span { font-size: 9px; }
+  .report-button { min-height: 38px; padding: 7px 10px; border-radius: 7px; }
+  .finance-table-wrap { border-radius: 8px; }
+  .finance-table-wrap table { min-width: 620px; }
+
+  .gallery-page { grid-template-columns: 1fr; gap: 12px; }
+  .gallery-card { border-radius: var(--mm-mobile-radius); }
+
+  .contact-grid-page { grid-template-columns: 1fr; gap: 12px; }
+  .contact-card-page { padding: 18px; border-radius: var(--mm-mobile-radius); }
+  .profile-feature, .profile-columns > article { border-radius: var(--mm-mobile-radius); }
+
+  /* Article/detail pages. */
+  .article-layout { grid-template-columns: 1fr; gap: 18px; }
+  .article-detail, .event-detail { padding: 0; }
+  .article-detail h1, .event-detail h1 { font-size: clamp(30px, 9vw, 42px); line-height: 1.06; }
+  .article-copy, .article-lead { max-width: none; }
+  .article-copy p { font-size: 14px; line-height: 1.8; }
+  .article-hero img { border-radius: var(--mm-mobile-radius); }
+  .article-sidebar { margin-top: 0; }
+  .detail-related { margin-top: 24px; }
+
+  /* Footer. */
+  .site-footer { padding-top: 34px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 22px; padding-bottom: 26px; }
+  .footer-brand { font-size: 22px; }
+  .footer-bottom { gap: 7px; align-items: flex-start; padding: 12px 0; }
+}
+
+@media (max-width: 420px) {
+  :root { --mm-mobile-gutter: 12px; }
+  .mm-brand-logo { width: min(150px, 47vw); }
+  .mm-header-top { min-height: 61px; }
+  .mm-search-trigger, .mm-mobile-menu-btn { width: 40px; min-width: 40px; height: 40px; min-height: 40px; }
+  .home-hero { padding-top: 40px; padding-bottom: 65px; background-position: 68% center; }
+  .home-hero h1 { font-size: clamp(40px, 13.5vw, 55px); }
+  .home-hero-card { padding: 16px; }
+  .finance-summary-page { grid-template-columns: 1fr; }
+  .finance-summary-page > div { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+}
+
+@media (max-width: 360px) {
+  .mm-brand-logo { width: 138px; }
+  .home-hero h1 { font-size: 39px; }
+  .home-hero p { font-size: 13px; }
+  .home-highlight { padding: 16px; }
+  .page-intro h1 { font-size: 34px; }
+  .news-page-card h2 { font-size: 19px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-mobile-menu, .mm-search-panel, .home-featured-news, .home-latest-item, .gallery-card img { transition: none !important; }
+}
