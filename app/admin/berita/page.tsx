@@ -1,5 +1,5 @@
 import AdminAuthGuard from '@/components/admin/AdminAuthGuard'
 import AdminShell from '@/components/admin/AdminShell'
-import AdminModulePlaceholder from '@/components/admin/AdminModulePlaceholder'
+import AdminNewsManager from '@/components/admin/AdminNewsManager'
 
-export default function AdminBeritaPage(){return <AdminAuthGuard><AdminShell><AdminModulePlaceholder title="Kelola Berita" description="Modul ini akan menangani pembuatan, penyuntingan, draft, publikasi, kategori, dan metadata berita." /></AdminShell></AdminAuthGuard>}
+export default function AdminBeritaPage(){return <AdminAuthGuard><AdminShell><div className="admin-page-heading"><span className="eyebrow">CMS</span><h1>Kelola Berita</h1><p>Tambah, edit, publikasikan, dan kelola berita Masjid Miftahul Mubin.</p></div><AdminNewsManager /></AdminShell></AdminAuthGuard>}
