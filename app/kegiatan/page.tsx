@@ -4,17 +4,22 @@ import Link from 'next/link'
 import SiteShell from '@/components/layout/SiteShell'
 import PageIntro from '@/components/content/PageIntro'
 import { CalendarDays, Clock3, MapPin, ArrowRight } from 'lucide-react'
-import { events } from '@/lib/content'
 import { useMemo, useState } from 'react'
+import type { EventRecord } from '@/types/content'
+import { contentRepository } from '@/lib/data'
+import { eventRecordToLegacy } from '@/lib/data/presentation'
 
 const filters = ['Semua', 'Kajian', 'Sosial', 'Pendidikan', 'Pengurus']
 
-export default function KegiatanPage() {
+export default async function KegiatanPage() {
+  const records = await contentRepository.listEvents()
+  return <KegiatanContent records={records} />
+}
+
+function KegiatanContent({ records }: { records: EventRecord[] }) {
   const [filter, setFilter] = useState('Semua')
-  const filtered = useMemo(
-    () => filter === 'Semua' ? events : events.filter((event) => event.category === filter),
-    [filter],
-  )
+  const items = useMemo(() => records.map(eventRecordToLegacy), [records])
+  const filtered = useMemo(() => filter === 'Semua' ? items : items.filter((event) => event.category === filter), [filter, items])
 
   return <SiteShell><main id="main-content" className="inner-page"><div className="container">
     <PageIntro eyebrow="Agenda Masjid" title="Kegiatan Miftahul Mubin" description="Agenda ibadah, kajian, pendidikan, kegiatan sosial, dan program kemasyarakatan Masjid Miftahul Mubin." />
