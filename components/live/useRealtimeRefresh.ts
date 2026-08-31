@@ -9,14 +9,24 @@ export function useRealtimeRefresh(table: TableName, refresh: () => void | Promi
   useEffect(() => {
     if (!supabase) return
 
+    const run = () => { void refresh() }
+    const onVisibility = () => { if (document.visibilityState === 'visible') run() }
+
+    window.addEventListener('focus', run)
+    window.addEventListener('pageshow', run)
+    document.addEventListener('visibilitychange', onVisibility)
+    const interval = window.setInterval(run, 15000)
+
     const channel = supabase
       .channel(`public:${table}:live`)
-      .on('postgres_changes', { event: '*', schema: 'public', table }, () => {
-        void refresh()
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table }, run)
       .subscribe()
 
     return () => {
+      window.removeEventListener('focus', run)
+      window.removeEventListener('pageshow', run)
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.clearInterval(interval)
       void supabase.removeChannel(channel)
     }
   }, [table, refresh])
