@@ -1,0 +1,19 @@
+/* Homepage popular editorial module. */
+.home-editorial-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:start}
+.home-editorial-grid>div{min-width:0}
+.home-editorial-grid .home-section-heading{margin-top:52px}
+.home-editorial-grid .home-section-heading.compact{margin-bottom:0}
+.popular-list{width:100%;border-top:1px solid var(--mm-line);background:var(--mm-surface)}
+.popular-list>a{display:grid;grid-template-columns:42px minmax(0,1fr) 18px;align-items:center;gap:14px;width:100%;min-width:0;padding:17px 2px 17px 0;border-bottom:1px solid var(--mm-line);color:var(--mm-text);text-decoration:none;transition:background .18s ease,padding-left .18s ease}
+.popular-list>a:hover{background:var(--mm-surface-2);padding-left:8px}
+.popular-list>a>span:nth-child(2){min-width:0;display:block}
+.popular-list>a small{display:block;margin:0 0 5px;color:var(--mm-muted);font-family:'DM Sans',system-ui,sans-serif;font-size:9px;font-weight:700;line-height:1.2;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.popular-list>a strong{display:block;min-width:0;color:var(--mm-text);font-family:'Playfair Display',Georgia,serif;font-size:16px;font-weight:600;line-height:1.32;overflow-wrap:anywhere;text-wrap:pretty}
+.popular-list>a>svg{color:var(--mm-green);justify-self:end;flex:none}
+.popular-rank{font-family:'DM Sans',system-ui,sans-serif;font-size:25px;font-weight:700;line-height:1;color:#a8b5ae;letter-spacing:-.04em}
+html[data-theme='dark'] .popular-list{background:var(--mm-surface)}
+html[data-theme='dark'] .popular-list>a:hover{background:var(--mm-surface-2)}
+html[data-theme='dark'] .popular-rank{color:#65756e}
+@media (max-width:1050px){.home-editorial-grid{gap:32px}.popular-list>a{grid-template-columns:36px minmax(0,1fr) 16px;gap:11px;padding-block:15px}.popular-rank{font-size:22px}.popular-list>a strong{font-size:15px}}
+@media (max-width:820px){.home-editorial-grid{grid-template-columns:1fr;gap:32px}.home-editorial-grid .home-section-heading{margin-top:42px}.popular-list>a{grid-template-columns:30px minmax(0,1fr) 16px}}
+@media (max-width:420px){.popular-list>a{grid-template-columns:27px minmax(0,1fr) 14px;gap:8px;padding-block:14px}.popular-list>a strong{font-size:15px}.popular-rank{font-size:20px}}
