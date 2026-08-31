@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState, type ReactNode } from 'react'
-import { useRouter } from 'next/navigation'
 import { LogOut, Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
+import { signOutAndRedirect } from '@/lib/admin/auth'
 
 type AdminAuthGuardProps = { children: ReactNode }
 
@@ -15,8 +16,7 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
   async function logout() {
     if (loggingOut) return
     setLoggingOut(true)
-    await supabase.auth.signOut()
-    router.replace('/admin/login/')
+    await signOutAndRedirect(router)
   }
 
   useEffect(() => {
@@ -31,9 +31,6 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
         return
       }
 
-      // Use the SECURITY DEFINER RPC instead of relying on a client-side join
-      // between user_roles and roles. This makes the guard authoritative and
-      // avoids RLS/relation-shape differences between environments.
       const { data, error } = await supabase.rpc('has_admin_access')
 
       if (error) {
@@ -44,8 +41,8 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
 
       if (data === true) {
         if (active) setState('authorized')
-      } else {
-        if (active) setState('denied')
+      } else if (active) {
+        setState('denied')
       }
     }
 
