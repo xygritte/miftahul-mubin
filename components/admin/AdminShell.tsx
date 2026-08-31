@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { BarChart3, CalendarDays, FileText, GalleryVerticalEnd, HardDrive, LayoutDashboard, LogOut, Megaphone, Settings2, ShieldCheck, Users, WalletCards } from 'lucide-react'
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { signOutAndRedirect } from '@/lib/admin/auth'
 
 const items = [
   { href: '/admin/', label: 'Dashboard', icon: LayoutDashboard },
@@ -24,9 +24,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [signingOut, setSigningOut] = useState(false)
 
   async function signOut() {
+    if (signingOut) return
     setSigningOut(true)
-    await supabase.auth.signOut()
-    router.replace('/admin/login/')
+    await signOutAndRedirect(router)
   }
 
   return <div className="admin-app">
@@ -38,7 +38,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           return <Link className={`admin-nav-item${active ? ' active' : ''}`} aria-current={active ? 'page' : undefined} key={href} href={href}><Icon size={17} /><span>{label}</span></Link>
         })}
       </nav>
-      <div className="admin-sidebar-bottom"><Link className="admin-nav-item" href="/"><BarChart3 size={17} /><span>Lihat Website</span></Link><button className="admin-nav-item admin-logout" disabled={signingOut} onClick={signOut}><LogOut size={17} /><span>{signingOut ? 'Keluar…' : 'Keluar'}</span></button></div>
+      <div className="admin-sidebar-bottom"><Link className="admin-nav-item" href="/"><BarChart3 size={17} /><span>Lihat Website</span></Link><button className="admin-nav-item admin-logout" disabled={signingOut} onClick={() => void signOut()}><LogOut size={17} /><span>{signingOut ? 'Keluar…' : 'Keluar'}</span></button></div>
     </aside>
     <div className="admin-main"><header className="admin-topbar"><div><span className="eyebrow">Miftahul Mubin</span><strong>Panel Pengelola</strong></div><span className="admin-session-status"><Settings2 size={15} /> Supabase Auth + Storage</span></header><main className="admin-content">{children}</main></div>
   </div>
