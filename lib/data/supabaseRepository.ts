@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client'
+import { supabaseServer } from '@/lib/supabase/server'
 import type {
   AnnouncementRecord,
   EventRecord,
@@ -16,8 +16,8 @@ import type { PublicContentRepository } from './repository'
 type Row = Record<string, unknown>
 
 function requireClient() {
-  if (!supabase) throw new Error('Supabase is not configured')
-  return supabase
+  if (!supabaseServer) throw new Error('Supabase is not configured')
+  return supabaseServer
 }
 
 function contentToParagraphs(value: unknown): string[] {
@@ -51,49 +51,41 @@ export const supabaseRepository: PublicContentRepository = {
     if (error) throw error
     return (data ?? []).map((row) => mapNews(row as Row))
   },
-
   async getNewsBySlug(slug) {
     const { data, error } = await requireClient().from('news').select('*, categories(name)').eq('slug', slug).maybeSingle()
     if (error) throw error
     return data ? mapNews(data as Row) : null
   },
-
   async listIslamic() {
     const { data, error } = await requireClient().from('islamic_articles').select('*, categories(name)').order('published_at', { ascending: false })
     if (error) throw error
     return (data ?? []).map((row) => mapIslamic(row as Row))
   },
-
   async getIslamicBySlug(slug) {
     const { data, error } = await requireClient().from('islamic_articles').select('*, categories(name)').eq('slug', slug).maybeSingle()
     if (error) throw error
     return data ? mapIslamic(data as Row) : null
   },
-
   async listEvents() {
     const { data, error } = await requireClient().from('events').select('*, categories(name)').order('event_date', { ascending: true }).order('start_time', { ascending: true })
     if (error) throw error
     return (data ?? []).map((row) => mapEvent(row as Row))
   },
-
   async getEventBySlug(slug) {
     const { data, error } = await requireClient().from('events').select('*, categories(name)').eq('slug', slug).maybeSingle()
     if (error) throw error
     return data ? mapEvent(data as Row) : null
   },
-
   async listAnnouncements() {
     const { data, error } = await requireClient().from('announcements').select('*').order('published_at', { ascending: false })
     if (error) throw error
     return (data ?? []).map((row) => ({ id: row.id, title: row.title, content: row.content, status: row.status, publishedAt: row.published_at, authorId: row.author_id, createdAt: row.created_at, updatedAt: row.updated_at })) as AnnouncementRecord[]
   },
-
   async listManagementPeriods() {
     const { data, error } = await requireClient().from('management_periods').select('*').order('start_date', { ascending: false })
     if (error) throw error
     return (data ?? []).map((row) => ({ id: row.id, name: row.name, startDate: row.start_date, endDate: row.end_date, isActive: row.is_active })) as ManagementPeriod[]
   },
-
   async listManagementMembers(periodId) {
     let query = requireClient().from('management_members').select('*').order('sort_order', { ascending: true })
     if (periodId) query = query.eq('period_id', periodId)
@@ -101,13 +93,11 @@ export const supabaseRepository: PublicContentRepository = {
     if (error) throw error
     return (data ?? []).map((row) => ({ id: row.id, periodId: row.period_id, name: row.name, position: row.position, photoUrl: row.photo_url, bio: row.bio, sortOrder: row.sort_order })) as ManagementMember[]
   },
-
   async listMediaAlbums() {
     const { data, error } = await requireClient().from('media_albums').select('*').order('created_at', { ascending: false })
     if (error) throw error
     return (data ?? []).map((row) => ({ id: row.id, title: row.title, slug: row.slug, description: row.description, coverUrl: row.cover_url, createdAt: row.created_at })) as MediaAlbum[]
   },
-
   async listMediaItems(albumId) {
     let query = requireClient().from('media_items').select('*').order('sort_order', { ascending: true })
     if (albumId) query = query.eq('album_id', albumId)
@@ -115,21 +105,18 @@ export const supabaseRepository: PublicContentRepository = {
     if (error) throw error
     return (data ?? []).map((row) => ({ id: row.id, albumId: row.album_id, type: row.type, title: row.title, url: row.url, thumbnailUrl: row.thumbnail_url, caption: row.caption, sortOrder: row.sort_order, createdAt: row.created_at })) as MediaItem[]
   },
-
   async getLatestPublishedFinancePeriod() {
     const { data, error } = await requireClient().from('finance_periods').select('*').not('published_at', 'is', null).lte('published_at', new Date().toISOString()).order('year', { ascending: false }).order('month', { ascending: false }).limit(1).maybeSingle()
     if (error) throw error
     if (!data) return null
     return { id: data.id, year: data.year, month: data.month, openingBalance: Number(data.opening_balance), publishedAt: data.published_at, createdAt: data.created_at, updatedAt: data.updated_at } as FinancePeriod
   },
-
   async getPublishedFinancePeriod(year, month) {
     const { data, error } = await requireClient().from('finance_periods').select('*').eq('year', year).eq('month', month).maybeSingle()
     if (error) throw error
     if (!data) return null
     return { id: data.id, year: data.year, month: data.month, openingBalance: Number(data.opening_balance), publishedAt: data.published_at, createdAt: data.created_at, updatedAt: data.updated_at } as FinancePeriod
   },
-
   async listPublishedFinanceTransactions(periodId) {
     const { data, error } = await requireClient().from('finance_transactions').select('*').eq('period_id', periodId).order('transaction_date', { ascending: true })
     if (error) throw error
