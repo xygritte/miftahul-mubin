@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import FilterableNews from '@/components/content/FilterableNews'
 import { newsRecordToLegacy } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
+import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { NewsRecord } from '@/types/content'
 import type { NewsItem } from '@/lib/content'
 
@@ -63,35 +64,9 @@ export default function LiveNewsList({ initialItems }: { initialItems: NewsItem[
   }, [])
 
   useEffect(() => {
-    let active = true
-    const runRefresh = async () => {
-      const next = await fetchNews()
-      if (active && next !== null) setItems(next)
-    }
-    void runRefresh()
-
-    const onFocus = () => { void refresh() }
-    const onVisibility = () => { if (document.visibilityState === 'visible') void refresh() }
-    const onPageShow = () => { void refresh() }
-    window.addEventListener('focus', onFocus)
-    window.addEventListener('pageshow', onPageShow)
-    document.addEventListener('visibilitychange', onVisibility)
-    const interval = window.setInterval(() => void refresh(), 15000)
-
-    const channel = supabase
-      .channel('public-news-live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'news' }, () => { void refresh() })
-      .subscribe()
-
-    return () => {
-      active = false
-      window.removeEventListener('focus', onFocus)
-      window.removeEventListener('pageshow', onPageShow)
-      document.removeEventListener('visibilitychange', onVisibility)
-      window.clearInterval(interval)
-      void supabase.removeChannel(channel)
-    }
+    void refresh()
   }, [refresh])
+  useRealtimeRefresh('news', refresh)
 
   return <FilterableNews items={items} />
 }
