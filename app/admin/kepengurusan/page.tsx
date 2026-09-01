@@ -1,6 +1,6 @@
 import AdminAuthGuard from '@/components/admin/AdminAuthGuard'
 import AdminShell from '@/components/admin/AdminShell'
-import AdminManagementManager from '@/components/admin/AdminManagementManager'
+import AdminManagementManagerFixed from '@/components/admin/AdminManagementManagerFixed'
 
 export default function AdminKepengurusanPage() {
   return (
@@ -11,7 +11,7 @@ export default function AdminKepengurusanPage() {
           <h1>Kelola Kepengurusan</h1>
           <p>Kelola periode kepengurusan dan anggota, jabatan, urutan, foto, serta status aktif.</p>
         </div>
-        <AdminManagementManager />
+        <AdminManagementManagerFixed />
       </AdminShell>
     </AdminAuthGuard>
   )
