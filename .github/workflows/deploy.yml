@@ -57,7 +57,14 @@ jobs:
             "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/news?select=id&limit=1" \
             -o /tmp/supabase-news.json
           test -s /tmp/supabase-news.json
-          echo "Supabase REST smoke test passed."
+
+          curl --fail --silent --show-error \
+            -H "apikey: $NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            -H "Authorization: Bearer $NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/events?select=id,title,status&status=eq.published&limit=1" \
+            -o /tmp/supabase-events.json
+          test -s /tmp/supabase-events.json
+          echo "Supabase REST smoke tests passed."
 
       - name: TypeScript check
         run: npm run typecheck
@@ -79,7 +86,8 @@ jobs:
             echo "Found an internal HTML link without the GitHub Pages basePath."
             exit 1
           fi
-          echo "GitHub Pages routing smoke test passed."
+          grep -q "useRealtimeRefresh('events'" components/live/LiveEvents.tsx
+          echo "GitHub Pages routing and live event integration checks passed."
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
@@ -112,6 +120,7 @@ jobs:
           done
           grep -qi 'Miftahul Mubin' /tmp/site.html
           echo "Home page is reachable."
+
       - name: Verify live event fallback route
         run: |
           url="https://xygritte.github.io/miftahul-mubin/kegiatan/kajian-rutin-kamis-03-september-2026/"
