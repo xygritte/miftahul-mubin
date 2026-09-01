@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { sitePath } from '@/lib/data/presentation'
 import type { NewsItem } from '@/lib/content'
 import { useMemo, useState } from 'react'
 
@@ -30,13 +30,13 @@ export default function FilterableNews({ items }: { items: NewsItem[] }) {
       <div className="news-page-grid" aria-live="polite">
         {filtered.map((item, index) => (
           <article className={index === 0 ? 'news-page-card featured' : 'news-page-card'} key={item.slug}>
-            <Link href={`/berita/${item.slug}/`} className="news-page-image-link"><img src={item.image} alt={item.title} /></Link>
+            <a href={sitePath(`/berita/${item.slug}/`)} className="news-page-image-link"><img src={item.image} alt={item.title} /></a>
             <div>
               <span className="tag static">{item.category}</span>
               <small>{item.date}</small>
-              <h2><Link href={`/berita/${item.slug}/`}>{item.title}</Link></h2>
+              <h2><a href={sitePath(`/berita/${item.slug}/`)}>{item.title}</a></h2>
               <p>{item.excerpt}</p>
-              <Link href={`/berita/${item.slug}/`}>Baca selengkapnya <ArrowRight size={16} /></Link>
+              <a href={sitePath(`/berita/${item.slug}/`)}>Baca selengkapnya <ArrowRight size={16} /></a>
             </div>
           </article>
         ))}
