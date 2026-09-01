@@ -6,7 +6,8 @@ const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 
 const WEEKDAYS = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
 const BASE_PATH = process.env.GITHUB_ACTIONS === 'true' ? '/miftahul-mubin' : ''
 
-const sitePath = (path: string) => `${BASE_PATH}${path.startsWith('/') ? path : `/${path}`}`
+/** Build a site-internal URL that respects the GitHub Pages project basePath. */
+export const sitePath = (path: string) => `${BASE_PATH}${path.startsWith('/') ? path : `/${path}`}`
 
 export function formatIndonesianDate(value: string | null | undefined, withWeekday = true): string {
   if (!value) return '—'
