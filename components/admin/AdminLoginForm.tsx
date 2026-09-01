@@ -2,11 +2,10 @@
 
 import { useState } from 'react'
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
+import { sitePath } from '@/lib/data/presentation'
 
 export default function AdminLoginForm() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -19,16 +18,34 @@ export default function AdminLoginForm() {
     setBusy(true)
     setError('')
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
-    if (signInError) {
+    const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    })
+
+    if (signInError || !authData.session || !authData.user) {
       setError('Email atau kata sandi tidak valid.')
       setBusy(false)
       return
     }
 
-    // Next.js router already applies basePath configured by next.config.ts.
-    router.replace('/admin/')
-    router.refresh()
+    const { data: hasAdminAccess, error: accessError } = await supabase.rpc('has_admin_access')
+    if (accessError) {
+      console.error('Admin access check failed after login:', accessError)
+      await supabase.auth.signOut()
+      setError('Sesi berhasil dibuat, tetapi akses panel gagal diverifikasi. Coba lagi.')
+      setBusy(false)
+      return
+    }
+
+    if (hasAdminAccess !== true) {
+      await supabase.auth.signOut()
+      setError('Akun berhasil masuk, tetapi belum memiliki role pengelola.')
+      setBusy(false)
+      return
+    }
+
+    window.location.assign(sitePath('/admin/'))
   }
 
   return <form className="admin-login-form" onSubmit={submit}>
