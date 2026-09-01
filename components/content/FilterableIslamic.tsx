@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { sitePath } from '@/lib/data/presentation'
 import { useMemo, useState } from 'react'
 import type { IslamicItem } from '@/lib/islamic'
 
@@ -26,10 +26,10 @@ export default function FilterableIslamic({ items }: { items: IslamicItem[] }) {
             <div className="editorial-number">{String(i + 1).padStart(2, '0')}</div>
             <div>
               <span>{item.category}</span>
-              <h2><Link href={`/keislaman/${item.slug}/`}>{item.title}</Link></h2>
+              <h2><a href={sitePath(`/keislaman/${item.slug}/`)}>{item.title}</a></h2>
               <small>{item.date}</small>
               <p>{item.excerpt}</p>
-              <Link href={`/keislaman/${item.slug}/`}>Baca artikel <ArrowRight size={15} /></Link>
+              <a href={sitePath(`/keislaman/${item.slug}/`)}>Baca artikel <ArrowRight size={15} /></a>
             </div>
           </article>
         ))}
