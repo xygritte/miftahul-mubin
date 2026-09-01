@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { Edit3, Eye, FilePlus2, Loader2, Search, Trash2, X } from 'lucide-react'
+import { Edit3, Eye, FilePlus2, ImagePlus, Loader2, Search, Trash2, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { sitePath } from '@/lib/data/presentation'
+import { uploadPublicStorageFile } from '@/lib/supabase/storage'
 
 type NewsRow = {
   id: string
@@ -53,12 +55,21 @@ function getErrorMessage(error: { code?: string; message?: string } | null, acti
   return 'Berita gagal disimpan.'
 }
 
+function storageErrorMessage(error: unknown) {
+  const message = error instanceof Error ? error.message : ''
+  if (message.includes('Tipe file')) return message
+  if (message.includes('Ukuran file')) return message
+  if (message.toLowerCase().includes('row-level security') || message.toLowerCase().includes('permission')) return 'Akun tidak memiliki izin untuk mengunggah gambar berita.'
+  return 'Gambar gagal diunggah. Coba file gambar lain.'
+}
+
 export default function AdminNewsManager() {
   const [rows, setRows] = useState<NewsRow[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -89,15 +100,33 @@ export default function AdminNewsManager() {
     return rows.filter((item) => `${item.title} ${item.excerpt} ${item.slug}`.toLowerCase().includes(needle))
   }, [query, rows])
 
-  function openCreate() { setForm(emptyForm); setEditorOpen(true); setError(''); setSuccess('') }
+  function openCreate() { setForm({ ...emptyForm }); setEditorOpen(true); setError(''); setSuccess('') }
   function openEdit(row: NewsRow) {
     setForm({ id: row.id, title: row.title, slug: row.slug, excerpt: row.excerpt, content: row.content.join('\n\n'), thumbnailUrl: row.thumbnail_url ?? '', categoryId: row.category_id ?? '', status: row.status === 'published' ? 'published' : 'draft', publishedAt: row.published_at })
     setEditorOpen(true); setError(''); setSuccess('')
   }
 
+  async function handleThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file || uploading || saving) return
+    setUploading(true)
+    setError('')
+    setSuccess('')
+    try {
+      const uploaded = await uploadPublicStorageFile('news-media', file)
+      setForm((current) => ({ ...current, thumbnailUrl: uploaded.url }))
+      setSuccess('Gambar berhasil diunggah. Klik Simpan berita untuk menyimpan perubahan.')
+    } catch (uploadError) {
+      setError(storageErrorMessage(uploadError))
+    } finally {
+      setUploading(false)
+    }
+  }
+
   async function save(event: React.FormEvent) {
     event.preventDefault()
-    if (!supabase || saving) return
+    if (!supabase || saving || uploading) return
     setSaving(true); setError(''); setSuccess('')
     const slug = slugify(form.slug || form.title)
     const paragraphs = form.content.split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean)
@@ -154,8 +183,15 @@ export default function AdminNewsManager() {
 
     {error && <p className="admin-form-error" role="alert">{error}</p>}
     {success && <p className="admin-form-success" role="status">{success}</p>}
-    {loading ? <div className="admin-table-state"><Loader2 className="spin" size={20} /> Memuat berita…</div> : filtered.length === 0 ? <div className="admin-table-state"><strong>Tidak ada berita</strong><span>{query ? 'Coba kata kunci lain.' : 'Mulai dengan membuat berita pertama.'}</span></div> : <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Berita</th><th>Status</th><th>Diperbarui</th><th aria-label="Aksi" /></tr></thead><tbody>{filtered.map((row) => <tr key={row.id}><td><div className="admin-table-title"><strong>{row.title}</strong><small>/{row.slug}</small></div></td><td><span className={`admin-status-pill ${row.status}`}>{row.status === 'published' ? 'Published' : row.status === 'draft' ? 'Draft' : 'Archived'}</span></td><td>{formatDate(row.updated_at)}</td><td><div className="admin-row-actions"><button className="admin-icon-button" onClick={() => openEdit(row)} aria-label={`Edit ${row.title}`}><Edit3 size={16} /></button><button className="admin-icon-button" onClick={() => window.open(`/berita/${row.slug}/`, '_blank', 'noopener,noreferrer')} aria-label={`Lihat ${row.title}`}><Eye size={16} /></button><button className="admin-icon-button danger" onClick={() => void remove(row)} disabled={deletingId === row.id} aria-label={`Hapus ${row.title}`}>{deletingId === row.id ? <Loader2 className="spin" size={16} /> : <Trash2 size={16} />}</button></div></td></tr>)}</tbody></table></div>}
+    {loading ? <div className="admin-table-state"><Loader2 className="spin" size={20} /> Memuat berita…</div> : filtered.length === 0 ? <div className="admin-table-state"><strong>Tidak ada berita</strong><span>{query ? 'Coba kata kunci lain.' : 'Mulai dengan membuat berita pertama.'}</span></div> : <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Berita</th><th>Status</th><th>Diperbarui</th><th aria-label="Aksi" /></tr></thead><tbody>{filtered.map((row) => <tr key={row.id}><td><div className="admin-table-title"><strong>{row.title}</strong><small>/{row.slug}</small></div></td><td><span className={`admin-status-pill ${row.status}`}>{row.status === 'published' ? 'Published' : row.status === 'draft' ? 'Draft' : 'Archived'}</span></td><td>{formatDate(row.updated_at)}</td><td><div className="admin-row-actions"><button className="admin-icon-button" onClick={() => openEdit(row)} aria-label={`Edit ${row.title}`}><Edit3 size={16} /></button><button className="admin-icon-button" onClick={() => window.open(sitePath(`/berita/${row.slug}/`), '_blank', 'noopener,noreferrer')} aria-label={`Lihat ${row.title}`}><Eye size={16} /></button><button className="admin-icon-button danger" onClick={() => void remove(row)} disabled={deletingId === row.id} aria-label={`Hapus ${row.title}`}>{deletingId === row.id ? <Loader2 className="spin" size={16} /> : <Trash2 size={16} />}</button></div></td></tr>)}</tbody></table></div>}
 
-    {editorOpen && <div className="admin-modal-backdrop" role="presentation"><div className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="news-editor-title"><div className="admin-modal-header"><div><span className="eyebrow">CMS Berita</span><h2 id="news-editor-title">{form.id ? 'Edit berita' : 'Tulis berita'}</h2></div><button className="admin-icon-button" onClick={() => setEditorOpen(false)} aria-label="Tutup"><X size={18} /></button></div><form className="admin-editor-form" onSubmit={save}><label><span>Judul</span><input value={form.title} onChange={(e) => setForm((v) => ({ ...v, title: e.target.value, slug: v.id ? v.slug : slugify(e.target.value) }))} required /></label><label><span>Slug</span><input value={form.slug} onChange={(e) => setForm((v) => ({ ...v, slug: slugify(e.target.value) }))} required /></label><div className="admin-form-grid"><label><span>Kategori</span><select value={form.categoryId} onChange={(e) => setForm((v) => ({ ...v, categoryId: e.target.value }))}><option value="">Tanpa kategori</option>{categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.name}</option>)}</select></label><label><span>Status</span><select value={form.status} onChange={(e) => setForm((v) => ({ ...v, status: e.target.value as FormState['status'] }))}><option value="draft">Draft</option><option value="published">Published</option></select></label></div><label><span>Ringkasan</span><textarea rows={3} value={form.excerpt} onChange={(e) => setForm((v) => ({ ...v, excerpt: e.target.value }))} required /></label><label><span>Isi berita</span><textarea rows={12} value={form.content} onChange={(e) => setForm((v) => ({ ...v, content: e.target.value }))} placeholder="Pisahkan paragraf dengan satu baris kosong." required /></label><label><span>URL thumbnail</span><input type="url" value={form.thumbnailUrl} onChange={(e) => setForm((v) => ({ ...v, thumbnailUrl: e.target.value }))} placeholder="https://…" /></label><div className="admin-modal-actions"><button type="button" className="admin-button secondary" onClick={() => setEditorOpen(false)} disabled={saving}>Batal</button><button type="submit" className="admin-button primary" disabled={saving}>{saving ? <><Loader2 className="spin" size={16} /> Menyimpan…</> : 'Simpan berita'}</button></div></form></div></div>}
+    {editorOpen && <div className="admin-modal-backdrop" role="presentation"><div className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="news-editor-title"><div className="admin-modal-header"><div><span className="eyebrow">CMS Berita</span><h2 id="news-editor-title">{form.id ? 'Edit berita' : 'Tulis berita'}</h2></div><button className="admin-icon-button" onClick={() => setEditorOpen(false)} aria-label="Tutup" disabled={saving || uploading}><X size={18} /></button></div><form className="admin-editor-form" onSubmit={save}>
+      <label><span>Judul</span><input value={form.title} onChange={(e) => setForm((v) => ({ ...v, title: e.target.value, slug: v.id ? v.slug : slugify(e.target.value) }))} required /></label>
+      <label><span>Slug</span><input value={form.slug} onChange={(e) => setForm((v) => ({ ...v, slug: slugify(e.target.value) }))} required /></label>
+      <div className="admin-form-grid"><label><span>Kategori</span><select value={form.categoryId} onChange={(e) => setForm((v) => ({ ...v, categoryId: e.target.value }))}><option value="">Tanpa kategori</option>{categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.name}</option>)}</select></label><label><span>Status</span><select value={form.status} onChange={(e) => setForm((v) => ({ ...v, status: e.target.value as FormState['status'] }))}><option value="draft">Draft</option><option value="published">Published</option></select></label></div>
+      <label><span>Ringkasan</span><textarea rows={3} value={form.excerpt} onChange={(e) => setForm((v) => ({ ...v, excerpt: e.target.value }))} required /></label>
+      <label><span>Isi berita</span><textarea rows={12} value={form.content} onChange={(e) => setForm((v) => ({ ...v, content: e.target.value }))} placeholder="Pisahkan paragraf dengan satu baris kosong." required /></label>
+      <div className="admin-upload-field"><div className="admin-upload-label"><span>Thumbnail berita</span><small>JPG, PNG, WebP, GIF, SVG · maks. 8 MB</small></div>{form.thumbnailUrl && <div className="admin-upload-preview"><img src={form.thumbnailUrl} alt="Pratinjau thumbnail berita" /><button type="button" className="admin-icon-button" onClick={() => setForm((v) => ({ ...v, thumbnailUrl: '' }))} aria-label="Hapus thumbnail" disabled={saving || uploading}><X size={16} /></button></div>}<label className="admin-file-picker"><ImagePlus size={17} /><span>{uploading ? 'Mengunggah gambar…' : form.thumbnailUrl ? 'Ganti gambar' : 'Pilih gambar dari perangkat'}</span><input type="file" accept="image/*" onChange={(e) => void handleThumbnailChange(e)} disabled={saving || uploading} /></label>{!form.thumbnailUrl && <input type="url" value={form.thumbnailUrl} onChange={(e) => setForm((v) => ({ ...v, thumbnailUrl: e.target.value }))} placeholder="Atau gunakan URL gambar eksternal" aria-label="URL thumbnail alternatif" />}</div>
+      <div className="admin-modal-actions"><button type="button" className="admin-button secondary" onClick={() => setEditorOpen(false)} disabled={saving || uploading}>Batal</button><button type="submit" className="admin-button primary" disabled={saving || uploading}>{saving ? <><Loader2 className="spin" size={16} /> Menyimpan…</> : uploading ? <><Loader2 className="spin" size={16} /> Mengunggah…</> : 'Simpan berita'}</button></div></form></div></div>}
   </section>
 }
