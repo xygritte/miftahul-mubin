@@ -18,6 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      NEXT_PUBLIC_BASE_PATH: /miftahul-mubin
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
     steps:
@@ -73,8 +74,13 @@ jobs:
           test -f out/404.html || test -f out/_not-found/index.html
           grep -q '/miftahul-mubin/_next/' out/index.html
           grep -q '/miftahul-mubin/logo.svg' out/index.html
+          grep -q '/miftahul-mubin/' out/404.html
           if grep -RInE '<a[^>]*href="/(berita|kegiatan|keislaman)/' out --include='*.html'; then
             echo "Found an internal content link without the GitHub Pages basePath."
+            exit 1
+          fi
+          if grep -RInE '(href|src)="/(?!miftahul-mubin/|/)' out --include='*.html'; then
+            echo "Found an absolute root asset/link that bypasses the GitHub Pages basePath."
             exit 1
           fi
           echo "GitHub Pages routing smoke test passed."
@@ -101,12 +107,19 @@ jobs:
     steps:
       - name: Verify public deployment
         run: |
-          url="https://xygritte.github.io/miftahul-mubin/"
+          base="https://xygritte.github.io/miftahul-mubin"
           for attempt in {1..12}; do
-            if curl --fail --silent --show-error --location "$url" -o /tmp/site.html; then
-              grep -qi 'Miftahul Mubin' /tmp/site.html && exit 0
+            if curl --fail --silent --show-error --location "$base/" -o /tmp/site.html; then
+              grep -qi 'Miftahul Mubin' /tmp/site.html && break
             fi
             sleep 5
           done
-          echo "Public GitHub Pages deployment did not become reachable in time."
-          exit 1
+          grep -qi 'Miftahul Mubin' /tmp/site.html
+          echo "Home page is reachable."
+      - name: Verify live event fallback route
+        run: |
+          url="https://xygritte.github.io/miftahul-mubin/kegiatan/kajian-rutin-kamis-03-september-2026/"
+          status=$(curl --silent --show-error --location --output /tmp/event.html --write-out '%{http_code}' "$url")
+          test "$status" = "200" || { echo "Live event route returned HTTP $status"; exit 1; }
+          grep -qiE 'Kajian Rutin|Kegiatan tidak tersedia|Miftahul Mubin' /tmp/event.html
+          echo "Live event route smoke test passed."
