@@ -67,7 +67,14 @@ export async function uploadStorageFile(bucket: StorageBucket, file: File) {
   return { path, url: config.public ? publicStorageUrl(bucket, path) : null }
 }
 
-export const uploadPublicStorageFile = uploadStorageFile
+export async function uploadPublicStorageFile(bucket: Exclude<StorageBucket, 'finance-proofs'>, file: File) {
+  const result = await uploadStorageFile(bucket, file)
+  if (!result.url) {
+    await removeStorageFile(bucket, result.path).catch(() => undefined)
+    throw new Error(`Bucket ${STORAGE_BUCKETS[bucket].label} tidak menyediakan URL publik.`)
+  }
+  return { path: result.path, url: result.url }
+}
 
 export async function removeStorageFile(bucket: StorageBucket, path: string) {
   if (!path) return
