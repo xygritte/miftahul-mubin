@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
@@ -35,5 +36,5 @@ export default function LivePopularNews({ initialItems }: { initialItems: NewsRe
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
 
-  return <div className="popular-list">{items.map((item, index) => <a key={item.slug} href={`/berita/${item.slug}/`}><span className="popular-rank">0{index + 1}</span><span><small>{item.category}</small><strong>{item.title}</strong></span><ChevronRight size={16} /></a>)}</div>
+  return <div className="popular-list">{items.map((item, index) => <Link key={item.slug} href={`/berita/${item.slug}/`}><span className="popular-rank">0{index + 1}</span><span><small>{item.category}</small><strong>{item.title}</strong></span><ChevronRight size={16} /></Link>)}</div>
 }
