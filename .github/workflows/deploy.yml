@@ -73,7 +73,11 @@ jobs:
           test -f out/404.html || test -f out/_not-found/index.html
           grep -q '/miftahul-mubin/_next/' out/index.html
           grep -q '/miftahul-mubin/logo.svg' out/index.html
-          echo "GitHub Pages basePath smoke test passed."
+          if grep -RInE '<a[^>]*href="/(berita|kegiatan|keislaman)/' out --include='*.html'; then
+            echo "Found an internal content link without the GitHub Pages basePath."
+            exit 1
+          fi
+          echo "GitHub Pages routing smoke test passed."
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
