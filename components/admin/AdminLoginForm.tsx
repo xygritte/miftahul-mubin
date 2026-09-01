@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
-import { sitePath } from '@/lib/data/presentation'
 
 export default function AdminLoginForm() {
   const router = useRouter()
@@ -27,7 +26,8 @@ export default function AdminLoginForm() {
       return
     }
 
-    router.replace(sitePath('/admin/'))
+    // Next.js router already applies basePath configured by next.config.ts.
+    router.replace('/admin/')
     router.refresh()
   }
 
