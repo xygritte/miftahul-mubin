@@ -5,7 +5,6 @@ import { LogOut, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { signOutAndRedirect } from '@/lib/admin/auth'
-import { sitePath } from '@/lib/data/presentation'
 
 type AdminAuthGuardProps = { children: ReactNode }
 
@@ -28,7 +27,7 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
 
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
-        if (active) router.replace(sitePath('/admin/login/'))
+        if (active) router.replace('/admin/login/')
         return
       }
 
@@ -51,7 +50,7 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session || event === 'SIGNED_OUT') {
-        if (active) router.replace(sitePath('/admin/login/'))
+        if (active) router.replace('/admin/login/')
         return
       }
 
@@ -71,7 +70,7 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
   }
 
   if (state === 'denied') {
-    return <div className="admin-status-page"><div className="admin-status-card"><span className="eyebrow">Akses ditolak</span><h1>Akun belum memiliki peran pengelola.</h1><p>Sesi berhasil dikenali, tetapi akun ini tidak memiliki role pengelola yang diizinkan.</p><div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}><button className="admin-button secondary" onClick={() => router.replace(sitePath('/'))}>Kembali ke website</button><button className="admin-button primary" onClick={() => void logout()} disabled={loggingOut}>{loggingOut ? <><Loader2 className="spin" size={16}/> Keluar…</> : <><LogOut size={16}/> Keluar</>}</button></div></div></div>
+    return <div className="admin-status-page"><div className="admin-status-card"><span className="eyebrow">Akses ditolak</span><h1>Akun belum memiliki peran pengelola.</h1><p>Sesi berhasil dikenali, tetapi akun ini tidak memiliki role pengelola yang diizinkan.</p><div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}><button className="admin-button secondary" onClick={() => router.replace('/')}>Kembali ke website</button><button className="admin-button primary" onClick={() => void logout()} disabled={loggingOut}>{loggingOut ? <><Loader2 className="spin" size={16}/> Keluar…</> : <><LogOut size={16}/> Keluar</>}</button></div></div></div>
   }
 
   return <>{children}</>
