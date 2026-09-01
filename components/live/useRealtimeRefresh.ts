@@ -30,7 +30,9 @@ export function useRealtimeRefresh(table: TableName, refresh: () => void | Promi
     const channel = supabase
       .channel(`public:${table}:live:${subscriptionSequence}`)
       .on('postgres_changes', { event: '*', schema: 'public', table }, run)
-      .subscribe()
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') run()
+      })
 
     return () => {
       window.removeEventListener('focus', run)
