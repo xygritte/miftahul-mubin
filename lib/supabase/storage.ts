@@ -47,7 +47,7 @@ export function publicStorageUrl(bucket: StorageBucket, path: string) {
   return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
 }
 
-export async function uploadPublicStorageFile(bucket: StorageBucket, file: File) {
+export async function uploadStorageFile(bucket: StorageBucket, file: File) {
   const config = STORAGE_BUCKETS[bucket]
   if (!acceptsMime(bucket, file.type)) {
     throw new Error(`Tipe file tidak didukung untuk ${config.label}.`)
@@ -59,12 +59,20 @@ export async function uploadPublicStorageFile(bucket: StorageBucket, file: File)
   const path = createStoragePath(file)
   const { error } = await supabase.storage.from(bucket).upload(path, file, {
     cacheControl: '3600',
-    contentType: file.type,
+    contentType: file.type || undefined,
     upsert: false,
   })
   if (error) throw error
 
-  return { path, url: publicStorageUrl(bucket, path) }
+  return { path, url: config.public ? publicStorageUrl(bucket, path) : null }
+}
+
+export const uploadPublicStorageFile = uploadStorageFile
+
+export async function removeStorageFile(bucket: StorageBucket, path: string) {
+  if (!path) return
+  const { error } = await supabase.storage.from(bucket).remove([path])
+  if (error) throw error
 }
 
 export async function privateStorageUrl(bucket: StorageBucket, path: string, expiresIn = 3600) {
