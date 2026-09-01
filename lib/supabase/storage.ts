@@ -47,6 +47,26 @@ export function publicStorageUrl(bucket: StorageBucket, path: string) {
   return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
 }
 
+export async function uploadPublicStorageFile(bucket: StorageBucket, file: File) {
+  const config = STORAGE_BUCKETS[bucket]
+  if (!acceptsMime(bucket, file.type)) {
+    throw new Error(`Tipe file tidak didukung untuk ${config.label}.`)
+  }
+  if (file.size > config.maxBytes) {
+    throw new Error(`Ukuran file terlalu besar. Maksimal ${Math.floor(config.maxBytes / (1024 * 1024))} MB.`)
+  }
+
+  const path = createStoragePath(file)
+  const { error } = await supabase.storage.from(bucket).upload(path, file, {
+    cacheControl: '3600',
+    contentType: file.type,
+    upsert: false,
+  })
+  if (error) throw error
+
+  return { path, url: publicStorageUrl(bucket, path) }
+}
+
 export async function privateStorageUrl(bucket: StorageBucket, path: string, expiresIn = 3600) {
   const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, expiresIn)
   if (error) throw error
