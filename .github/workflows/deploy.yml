@@ -64,6 +64,13 @@ jobs:
             "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/events?select=id,title,status&status=eq.published&limit=1" \
             -o /tmp/supabase-events.json
           test -s /tmp/supabase-events.json
+
+          curl --fail --silent --show-error \
+            -H "apikey: $NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            -H "Authorization: Bearer $NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" \
+            "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/announcements?select=id,title,status&status=eq.published&limit=1" \
+            -o /tmp/supabase-announcements.json
+          test -s /tmp/supabase-announcements.json
           echo "Supabase REST smoke tests passed."
 
       - name: TypeScript check
@@ -87,7 +94,11 @@ jobs:
             exit 1
           fi
           grep -q "useRealtimeRefresh('events'" components/live/LiveEvents.tsx
-          echo "GitHub Pages routing and live event integration checks passed."
+          grep -q "useRealtimeRefresh('islamic_articles'" components/live/LiveIslamic.tsx
+          grep -q "useRealtimeRefresh('announcements'" components/live/LiveAnnouncements.tsx
+          grep -q "useRealtimeRefresh('management_periods'" components/live/LiveManagement.tsx
+          grep -q "useRealtimeRefresh('media_items'" components/live/LiveDocumentation.tsx
+          echo "GitHub Pages routing and live content integration checks passed."
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
