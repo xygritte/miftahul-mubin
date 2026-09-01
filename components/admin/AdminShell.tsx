@@ -37,10 +37,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         {items.map(({ href, label, icon: Icon }) => {
           const resolvedHref = sitePath(href)
           const active = href === '/admin/' ? pathname === resolvedHref : pathname.startsWith(resolvedHref)
-          return <Link className={`admin-nav-item${active ? ' active' : ''}`} aria-current={active ? 'page' : undefined} key={href} href={resolvedHref}><Icon size={17} /><span>{label}</span></Link>
+          return <Link className={`admin-nav-item${active ? ' active' : ''}`} aria-current={active ? 'page' : undefined} key={href} href={href}><Icon size={17} /><span>{label}</span></Link>
         })}
       </nav>
-      <div className="admin-sidebar-bottom"><Link className="admin-nav-item" href={sitePath('/')}><BarChart3 size={17} /><span>Lihat Website</span></Link><button className="admin-nav-item admin-logout" disabled={signingOut} onClick={() => void signOut()}><LogOut size={17} /><span>{signingOut ? 'Keluar…' : 'Keluar'}</span></button></div>
+      <div className="admin-sidebar-bottom"><Link className="admin-nav-item" href="/"><BarChart3 size={17} /><span>Lihat Website</span></Link><button className="admin-nav-item admin-logout" disabled={signingOut} onClick={() => void signOut()}><LogOut size={17} /><span>{signingOut ? 'Keluar…' : 'Keluar'}</span></button></div>
     </aside>
     <div className="admin-main"><header className="admin-topbar"><div><span className="eyebrow">Miftahul Mubin</span><strong>Panel Pengelola</strong></div><span className="admin-session-status"><Settings2 size={15} /> Supabase Auth + Storage</span></header><main className="admin-content">{children}</main></div>
   </div>
