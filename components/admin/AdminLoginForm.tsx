@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
+import { sitePath } from '@/lib/data/presentation'
 
 export default function AdminLoginForm() {
   const router = useRouter()
@@ -26,7 +27,7 @@ export default function AdminLoginForm() {
       return
     }
 
-    router.replace('/admin/')
+    router.replace(sitePath('/admin/'))
     router.refresh()
   }
 
