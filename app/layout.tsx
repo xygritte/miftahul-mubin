@@ -10,6 +10,7 @@ import './popular-polish.css'
 import './embed-polish.css'
 import './admin.css'
 import './dark-mode-fixes.css'
+import './management-photo-fix.css'
 
 export const metadata: Metadata = {
   title: {
