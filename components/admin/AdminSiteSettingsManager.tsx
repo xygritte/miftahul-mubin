@@ -1,14 +1,16 @@
 'use client'
 
-import { useEffect, useState, type FormEvent } from 'react'
-import { Loader2, Save } from 'lucide-react'
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { ImagePlus, Loader2, Save, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { publicStorageUrl, removeStorageFile, uploadPublicStorageFile } from '@/lib/supabase/storage'
 
 type Mode = 'profile' | 'contact'
 
 type Settings = {
   id: boolean
   site_name: string
+  profile_image_url: string
   profile_eyebrow: string
   profile_title: string
   profile_description: string
@@ -31,7 +33,7 @@ type Settings = {
 }
 
 const empty: Settings = {
-  id: true, site_name: 'Miftahul Mubin', profile_eyebrow: '', profile_title: '', profile_description: '',
+  id: true, site_name: 'Miftahul Mubin', profile_image_url: '', profile_eyebrow: '', profile_title: '', profile_description: '',
   about_title: '', about_text: '', profile_period: '', profile_agenda_stat: '', profile_service_stat: '',
   profile_vision_title: '', profile_vision_text: '', profile_mission_title: '', profile_mission_text: '',
   profile_facilities_title: '', profile_facilities_text: '', contact_address: '', contact_phone: '',
@@ -42,8 +44,10 @@ export default function AdminSiteSettingsManager({ mode }: { mode: Mode }) {
   const [form, setForm] = useState<Settings>(empty)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
   async function load() {
     setLoading(true); setError('')
@@ -59,17 +63,66 @@ export default function AdminSiteSettingsManager({ mode }: { mode: Mode }) {
     setForm((current) => ({ ...current, [key]: value }))
   }
 
+  async function uploadProfileImage(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file || uploading) return
+    if (!file.type.startsWith('image/')) { setError('File foto harus berupa gambar.'); return }
+    if (file.size > 8 * 1024 * 1024) { setError('Ukuran foto maksimal 8 MB.'); return }
+
+    setUploading(true); setError(''); setMessage('')
+    try {
+      const uploaded = await uploadPublicStorageFile('site-assets', file)
+      const oldUrl = form.profile_image_url
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('Sesi admin tidak tersedia. Silakan masuk kembali.')
+      const { error: saveError } = await supabase.from('site_settings').update({ profile_image_url: uploaded.url, updated_by: userData.user.id }).eq('id', true)
+      if (saveError) {
+        await removeStorageFile('site-assets', uploaded.path).catch(() => undefined)
+        throw new Error(saveError.code === '42501' ? 'Akun tidak memiliki izin mengubah foto profil.' : 'Foto profil gagal disimpan.')
+      }
+      setForm((current) => ({ ...current, profile_image_url: uploaded.url }))
+      if (oldUrl) setMessage('Foto profil berhasil diganti.')
+      else setMessage('Foto profil berhasil diunggah.')
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : 'Foto profil gagal diunggah.')
+    } finally { setUploading(false) }
+  }
+
+  async function removeProfileImage() {
+    if (!form.profile_image_url || uploading) return
+    if (!window.confirm('Hapus foto profil?')) return
+    setUploading(true); setError(''); setMessage('')
+    try {
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('Sesi admin tidak tersedia. Silakan masuk kembali.')
+      const { error: saveError } = await supabase.from('site_settings').update({ profile_image_url: null, updated_by: userData.user.id }).eq('id', true)
+      if (saveError) throw new Error(saveError.code === '42501' ? 'Akun tidak memiliki izin menghapus foto profil.' : 'Foto profil gagal dihapus.')
+      const marker = '/site-assets/'
+      const index = form.profile_image_url.indexOf(marker)
+      if (index >= 0) {
+        const path = decodeURIComponent(form.profile_image_url.slice(index + marker.length))
+        await removeStorageFile('site-assets', path).catch(() => undefined)
+      }
+      setForm((current) => ({ ...current, profile_image_url: '' }))
+      setMessage('Foto profil berhasil dihapus.')
+    } catch (removeError) {
+      setError(removeError instanceof Error ? removeError.message : 'Foto profil gagal dihapus.')
+    } finally { setUploading(false) }
+  }
+
   async function save(event: FormEvent) {
     event.preventDefault()
-    if (saving) return
+    if (saving || uploading) return
     setSaving(true); setError(''); setMessage('')
     const { data: userData } = await supabase.auth.getUser()
     if (!userData.user) { setError('Sesi admin tidak tersedia. Silakan masuk kembali.'); setSaving(false); return }
 
     const payload = {
-      site_name: form.site_name.trim(), profile_eyebrow: form.profile_eyebrow.trim(), profile_title: form.profile_title.trim(),
-      profile_description: form.profile_description.trim(), about_title: form.about_title.trim(), about_text: form.about_text.trim(),
-      profile_period: form.profile_period.trim(), profile_agenda_stat: form.profile_agenda_stat.trim(), profile_service_stat: form.profile_service_stat.trim(),
+      site_name: form.site_name.trim(), profile_image_url: form.profile_image_url || null,
+      profile_eyebrow: form.profile_eyebrow.trim(), profile_title: form.profile_title.trim(), profile_description: form.profile_description.trim(),
+      about_title: form.about_title.trim(), about_text: form.about_text.trim(), profile_period: form.profile_period.trim(),
+      profile_agenda_stat: form.profile_agenda_stat.trim(), profile_service_stat: form.profile_service_stat.trim(),
       profile_vision_title: form.profile_vision_title.trim(), profile_vision_text: form.profile_vision_text.trim(),
       profile_mission_title: form.profile_mission_title.trim(), profile_mission_text: form.profile_mission_text.trim(),
       profile_facilities_title: form.profile_facilities_title.trim(), profile_facilities_text: form.profile_facilities_text.trim(),
@@ -85,8 +138,13 @@ export default function AdminSiteSettingsManager({ mode }: { mode: Mode }) {
   if (loading) return <div className="admin-table-state"><Loader2 className="spin" size={20} /> Memuat pengaturan…</div>
 
   const profile = mode === 'profile'
-  return <form className="admin-editor-form" onSubmit={save}>
-    <div className="admin-form-grid">
+  return <form className="admin-editor-form admin-site-settings-form" onSubmit={save}>
+    {profile && <section className="admin-settings-media" aria-label="Foto profil">
+      <div className="admin-settings-media-preview">{form.profile_image_url ? <img src={form.profile_image_url} alt="Pratinjau foto profil" /> : <div className="admin-settings-media-placeholder"><ImagePlus size={26} /><span>Belum ada foto</span></div>}</div>
+      <div className="admin-settings-media-copy"><span className="eyebrow">Identitas visual</span><h2>Foto Profil</h2><p>Gunakan foto masjid atau gambar representatif. Disarankan JPG, PNG, atau WebP hingga 8 MB.</p><div className="admin-row-actions admin-settings-media-actions"><button type="button" className="admin-button secondary" onClick={() => inputRef.current?.click()} disabled={uploading}>{uploading ? <Loader2 className="spin" size={16} /> : <ImagePlus size={16} />} {form.profile_image_url ? 'Ganti foto' : 'Upload foto'}</button>{form.profile_image_url && <button type="button" className="admin-button secondary danger-text" onClick={() => void removeProfileImage()} disabled={uploading}><Trash2 size={16} /> Hapus</button>}<input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml" onChange={(e) => void uploadProfileImage(e)} hidden /></div></div>
+    </section>}
+
+    <div className="admin-form-section"><div className="admin-form-section-heading"><span className="eyebrow">Identitas</span><h2>{profile ? 'Informasi profil' : 'Informasi kontak'}</h2><p>{profile ? 'Atur konten yang tampil pada halaman profil.' : 'Atur alamat, komunikasi, dan lokasi yang tampil pada halaman kontak.'}</p></div><div className="admin-form-grid">
       {profile ? <>
         <label><span>Nama situs</span><input value={form.site_name} onChange={(e) => update('site_name', e.target.value)} /></label>
         <label><span>Eyebrow</span><input value={form.profile_eyebrow} onChange={(e) => update('profile_eyebrow', e.target.value)} /></label>
@@ -97,12 +155,6 @@ export default function AdminSiteSettingsManager({ mode }: { mode: Mode }) {
         <label><span>Periode informasi</span><input value={form.profile_period} onChange={(e) => update('profile_period', e.target.value)} /></label>
         <label><span>Statistik agenda</span><input value={form.profile_agenda_stat} placeholder="24+" onChange={(e) => update('profile_agenda_stat', e.target.value)} /></label>
         <label><span>Statistik bidang</span><input value={form.profile_service_stat} placeholder="5" onChange={(e) => update('profile_service_stat', e.target.value)} /></label>
-        <label><span>Judul visi</span><input value={form.profile_vision_title} onChange={(e) => update('profile_vision_title', e.target.value)} /></label>
-        <label className="full"><span>Isi visi</span><textarea rows={4} value={form.profile_vision_text} onChange={(e) => update('profile_vision_text', e.target.value)} /></label>
-        <label><span>Judul misi</span><input value={form.profile_mission_title} onChange={(e) => update('profile_mission_title', e.target.value)} /></label>
-        <label className="full"><span>Isi misi</span><textarea rows={4} value={form.profile_mission_text} onChange={(e) => update('profile_mission_text', e.target.value)} /></label>
-        <label><span>Judul fasilitas</span><input value={form.profile_facilities_title} onChange={(e) => update('profile_facilities_title', e.target.value)} /></label>
-        <label className="full"><span>Isi fasilitas</span><textarea rows={4} value={form.profile_facilities_text} onChange={(e) => update('profile_facilities_text', e.target.value)} /></label>
       </> : <>
         <label className="full"><span>Alamat</span><textarea rows={4} value={form.contact_address} onChange={(e) => update('contact_address', e.target.value)} /></label>
         <label><span>Nomor telepon</span><input value={form.contact_phone} onChange={(e) => update('contact_phone', e.target.value)} /></label>
@@ -110,9 +162,19 @@ export default function AdminSiteSettingsManager({ mode }: { mode: Mode }) {
         <label><span>Jam layanan</span><input value={form.contact_hours} onChange={(e) => update('contact_hours', e.target.value)} /></label>
         <label className="full"><span>Pencarian Google Maps</span><input value={form.contact_maps_query} onChange={(e) => update('contact_maps_query', e.target.value)} /></label>
       </>}
-    </div>
+    </div></div>
+
+    {profile && <div className="admin-form-section"><div className="admin-form-section-heading"><span className="eyebrow">Konten utama</span><h2>Tentang, visi, misi, fasilitas</h2><p>Susun isi bagian utama halaman profil tanpa perlu mengubah kode website.</p></div><div className="admin-form-grid">
+      <label><span>Judul visi</span><input value={form.profile_vision_title} onChange={(e) => update('profile_vision_title', e.target.value)} /></label>
+      <label><span>Judul misi</span><input value={form.profile_mission_title} onChange={(e) => update('profile_mission_title', e.target.value)} /></label>
+      <label><span>Judul fasilitas</span><input value={form.profile_facilities_title} onChange={(e) => update('profile_facilities_title', e.target.value)} /></label>
+      <label className="full"><span>Isi visi</span><textarea rows={4} value={form.profile_vision_text} onChange={(e) => update('profile_vision_text', e.target.value)} /></label>
+      <label className="full"><span>Isi misi</span><textarea rows={4} value={form.profile_mission_text} onChange={(e) => update('profile_mission_text', e.target.value)} /></label>
+      <label className="full"><span>Isi fasilitas</span><textarea rows={4} value={form.profile_facilities_text} onChange={(e) => update('profile_facilities_text', e.target.value)} /></label>
+    </div></div>}
+
     {error && <p className="admin-form-error" role="alert">{error}</p>}
     {message && <p className="admin-form-success" role="status">{message}</p>}
-    <div className="admin-modal-actions"><button type="submit" className="admin-button primary" disabled={saving}>{saving ? <><Loader2 className="spin" size={16} /> Menyimpan…</> : <><Save size={16} /> Simpan perubahan</>}</button></div>
+    <div className="admin-modal-actions admin-settings-submit"><button type="submit" className="admin-button primary" disabled={saving || uploading}>{saving ? <><Loader2 className="spin" size={16} /> Menyimpan…</> : <><Save size={16} /> Simpan perubahan</>}</button></div>
   </form>
 }
