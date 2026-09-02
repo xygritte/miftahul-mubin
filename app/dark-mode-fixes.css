@@ -1,0 +1,284 @@
+/* Dark-mode completion layer. Loaded last so legacy and inline component styles are normalized. */
+html[data-theme='dark'] {
+  --mm-bg-deep: #0d1311;
+  --mm-surface: #151d1a;
+  --mm-surface-2: #1b2521;
+  --mm-surface-3: #202d28;
+  --mm-text: #e6eeea;
+  --mm-text-strong: #f4f8f6;
+  --mm-muted: #a6b4ae;
+  --mm-border: #2d3b35;
+  --mm-border-strong: #405149;
+  --mm-accent: #43a98f;
+  --mm-accent-soft: #18382f;
+  --mm-gold: #d7b76c;
+}
+
+html[data-theme='dark'] body,
+html[data-theme='dark'] .inner-page,
+html[data-theme='dark'] .page-space {
+  background: var(--mm-bg-deep);
+  color: var(--mm-text);
+}
+
+/* Public layout surfaces */
+html[data-theme='dark'] .management-public,
+html[data-theme='dark'] .management-empty,
+html[data-theme='dark'] .finance-disclosure,
+html[data-theme='dark'] .empty-state,
+html[data-theme='dark'] .finance-summary-page > div,
+html[data-theme='dark'] .finance-table-wrap,
+html[data-theme='dark'] .gallery-page article,
+html[data-theme='dark'] .contact-card-page,
+html[data-theme='dark'] .profile-feature,
+html[data-theme='dark'] .profile-columns article,
+html[data-theme='dark'] .notice-list article,
+html[data-theme='dark'] .news-page-card,
+html[data-theme='dark'] .event-card,
+html[data-theme='dark'] .event-row,
+html[data-theme='dark'] .event-info-grid > div,
+html[data-theme='dark'] .sidebar-card,
+html[data-theme='dark'] .org-tree-page {
+  background: var(--mm-surface);
+  color: var(--mm-text);
+  border-color: var(--mm-border);
+}
+
+html[data-theme='dark'] .management-public-head,
+html[data-theme='dark'] .management-lead-card,
+html[data-theme='dark'] .management-team-heading,
+html[data-theme='dark'] .management-person-card,
+html[data-theme='dark'] .management-public-note,
+html[data-theme='dark'] .management-empty,
+html[data-theme='dark'] .finance-disclosure,
+html[data-theme='dark'] .empty-state,
+html[data-theme='dark'] .finance-note,
+html[data-theme='dark'] .sidebar-note,
+html[data-theme='dark'] .event-detail-note,
+html[data-theme='dark'] .finance-period,
+html[data-theme='dark'] .event-info-grid,
+html[data-theme='dark'] .profile-facts,
+html[data-theme='dark'] .finance-table-wrap,
+html[data-theme='dark'] .gallery-page article > div:last-child {
+  border-color: var(--mm-border);
+}
+
+html[data-theme='dark'] .management-lead-card {
+  background: linear-gradient(135deg, #17221e 0%, #151d1a 70%);
+}
+
+html[data-theme='dark'] .management-period-badge,
+html[data-theme='dark'] .management-person-card,
+html[data-theme='dark'] .management-public-note,
+html[data-theme='dark'] .finance-note,
+html[data-theme='dark'] .empty-state,
+html[data-theme='dark'] .sidebar-note,
+html[data-theme='dark'] .event-detail-note {
+  background: var(--mm-surface-2);
+}
+
+html[data-theme='dark'] .management-person-card:hover {
+  background: var(--mm-surface-3);
+  border-color: var(--mm-border-strong);
+  box-shadow: 0 12px 30px rgba(0,0,0,.28);
+}
+
+html[data-theme='dark'] .management-photo {
+  background: #23302b;
+  color: #a9d7c8;
+  border-color: #18211e;
+  box-shadow: 0 7px 24px rgba(0,0,0,.3);
+}
+
+html[data-theme='dark'] .management-public-note {
+  border-left-color: var(--mm-accent);
+}
+
+html[data-theme='dark'] .management-role,
+html[data-theme='dark'] .management-person-content > span,
+html[data-theme='dark'] .finance-period > span,
+html[data-theme='dark'] .event-label,
+html[data-theme='dark'] .gallery-page article > div > span,
+html[data-theme='dark'] .notice-list article > div > span {
+  color: var(--mm-gold);
+}
+
+html[data-theme='dark'] .management-public-head p,
+html[data-theme='dark'] .management-lead-content p,
+html[data-theme='dark'] .management-lead-label,
+html[data-theme='dark'] .management-team-heading > span,
+html[data-theme='dark'] .management-person-content p,
+html[data-theme='dark'] .management-public-note p,
+html[data-theme='dark'] .management-empty p,
+html[data-theme='dark'] .finance-disclosure p,
+html[data-theme='dark'] .finance-note p,
+html[data-theme='dark'] .empty-state p,
+html[data-theme='dark'] .gallery-page article small,
+html[data-theme='dark'] .contact-card-page p,
+html[data-theme='dark'] .profile-feature p,
+html[data-theme='dark'] .profile-columns p,
+html[data-theme='dark'] .notice-list article p,
+html[data-theme='dark'] .event-detail-note p {
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] .management-period-badge {
+  color: var(--mm-accent);
+}
+
+html[data-theme='dark'] .finance-disclosure {
+  border-left-color: var(--mm-gold);
+}
+
+html[data-theme='dark'] .finance-summary-page > div,
+html[data-theme='dark'] .finance-table-wrap,
+html[data-theme='dark'] .event-info-grid > div,
+html[data-theme='dark'] .gallery-page article,
+html[data-theme='dark'] .contact-card-page,
+html[data-theme='dark'] .profile-feature,
+html[data-theme='dark'] .profile-columns article,
+html[data-theme='dark'] .news-page-card,
+html[data-theme='dark'] .event-card,
+html[data-theme='dark'] .sidebar-card {
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+
+html[data-theme='dark'] .report-button,
+html[data-theme='dark'] .event-status,
+html[data-theme='dark'] .filter-row-interactive button,
+html[data-theme='dark'] .filter-row span {
+  background: var(--mm-surface);
+  color: var(--mm-text);
+  border-color: var(--mm-border-strong);
+}
+
+html[data-theme='dark'] .filter-row-interactive button:hover,
+html[data-theme='dark'] .filter-row-interactive button.is-active {
+  background: var(--mm-accent-soft);
+  color: var(--mm-accent);
+  border-color: #2d6656;
+}
+
+html[data-theme='dark'] .filter-row span:first-child {
+  background: var(--mm-accent);
+  color: #071511;
+  border-color: var(--mm-accent);
+}
+
+html[data-theme='dark'] .event-status {
+  color: var(--mm-accent);
+}
+
+html[data-theme='dark'] th {
+  background: var(--mm-surface-2);
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] td,
+html[data-theme='dark'] th,
+html[data-theme='dark'] .event-row,
+html[data-theme='dark'] .profile-facts > div,
+html[data-theme='dark'] .notice-list article,
+html[data-theme='dark'] .gallery-page article {
+  border-color: var(--mm-border);
+}
+
+html[data-theme='dark'] .article-lead,
+html[data-theme='dark'] .article-caption,
+html[data-theme='dark'] .article-share,
+html[data-theme='dark'] .event-details,
+html[data-theme='dark'] .finance-no-proof {
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] .article-hero {
+  background: var(--mm-surface-2);
+}
+
+/* Header control consistency */
+html[data-theme='dark'] .mm-theme-toggle {
+  background: var(--mm-accent);
+}
+
+html[data-theme='dark'] .mm-theme-knob {
+  background: #f4f8f6;
+  color: #31544a;
+}
+
+/* Admin console */
+.admin-theme-toggle {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-subtle, #dde3df);
+  border-radius: 10px;
+  background: var(--surface-card, #fff);
+  color: inherit;
+  cursor: pointer;
+}
+.admin-theme-toggle:hover {
+  background: var(--surface-muted, #f2f5f2);
+}
+
+html[data-theme='dark'] .admin-theme-toggle {
+  background: #151c19;
+  border-color: #34423c;
+  color: #e6eeea;
+}
+
+html[data-theme='dark'] .admin-theme-toggle:hover {
+  background: #1c2622;
+}
+
+html[data-theme='dark'] .admin-page-heading h1,
+html[data-theme='dark'] .admin-page-heading strong,
+html[data-theme='dark'] .admin-module-card strong,
+html[data-theme='dark'] .admin-modal-header h2,
+html[data-theme='dark'] .admin-status-card h1,
+html[data-theme='dark'] .admin-login-heading h1,
+html[data-theme='dark'] .admin-login-form label,
+html[data-theme='dark'] .admin-editor-form label,
+html[data-theme='dark'] .admin-table-title strong {
+  color: #f0f6f3;
+}
+
+html[data-theme='dark'] .admin-page-heading p,
+html[data-theme='dark'] .admin-module-card p,
+html[data-theme='dark'] .admin-module-card span,
+html[data-theme='dark'] .admin-status-card p,
+html[data-theme='dark'] .admin-login-heading p,
+html[data-theme='dark'] .admin-form-note,
+html[data-theme='dark'] .admin-login-footer,
+html[data-theme='dark'] .admin-table-title small,
+html[data-theme='dark'] .admin-session-status {
+  color: #a6b4ae;
+}
+
+html[data-theme='dark'] .admin-module-card:hover {
+  border-color: #405149;
+  box-shadow: 0 14px 30px rgba(0,0,0,.25);
+}
+
+html[data-theme='dark'] .admin-form-error {
+  background: #3a211c;
+  color: #f3aaa0;
+}
+
+html[data-theme='dark'] .admin-status-pill.published {
+  background: #18382f;
+  color: #9fe0ca;
+}
+html[data-theme='dark'] .admin-status-pill.draft {
+  background: #252d2a;
+  color: #a9b3af;
+}
+html[data-theme='dark'] .admin-status-pill.archived {
+  background: #3a3021;
+  color: #e0bc79;
+}
+
+@media (max-width: 700px) {
+  .admin-theme-toggle { width: 40px; height: 40px; flex-basis: 40px; }
+}
