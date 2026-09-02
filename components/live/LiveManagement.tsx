@@ -21,7 +21,7 @@ function initials(name: string) {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || 'MM'
 }
 
-function formatPeriodDate(value: string | null) {
+function formatPeriodDate(value: string | null | undefined) {
   if (!value) return null
   const date = new Date(`${value.slice(0, 10)}T12:00:00`)
   if (Number.isNaN(date.getTime())) return null
