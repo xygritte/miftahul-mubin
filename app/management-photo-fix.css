@@ -1,0 +1,34 @@
+/* Management photo bounds. Loaded after component/base styles. */
+.management-person-card .management-photo {
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  min-height: 72px !important;
+  max-height: 72px !important;
+  flex: 0 0 72px !important;
+  overflow: hidden !important;
+  display: grid !important;
+}
+
+.management-person-card .management-photo > img,
+.management-person-card .management-photo > span {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.management-person-card .management-photo > img {
+  display: block !important;
+  object-fit: cover !important;
+}
+
+html[data-theme='dark'] .management-person-card .management-photo {
+  background: #23302b;
+  color: #a9d7c8;
+  border-color: #18211e;
+  box-shadow: 0 7px 24px rgba(0,0,0,.3);
+}
