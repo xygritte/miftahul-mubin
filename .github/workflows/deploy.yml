@@ -132,10 +132,13 @@ jobs:
           grep -qi 'Miftahul Mubin' /tmp/site.html
           echo "Home page is reachable."
 
-      - name: Verify live event fallback route
+      - name: Verify GitHub Pages dynamic-route fallback
         run: |
           url="https://xygritte.github.io/miftahul-mubin/kegiatan/kajian-rutin-kamis-03-september-2026/"
           status=$(curl --silent --show-error --location --output /tmp/event.html --write-out '%{http_code}' "$url")
-          test "$status" = "200" || { echo "Live event route returned HTTP $status"; exit 1; }
-          grep -qiE 'Kajian Rutin|Kegiatan tidak tersedia|Miftahul Mubin' /tmp/event.html
-          echo "Live event route smoke test passed."
+          case "$status" in
+            200|404) ;;
+            *) echo "Unexpected live event route HTTP $status"; exit 1 ;;
+          esac
+          grep -qi 'Miftahul Mubin' /tmp/event.html
+          echo "GitHub Pages dynamic-route fallback is available (HTTP $status)."
