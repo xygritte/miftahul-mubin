@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart3, CalendarDays, FileText, GalleryVerticalEnd, HardDrive, LayoutDashboard, LogOut, Megaphone, Moon, Settings2, ShieldCheck, Sun, Users, WalletCards } from 'lucide-react'
+import { BarChart3, CalendarDays, FileText, GalleryVerticalEnd, HardDrive, LayoutDashboard, LogOut, Mail, Megaphone, Moon, ShieldCheck, Sun, Users, WalletCards, UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { signOutAndRedirect } from '@/lib/admin/auth'
 import { sitePath } from '@/lib/data/presentation'
@@ -16,6 +16,8 @@ const items = [
   { href: '/admin/kepengurusan/', label: 'Kepengurusan', icon: Users },
   { href: '/admin/dokumentasi/', label: 'Dokumentasi', icon: GalleryVerticalEnd },
   { href: '/admin/keuangan/', label: 'Keuangan', icon: WalletCards },
+  { href: '/admin/profil/', label: 'Profil', icon: UserRound },
+  { href: '/admin/kontak/', label: 'Kontak', icon: Mail },
   { href: '/admin/storage/', label: 'Storage', icon: HardDrive },
 ]
 
@@ -25,9 +27,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [signingOut, setSigningOut] = useState(false)
   const [dark, setDark] = useState(false)
 
-  useEffect(() => {
-    setDark(document.documentElement.dataset.theme === 'dark')
-  }, [])
+  useEffect(() => { setDark(document.documentElement.dataset.theme === 'dark') }, [])
 
   async function signOut() {
     if (signingOut) return
@@ -54,6 +54,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </nav>
       <div className="admin-sidebar-bottom"><Link className="admin-nav-item" href="/"><BarChart3 size={17} /><span>Lihat Website</span></Link><button className="admin-nav-item admin-logout" disabled={signingOut} onClick={() => void signOut()}><LogOut size={17} /><span>{signingOut ? 'Keluar…' : 'Keluar'}</span></button></div>
     </aside>
-    <div className="admin-main"><header className="admin-topbar"><div><span className="eyebrow">Miftahul Mubin</span><strong>Panel Pengelola</strong></div><span className="admin-topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><span className="admin-session-status"><Settings2 size={15} /> Supabase Auth + Storage</span><button className="admin-theme-toggle" type="button" aria-label={dark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'} aria-pressed={dark} onClick={toggleTheme}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button></span></header><main className="admin-content">{children}</main></div>
+    <div className="admin-main"><header className="admin-topbar"><div><span className="eyebrow">Miftahul Mubin</span><strong>Panel Pengelola</strong></div><span className="admin-topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><span className="admin-session-status">Supabase Auth + Storage</span><button className="admin-theme-toggle" type="button" aria-label={dark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'} aria-pressed={dark} onClick={toggleTheme}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button></span></header><main className="admin-content">{children}</main></div>
   </div>
 }
