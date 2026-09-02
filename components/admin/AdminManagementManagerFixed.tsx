@@ -12,6 +12,8 @@ type MemberForm = { id?: string; name: string; position: string; photoUrl: strin
 
 const EMPTY_PERIOD: PeriodForm = { name: '', startDate: '', endDate: '', isActive: false }
 const EMPTY_MEMBER: MemberForm = { name: '', position: '', photoUrl: '', bio: '', sortOrder: '0' }
+const MANAGEMENT_PHOTO_SIZE = 800
+const MANAGEMENT_PHOTO_MAX_SOURCE_BYTES = 20 * 1024 * 1024
 
 function formatDate(value: string | null) {
   if (!value) return '—'
@@ -32,6 +34,54 @@ function messageFor(error: { code?: string; message?: string } | null, label: st
   if (error.code === '23505') return 'Data dengan nilai unik tersebut sudah digunakan.'
   if (error.code === '23503') return 'Relasi data tidak valid.'
   return `${label} gagal diproses.`
+}
+
+async function prepareManagementPhoto(file: File) {
+  if (!file.type.startsWith('image/')) throw new Error('File harus berupa gambar.')
+  if (file.size > MANAGEMENT_PHOTO_MAX_SOURCE_BYTES) throw new Error('Foto sumber terlalu besar. Maksimal 20 MB.')
+
+  const objectUrl = URL.createObjectURL(file)
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image()
+      element.onload = () => resolve(element)
+      element.onerror = () => reject(new Error('Foto tidak dapat dibaca oleh browser.'))
+      element.src = objectUrl
+    })
+
+    const sourceSize = Math.min(image.naturalWidth, image.naturalHeight)
+    if (!sourceSize) throw new Error('Dimensi foto tidak valid.')
+
+    const sourceX = (image.naturalWidth - sourceSize) / 2
+    const sourceY = (image.naturalHeight - sourceSize) / 2
+    const canvas = document.createElement('canvas')
+    canvas.width = MANAGEMENT_PHOTO_SIZE
+    canvas.height = MANAGEMENT_PHOTO_SIZE
+    const context = canvas.getContext('2d')
+    if (!context) throw new Error('Browser tidak mendukung pemrosesan foto.')
+
+    context.imageSmoothingEnabled = true
+    context.imageSmoothingQuality = 'high'
+    context.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceSize,
+      sourceSize,
+      0,
+      0,
+      MANAGEMENT_PHOTO_SIZE,
+      MANAGEMENT_PHOTO_SIZE,
+    )
+
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.84))
+    if (!blob) throw new Error('Foto gagal dioptimalkan.')
+
+    const originalBase = file.name.replace(/\.[^.]+$/, '') || 'foto-anggota'
+    return new File([blob], `${originalBase}.jpg`, { type: 'image/jpeg', lastModified: Date.now() })
+  } finally {
+    URL.revokeObjectURL(objectUrl)
+  }
 }
 
 export default function AdminManagementManagerFixed() {
@@ -148,11 +198,12 @@ export default function AdminManagementManagerFixed() {
     if (!file || saving || uploading) return
     setUploading(true); setError(''); setSuccess('')
     try {
-      const uploaded = await uploadPublicStorageFile('management-media', file)
+      const optimized = await prepareManagementPhoto(file)
+      const uploaded = await uploadPublicStorageFile('management-media', optimized)
       if (stagedPath) await removeStorageFile('management-media', stagedPath).catch(() => undefined)
       setStagedPath(uploaded.path)
       setMemberForm((current) => ({ ...current, photoUrl: uploaded.url }))
-      setSuccess('Foto berhasil diunggah. Klik Simpan anggota untuk menyimpannya.')
+      setSuccess(`Foto dioptimalkan menjadi ${MANAGEMENT_PHOTO_SIZE} × ${MANAGEMENT_PHOTO_SIZE} px dan siap disimpan.`)
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : 'Foto anggota gagal diunggah.')
     } finally { setUploading(false) }
@@ -208,6 +259,6 @@ export default function AdminManagementManagerFixed() {
 
     {periodEditor && <div className="admin-modal-backdrop"><div className="admin-modal" role="dialog" aria-modal="true"><div className="admin-modal-header"><div><span className="eyebrow">CMS Kepengurusan</span><h2>{periodForm.id ? 'Edit periode' : 'Tambah periode'}</h2></div><button className="admin-icon-button" onClick={() => setPeriodEditor(false)} disabled={saving}><X size={18}/></button></div><form className="admin-editor-form" onSubmit={savePeriod}><label><span>Nama periode</span><input required value={periodForm.name} onChange={(e) => setPeriodForm((v) => ({ ...v, name: e.target.value }))}/></label><div className="admin-form-grid"><label><span>Tanggal mulai</span><input type="date" required value={periodForm.startDate} onChange={(e) => setPeriodForm((v) => ({ ...v, startDate: e.target.value }))}/></label><label><span>Tanggal selesai</span><input type="date" value={periodForm.endDate} onChange={(e) => setPeriodForm((v) => ({ ...v, endDate: e.target.value }))}/></label></div><label className="admin-checkbox"><input type="checkbox" checked={periodForm.isActive} onChange={(e) => setPeriodForm((v) => ({ ...v, isActive: e.target.checked }))}/><span>Jadikan periode aktif</span></label><div className="admin-modal-actions"><button type="button" className="admin-button secondary" onClick={() => setPeriodEditor(false)} disabled={saving}>Batal</button><button type="submit" className="admin-button primary" disabled={saving}>{saving ? <><Loader2 className="spin" size={16}/> Menyimpan…</> : 'Simpan periode'}</button></div></form></div></div>}
 
-    {memberEditor && <div className="admin-modal-backdrop"><div className="admin-modal" role="dialog" aria-modal="true"><div className="admin-modal-header"><div><span className="eyebrow">CMS Kepengurusan</span><h2>{memberForm.id ? 'Edit anggota' : 'Tambah anggota'}</h2></div><button className="admin-icon-button" onClick={closeMemberEditor} disabled={saving || uploading}><X size={18}/></button></div><form className="admin-editor-form" onSubmit={saveMember}><label><span>Nama</span><input required value={memberForm.name} onChange={(e) => setMemberForm((v) => ({ ...v, name: e.target.value }))}/></label><label><span>Jabatan</span><input required value={memberForm.position} onChange={(e) => setMemberForm((v) => ({ ...v, position: e.target.value }))}/></label><label><span>Urutan</span><input type="number" min="0" step="1" required value={memberForm.sortOrder} onChange={(e) => setMemberForm((v) => ({ ...v, sortOrder: e.target.value }))}/></label><label><span>Bio</span><textarea rows={4} value={memberForm.bio} onChange={(e) => setMemberForm((v) => ({ ...v, bio: e.target.value }))}/></label><div className="admin-upload-field"><div className="admin-upload-label"><span>Foto anggota</span><small>JPG, PNG, WebP, GIF, SVG · maks. 8 MB</small></div>{memberForm.photoUrl && <div className="admin-upload-preview"><img src={memberForm.photoUrl} alt="Pratinjau foto anggota"/><button type="button" className="admin-icon-button" onClick={() => setMemberForm((v) => ({ ...v, photoUrl: '' }))} disabled={saving || uploading} aria-label="Hapus foto"><X size={16}/></button></div>}<label className="admin-file-picker"><ImagePlus size={17}/><span>{uploading ? 'Mengunggah foto…' : memberForm.photoUrl ? 'Ganti foto' : 'Pilih foto dari perangkat'}</span><input type="file" accept="image/*" onChange={(e) => void handlePhoto(e)} disabled={saving || uploading}/></label></div><div className="admin-modal-actions"><button type="button" className="admin-button secondary" onClick={closeMemberEditor} disabled={saving || uploading}>Batal</button><button type="submit" className="admin-button primary" disabled={saving || uploading}>{saving ? <><Loader2 className="spin" size={16}/> Menyimpan…</> : uploading ? <><Loader2 className="spin" size={16}/> Mengunggah…</> : 'Simpan anggota'}</button></div></form></div></div>}
+    {memberEditor && <div className="admin-modal-backdrop"><div className="admin-modal" role="dialog" aria-modal="true"><div className="admin-modal-header"><div><span className="eyebrow">CMS Kepengurusan</span><h2>{memberForm.id ? 'Edit anggota' : 'Tambah anggota'}</h2></div><button className="admin-icon-button" onClick={closeMemberEditor} disabled={saving || uploading}><X size={18}/></button></div><form className="admin-editor-form" onSubmit={saveMember}><label><span>Nama</span><input required value={memberForm.name} onChange={(e) => setMemberForm((v) => ({ ...v, name: e.target.value }))}/></label><label><span>Jabatan</span><input required value={memberForm.position} onChange={(e) => setMemberForm((v) => ({ ...v, position: e.target.value }))}/></label><label><span>Urutan</span><input type="number" min="0" step="1" required value={memberForm.sortOrder} onChange={(e) => setMemberForm((v) => ({ ...v, sortOrder: e.target.value }))}/></label><label><span>Bio</span><textarea rows={4} value={memberForm.bio} onChange={(e) => setMemberForm((v) => ({ ...v, bio: e.target.value }))}/></label><div className="admin-upload-field"><div className="admin-upload-label"><span>Foto anggota</span><small>Foto akan dipotong proporsional dari tengah dan disimpan sebagai JPEG 800 × 800 px.</small></div>{memberForm.photoUrl && <div className="admin-upload-preview"><img src={memberForm.photoUrl} alt="Pratinjau foto anggota"/><button type="button" className="admin-icon-button" onClick={() => setMemberForm((v) => ({ ...v, photoUrl: '' }))} disabled={saving || uploading} aria-label="Hapus foto"><X size={16}/></button></div>}<label className="admin-file-picker"><ImagePlus size={17}/><span>{uploading ? 'Menyiapkan foto…' : memberForm.photoUrl ? 'Ganti foto' : 'Pilih foto dari perangkat'}</span><input type="file" accept="image/*" onChange={(e) => void handlePhoto(e)} disabled={saving || uploading}/></label></div><div className="admin-modal-actions"><button type="button" className="admin-button secondary" onClick={closeMemberEditor} disabled={saving || uploading}>Batal</button><button type="submit" className="admin-button primary" disabled={saving || uploading}>{saving ? <><Loader2 className="spin" size={16}/> Menyimpan…</> : uploading ? <><Loader2 className="spin" size={16}/> Memproses…</> : 'Simpan anggota'}</button></div></form></div></div>}
   </section>
 }
