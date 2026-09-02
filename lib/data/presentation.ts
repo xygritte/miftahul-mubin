@@ -50,6 +50,8 @@ export function newsRecordToLegacy(item: NewsRecord): NewsItem {
     image: item.thumbnailUrl ?? sitePath('/hero-bg.png'),
     excerpt: item.excerpt,
     content: item.content,
+    publishedAt: item.publishedAt ?? null,
+    viewCount: item.viewCount,
   }
 }
 
