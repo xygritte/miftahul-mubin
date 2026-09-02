@@ -1,5 +1,6 @@
 import Header from './Header'
 import Footer from './Footer'
+import ScrollToTop from './ScrollToTop'
 import { contentRepository } from '@/lib/data'
 import { buildSearchEntries } from '@/lib/data/presentation'
 
@@ -12,6 +13,7 @@ export default async function SiteShell({ children }: { children: React.ReactNod
 
   return (
     <>
+      <ScrollToTop />
       <Header searchItems={buildSearchEntries(news, islamic, events)} />
       {children}
       <Footer />
