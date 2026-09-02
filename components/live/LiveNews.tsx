@@ -17,6 +17,11 @@ type NewsRow = {
   categories?: { name: string } | { name: string }[] | null
 }
 
+type HomeNewsItem = NewsItem & {
+  publishedAt?: string
+  viewCount?: number
+}
+
 function mapRow(row: NewsRow): NewsRecord {
   const category = Array.isArray(row.categories) ? row.categories[0]?.name : row.categories?.name
   const content = Array.isArray(row.content) ? row.content : row.content.split(/\n\s*\n/).filter(Boolean)
@@ -28,13 +33,17 @@ function mapRow(row: NewsRow): NewsRecord {
   }
 }
 
-async function fetchNews(): Promise<NewsItem[] | null> {
+async function fetchNews(): Promise<HomeNewsItem[] | null> {
   const { data, error } = await supabase.from('news')
     .select('id,title,slug,excerpt,content,thumbnail_url,category_id,status,published_at,view_count,created_at,updated_at,categories(name)')
     .eq('status','published').not('published_at','is',null).lte('published_at',new Date().toISOString())
     .order('published_at',{ascending:false})
   if (error) return null
-  return ((data ?? []) as unknown as NewsRow[]).map(mapRow).map(newsRecordToLegacy)
+  return ((data ?? []) as unknown as NewsRow[]).map(mapRow).map((record) => ({
+    ...newsRecordToLegacy(record),
+    publishedAt: record.publishedAt ?? undefined,
+    viewCount: record.viewCount ?? 0,
+  }))
 }
 
 function formatDate(value: string | undefined) {
@@ -47,7 +56,7 @@ function formatViews(value: number | undefined) {
 }
 
 export default function LiveNews({ initialItems }: Props) {
-  const [items,setItems] = useState(initialItems)
+  const [items,setItems] = useState<HomeNewsItem[]>(initialItems)
   const refresh = useCallback(async () => { const next = await fetchNews(); if (next !== null) setItems(next) }, [])
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
