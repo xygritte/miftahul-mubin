@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Eye, Clock3 } from 'lucide-react'
 import { newsRecordToLegacy } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
@@ -37,6 +37,15 @@ async function fetchNews(): Promise<NewsItem[] | null> {
   return ((data ?? []) as unknown as NewsRow[]).map(mapRow).map(newsRecordToLegacy)
 }
 
+function formatDate(value: string | undefined) {
+  if (!value) return ''
+  return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value))
+}
+
+function formatViews(value: number | undefined) {
+  return new Intl.NumberFormat('id-ID', { notation: 'compact', maximumFractionDigits: 1 }).format(value ?? 0)
+}
+
 export default function LiveNews({ initialItems }: Props) {
   const [items,setItems] = useState(initialItems)
   const refresh = useCallback(async () => { const next = await fetchNews(); if (next !== null) setItems(next) }, [])
@@ -44,5 +53,29 @@ export default function LiveNews({ initialItems }: Props) {
   useRealtimeRefresh('news', refresh)
   if (!items.length) return <div className="empty-state"><strong>Belum ada berita</strong><p>Belum tersedia berita yang dipublikasikan.</p></div>
   const [featured,...latest] = items
-  return <div className="home-news-layout"><Link className="home-featured-news" href={`/berita/${featured.slug}/`}><div className="home-news-image"><img src={featured.image} alt={featured.title}/><span className="tag">{featured.category}</span></div><div className="home-news-copy"><span className="meta">{featured.date}</span><h3>{featured.title}</h3><p>{featured.excerpt}</p><span className="read-link">Baca selengkapnya <ArrowRight size={15}/></span></div></Link><div className="home-latest-list">{latest.slice(0,3).map((item,index)=><Link className="home-latest-item" key={item.slug} href={`/berita/${item.slug}/`}><span className="latest-number">0{index+2}</span><div><span className="eyebrow">{item.category}</span><h3>{item.title}</h3><span className="meta">{item.date}</span></div><ArrowRight size={16} aria-hidden="true"/></Link>)}</div></div>
+  return (
+    <div className="home-news-layout">
+      <Link className="home-featured-news" href={`/berita/${featured.slug}/`}>
+        <div className="home-news-image"><img src={featured.image} alt={featured.title}/><span className="tag">{featured.category}</span><div className="home-news-image-shade"/></div>
+        <div className="home-news-copy">
+          <div className="home-news-meta"><span>{formatDate(featured.publishedAt)}</span><span><Eye size={14}/> {formatViews(featured.viewCount)}</span></div>
+          <span className="home-news-kicker">Berita utama</span>
+          <h3>{featured.title}</h3>
+          <p>{featured.excerpt}</p>
+          <span className="read-link">Baca selengkapnya <ArrowRight size={15}/></span>
+        </div>
+      </Link>
+      <div className="home-latest-panel">
+        <div className="home-latest-head"><span className="eyebrow">Berita terbaru</span><span>{latest.length} artikel</span></div>
+        <div className="home-latest-list">
+          {latest.slice(0,3).map((item,index)=><Link className="home-latest-item" key={item.slug} href={`/berita/${item.slug}/`}>
+            <span className="latest-number">0{index+2}</span>
+            <div className="home-latest-copy"><span className="eyebrow">{item.category}</span><h3>{item.title}</h3><div className="home-latest-meta"><span><Clock3 size={13}/> {formatDate(item.publishedAt)}</span><span><Eye size={13}/> {formatViews(item.viewCount)}</span></div></div>
+            <ArrowRight className="home-latest-arrow" size={17} aria-hidden="true"/>
+          </Link>)}
+        </div>
+        <Link className="home-news-more" href="/berita/">Lihat semua berita <ArrowRight size={15}/></Link>
+      </div>
+    </div>
+  )
 }
