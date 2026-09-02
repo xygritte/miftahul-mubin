@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Mail, MapPin, Phone, ExternalLink } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import PageIntro from '@/components/content/PageIntro'
 
 type Settings = {
   site_name: string
@@ -52,6 +53,7 @@ export default function LiveSiteSettings({ mode }: { mode: 'profile' | 'contact'
   if (error) return <div className="empty-state"><strong>Informasi belum tersedia</strong><p>Pengaturan halaman gagal dimuat.</p></div>
 
   if (mode === 'profile') return <>
+    <PageIntro eyebrow={settings.profile_eyebrow || 'Tentang Masjid'} title={settings.profile_title || settings.site_name} description={settings.profile_description} />
     <PageProfile s={settings} />
   </>
 
