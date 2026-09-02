@@ -6,6 +6,8 @@ export type NewsItem = {
   image: string
   excerpt: string
   content: string[]
+  publishedAt?: string | null
+  viewCount?: number
 }
 
 export type EventItem = {
