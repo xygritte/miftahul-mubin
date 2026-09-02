@@ -18,7 +18,7 @@ type NewsRow = {
 }
 
 type HomeNewsItem = NewsItem & {
-  publishedAt?: string
+  publishedAt?: string | null
   viewCount?: number
 }
 
@@ -41,12 +41,12 @@ async function fetchNews(): Promise<HomeNewsItem[] | null> {
   if (error) return null
   return ((data ?? []) as unknown as NewsRow[]).map(mapRow).map((record) => ({
     ...newsRecordToLegacy(record),
-    publishedAt: record.publishedAt ?? undefined,
+    publishedAt: record.publishedAt ?? null,
     viewCount: record.viewCount ?? 0,
   }))
 }
 
-function formatDate(value: string | undefined) {
+function formatDate(value: string | null | undefined) {
   if (!value) return ''
   return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value))
 }
