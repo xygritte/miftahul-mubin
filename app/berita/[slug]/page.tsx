@@ -6,9 +6,13 @@ import { newsRecordToLegacy } from '@/lib/data/presentation'
 
 export const dynamicParams = false
 
+/**
+ * GitHub Pages uses `output: 'export'` and requires at least one generated
+ * path for a dynamic segment, even when the live database is empty.
+ * Real slugs are resolved client-side by the 404 route resolver.
+ */
 export async function generateStaticParams() {
-  const records = await contentRepository.listNews()
-  return records.map((item) => ({ slug: item.slug }))
+  return [{ slug: '__placeholder__' }]
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
