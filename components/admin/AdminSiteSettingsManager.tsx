@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { ImagePlus, Loader2, Save, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
-import { publicStorageUrl, removeStorageFile, uploadPublicStorageFile } from '@/lib/supabase/storage'
+import { removeStorageFile, uploadPublicStorageFile } from '@/lib/supabase/storage'
 
 type Mode = 'profile' | 'contact'
 
@@ -75,7 +75,7 @@ export default function AdminSiteSettingsManager({ mode }: { mode: Mode }) {
       const uploaded = await uploadPublicStorageFile('site-assets', file)
       const oldUrl = form.profile_image_url
       const { data: userData } = await supabase.auth.getUser()
-      if (!userData.user) throw new Error('Sesi admin tidak tersedia. Silakan masuk kembali.')
+      if (!userData.user) { await removeStorageFile('site-assets', uploaded.path).catch(() => undefined); throw new Error('Sesi admin tidak tersedia. Silakan masuk kembali.') }
       const { error: saveError } = await supabase.from('site_settings').update({ profile_image_url: uploaded.url, updated_by: userData.user.id }).eq('id', true)
       if (saveError) {
         await removeStorageFile('site-assets', uploaded.path).catch(() => undefined)
