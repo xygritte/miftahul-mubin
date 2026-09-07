@@ -44,6 +44,7 @@ async function fetchNews(): Promise<HomeNewsItem[] | null> {
     .select('title,slug,excerpt,thumbnail_url,published_at,view_count,categories(name)')
     .eq('status','published').not('published_at','is',null).lte('published_at',new Date().toISOString())
     .order('published_at',{ascending:false})
+    .limit(4)
   if (error) return null
   return ((data ?? []) as unknown as NewsRow[]).map(mapRow)
 }
