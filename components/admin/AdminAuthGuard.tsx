@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { LogOut, Loader2, RefreshCw } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { sitePath } from '@/lib/data/presentation'
-import { signOutAndRedirect } from '@/lib/admin/auth'
+import { signOutAndRedirect, verifyAdminAccess } from '@/lib/admin/auth'
 
 type AdminAuthGuardProps = { children: ReactNode }
 
@@ -53,7 +53,7 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
           return
         }
 
-        const { data, error } = await supabase.rpc('has_admin_access')
+        const { data, error } = await verifyAdminAccess()
         if (error) {
           console.error('Admin access check failed:', error)
           if (active) setState('error')
