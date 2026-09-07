@@ -1,16 +1,19 @@
 'use client'
 
 import { useEffect, useState, type ReactNode } from 'react'
-import { LogOut, Loader2 } from 'lucide-react'
+import { LogOut, Loader2, RefreshCw } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { sitePath } from '@/lib/data/presentation'
 import { signOutAndRedirect } from '@/lib/admin/auth'
 
 type AdminAuthGuardProps = { children: ReactNode }
 
+type GuardState = 'loading' | 'authorized' | 'denied' | 'error'
+
 export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
-  const [state, setState] = useState<'loading' | 'authorized' | 'denied'>('loading')
+  const [state, setState] = useState<GuardState>('loading')
   const [loggingOut, setLoggingOut] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
 
   async function logout() {
     if (loggingOut) return
@@ -32,8 +35,20 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
       setState((current) => current === 'authorized' ? current : 'loading')
 
       try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser()
-        if (userError || !user) {
+        const { data: userData, error: userError } = await supabase.auth.getUser()
+        let user = userData.user
+
+        if (userError) {
+          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
+          if (refreshError || !refreshData.user) {
+            console.error('Admin session recovery failed:', refreshError ?? userError)
+            if (active) setState('error')
+            return
+          }
+          user = refreshData.user
+        }
+
+        if (!user) {
           if (active) redirectToLogin()
           return
         }
@@ -41,11 +56,14 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
         const { data, error } = await supabase.rpc('has_admin_access')
         if (error) {
           console.error('Admin access check failed:', error)
-          if (active) setState('denied')
+          if (active) setState('error')
           return
         }
 
         if (active) setState(data === true ? 'authorized' : 'denied')
+      } catch (error) {
+        console.error('Admin access check unexpectedly failed:', error)
+        if (active) setState('error')
       } finally {
         checking = false
       }
@@ -63,10 +81,14 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
       active = false
       authListener.subscription.unsubscribe()
     }
-  }, [])
+  }, [retryCount])
 
   if (state === 'loading') {
     return <div className="admin-status-page"><div className="admin-status-card"><span className="eyebrow">Miftahul Mubin</span><strong>Memeriksa akses…</strong><p>Menyiapkan sesi pengelola.</p></div></div>
+  }
+
+  if (state === 'error') {
+    return <div className="admin-status-page"><div className="admin-status-card"><span className="eyebrow">Sesi bermasalah</span><h1>Sesi pengelola tidak dapat diverifikasi.</h1><p>Koneksi atau sesi browser mungkin sedang bermasalah. Data Anda belum diubah.</p><div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}><button className="admin-button secondary" onClick={() => setRetryCount((count) => count + 1)}><RefreshCw size={16}/> Coba lagi</button><button className="admin-button primary" onClick={() => void logout()} disabled={loggingOut}>{loggingOut ? <><Loader2 className="spin" size={16}/> Keluar…</> : <><LogOut size={16}/> Keluar dan masuk kembali</>}</button></div></div></div>
   }
 
   if (state === 'denied') {
