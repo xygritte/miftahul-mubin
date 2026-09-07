@@ -5,25 +5,30 @@ import { useCallback, useEffect, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
-import type { NewsRecord } from '@/types/content'
 
-type NewsCategoryRelation = { name: string | null }
-type NewsRow = Omit<NewsRecord, 'category'> & {
-  category?: string | null
-  categories?: NewsCategoryRelation | NewsCategoryRelation[] | null
+type PopularNewsItem = {
+  slug: string
+  category: string
+  title: string
 }
 
-function mapNewsRow(row: NewsRow): NewsRecord {
+type NewsRow = {
+  slug: string
+  title: string
+  categories?: { name: string | null } | { name: string | null }[] | null
+}
+
+function mapNewsRow(row: NewsRow): PopularNewsItem {
   const category = Array.isArray(row.categories) ? row.categories[0]?.name : row.categories?.name
-  return { ...row, category: row.category ?? category ?? 'Berita' }
+  return { slug: row.slug, category: category ?? 'Berita', title: row.title }
 }
 
-export default function LivePopularNews({ initialItems }: { initialItems: NewsRecord[] }) {
+export default function LivePopularNews({ initialItems }: { initialItems: PopularNewsItem[] }) {
   const [items, setItems] = useState(initialItems)
   const refresh = useCallback(async () => {
     const { data, error } = await supabase
       .from('news')
-      .select('id,title,slug,excerpt,content,thumbnail_url,category_id,status,published_at,view_count,created_at,updated_at,categories(name)')
+      .select('slug,title,categories(name)')
       .eq('status', 'published')
       .not('published_at', 'is', null)
       .lte('published_at', new Date().toISOString())
