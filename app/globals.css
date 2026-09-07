@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
-:root { --green:#0d5c48; --green-dark:#083d31; --gold:#b79652; --ink:#17211d; --muted:#697570; --line:#e1e8e4; --canvas:#f6f8f6; --white:#fff; }
 *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--canvas);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif} a{color:inherit;text-decoration:none} img{display:block;max-width:100%} button,input{font:inherit}.container{width:min(1180px,calc(100% - 40px));margin-inline:auto}
 .skip-link{position:fixed;left:12px;top:-60px;background:var(--green-dark);color:#fff;padding:10px 14px;z-index:100}.skip-link:focus{top:12px}
 .utility-bar{background:var(--green-dark);color:#dcebe6;font-size:12px}.utility-inner{min-height:34px;display:flex;align-items:center;justify-content:space-between;gap:16px}.utility-right{display:flex;gap:10px}.utility-right a:hover{color:#fff}
