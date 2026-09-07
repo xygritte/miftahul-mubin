@@ -2,10 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import FilterableEvents from '@/components/content/FilterableEvents'
-import { eventRecordToLegacy } from '@/lib/data/presentation'
+import { eventRecordToLegacy, type EventItem } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
-import type { EventItem } from '@/lib/content'
 import type { EventStatus } from '@/types/content'
 
 type Props = { initialItems: EventItem[]; limit?: number }
