@@ -29,7 +29,7 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
     const checkAccess = async () => {
       if (checking) return
       checking = true
-      setState('loading')
+      setState((current) => current === 'authorized' ? current : 'loading')
 
       try {
         const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -54,13 +54,8 @@ export default function AdminAuthGuard({ children }: AdminAuthGuardProps) {
     void checkAccess()
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session || event === 'SIGNED_OUT') {
+      if (event === 'SIGNED_OUT' || !session) {
         if (active) redirectToLogin()
-        return
-      }
-
-      if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-        window.setTimeout(() => { void checkAccess() }, 0)
       }
     })
 
