@@ -119,6 +119,62 @@ select {
   outline-color: var(--mm-focus);
 }
 
+/* Dark-mode normalization for legacy homepage surfaces. Keep these rules canonical
+   so light-only rgba/white declarations cannot leak into the dark theme. */
+html[data-theme='dark'] .home-latest-panel {
+  background: var(--mm-surface);
+  color: var(--mm-text);
+  border-top-color: var(--mm-green-dark);
+  border-bottom-color: var(--mm-line);
+}
+
+html[data-theme='dark'] .home-latest-head,
+html[data-theme='dark'] .home-latest-meta {
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] .home-latest-list,
+html[data-theme='dark'] .home-latest-item-wrap {
+  border-color: var(--mm-line);
+}
+
+html[data-theme='dark'] .home-latest-item {
+  color: var(--mm-text);
+}
+
+html[data-theme='dark'] .home-latest-item:hover {
+  background: var(--mm-surface-2);
+}
+
+html[data-theme='dark'] .home-latest-copy h3 {
+  color: var(--mm-text-strong);
+}
+
+html[data-theme='dark'] .latest-number {
+  color: var(--mm-muted);
+}
+
+html[data-theme='dark'] .home-news-share,
+html[data-theme='dark'] .home-latest-share-row .home-news-share {
+  background: var(--mm-surface);
+  color: var(--mm-green-dark);
+  border-color: var(--mm-line-strong);
+}
+
+html[data-theme='dark'] .home-news-share:hover {
+  background: var(--mm-surface-2);
+  border-color: var(--mm-green);
+}
+
+html[data-theme='dark'] .home-news-kicker {
+  background: var(--mm-accent-soft);
+  color: var(--mm-green);
+}
+
+html[data-theme='dark'] .home-news-image {
+  background: var(--mm-surface-3);
+}
+
 @media (max-width: 820px) {
   :root { --mm-gutter: 28px; }
 }
