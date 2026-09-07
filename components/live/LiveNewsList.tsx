@@ -33,7 +33,6 @@ function mapNewsRow(row: NewsRow): NewsRecord {
     excerpt: row.excerpt,
     content,
     thumbnailUrl: row.thumbnail_url,
-    categoryId: row.category_id,
     category: category ?? 'Berita',
     status: row.status,
     publishedAt: row.published_at,
