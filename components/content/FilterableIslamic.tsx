@@ -3,7 +3,7 @@
 import { ArrowRight } from 'lucide-react'
 import { sitePath } from '@/lib/data/presentation'
 import { useMemo, useState } from 'react'
-import type { IslamicItem } from '@/lib/islamic'
+import type { IslamicItem } from '@/lib/data/presentation'
 
 const filters = ['Semua', 'Khutbah', 'Kajian', 'Al-Qur’an', 'Fiqih', 'Akhlak', 'Pendidikan']
 
