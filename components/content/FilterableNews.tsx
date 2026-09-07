@@ -1,8 +1,7 @@
 'use client'
 
 import { ArrowRight } from 'lucide-react'
-import { sitePath } from '@/lib/data/presentation'
-import type { NewsItem } from '@/lib/content'
+import { sitePath, type NewsItem } from '@/lib/data/presentation'
 import { useMemo, useState } from 'react'
 
 const filters = ['Semua', 'Masjid', 'Kegiatan', 'Keislaman', 'Sosial', 'Pendidikan', 'Pengumuman']
@@ -10,7 +9,7 @@ const filters = ['Semua', 'Masjid', 'Kegiatan', 'Keislaman', 'Sosial', 'Pendidik
 function matches(category: string, filter: string) {
   if (filter === 'Semua') return true
   if (filter === 'Masjid') return category === 'Masjid'
-  if (filter === 'Kegiatan') return category === 'Kegiatan Masjid'
+  if (filter === 'Kegiatan') return category === 'Kegiatan Masjid' || category === 'Kegiatan'
   return category === filter
 }
 
@@ -27,16 +26,16 @@ export default function FilterableNews({ items }: { items: NewsItem[] }) {
           </button>
         ))}
       </div>
-      <div className="news-page-grid" aria-live="polite">
-        {filtered.map((item, index) => (
-          <article className={index === 0 ? 'news-page-card featured' : 'news-page-card'} key={item.slug}>
-            <a href={sitePath(`/berita/${item.slug}/`)} className="news-page-image-link"><img src={item.image} alt={item.title} /></a>
+      <div className="editorial-list" aria-live="polite">
+        {filtered.map((item, i) => (
+          <article className={i === 0 ? 'editorial-card lead' : 'editorial-card'} key={item.slug}>
+            <div className="editorial-number">{String(i + 1).padStart(2, '0')}</div>
             <div>
-              <span className="tag static">{item.category}</span>
-              <small>{item.date}</small>
+              <span>{item.category}</span>
               <h2><a href={sitePath(`/berita/${item.slug}/`)}>{item.title}</a></h2>
+              <small>{item.date}</small>
               <p>{item.excerpt}</p>
-              <a href={sitePath(`/berita/${item.slug}/`)}>Baca selengkapnya <ArrowRight size={16} /></a>
+              <a href={sitePath(`/berita/${item.slug}/`)}>Baca berita <ArrowRight size={15} /></a>
             </div>
           </article>
         ))}
