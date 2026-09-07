@@ -3,10 +3,9 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { ArrowRight, Clock3, Eye, Share2 } from 'lucide-react'
-import { sitePath } from '@/lib/data/presentation'
+import { sitePath, type NewsItem } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
-import type { NewsItem } from '@/lib/content'
 
 type Props = { initialItems: NewsItem[] }
 type NewsRow = {
@@ -19,12 +18,7 @@ type NewsRow = {
   categories?: { name: string } | { name: string }[] | null
 }
 
-type HomeNewsItem = NewsItem & {
-  publishedAt?: string | null
-  viewCount?: number
-}
-
-function mapRow(row: NewsRow): HomeNewsItem {
+function mapRow(row: NewsRow): NewsItem & { publishedAt?: string | null; viewCount?: number } {
   const category = Array.isArray(row.categories) ? row.categories[0]?.name : row.categories?.name
   return {
     slug: row.slug,
@@ -39,7 +33,7 @@ function mapRow(row: NewsRow): HomeNewsItem {
   }
 }
 
-async function fetchNews(): Promise<HomeNewsItem[] | null> {
+async function fetchNews(): Promise<(NewsItem & { publishedAt?: string | null; viewCount?: number })[] | null> {
   const { data, error } = await supabase.from('news')
     .select('title,slug,excerpt,thumbnail_url,published_at,view_count,categories(name)')
     .eq('status','published').not('published_at','is',null).lte('published_at',new Date().toISOString())
@@ -78,7 +72,7 @@ function ShareButton({ title, slug }: { title: string; slug: string }) {
 }
 
 export default function LiveNews({ initialItems }: Props) {
-  const [items, setItems] = useState<HomeNewsItem[]>(initialItems)
+  const [items, setItems] = useState<(NewsItem & { publishedAt?: string | null; viewCount?: number })[]>(initialItems)
   const refresh = useCallback(async () => { const next = await fetchNews(); if (next !== null) setItems(next) }, [])
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
