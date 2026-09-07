@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import { sitePath } from '@/lib/data/presentation'
+import { verifyAdminAccess } from '@/lib/admin/auth'
 
 export default function AdminLoginForm() {
   const [email, setEmail] = useState('')
@@ -29,7 +30,7 @@ export default function AdminLoginForm() {
       return
     }
 
-    const { data: hasAdminAccess, error: accessError } = await supabase.rpc('has_admin_access')
+    const { data: hasAdminAccess, error: accessError } = await verifyAdminAccess()
     if (accessError) {
       console.error('Admin access check failed after login:', accessError)
       await supabase.auth.signOut()
