@@ -3,17 +3,19 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { ArrowRight, Clock3, Eye, Share2 } from 'lucide-react'
-import { newsRecordToLegacy } from '@/lib/data/presentation'
+import { sitePath } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
-import type { NewsRecord } from '@/types/content'
 import type { NewsItem } from '@/lib/content'
 
 type Props = { initialItems: NewsItem[] }
 type NewsRow = {
-  id: string; title: string; slug: string; excerpt: string; content: string | string[]
-  thumbnail_url: string | null; category_id: string | null; status: NewsRecord['status']
-  published_at: string | null; view_count: number | null; created_at: string | null; updated_at: string | null
+  title: string
+  slug: string
+  excerpt: string
+  thumbnail_url: string | null
+  published_at: string | null
+  view_count: number | null
   categories?: { name: string } | { name: string }[] | null
 }
 
@@ -22,28 +24,28 @@ type HomeNewsItem = NewsItem & {
   viewCount?: number
 }
 
-function mapRow(row: NewsRow): NewsRecord {
+function mapRow(row: NewsRow): HomeNewsItem {
   const category = Array.isArray(row.categories) ? row.categories[0]?.name : row.categories?.name
-  const content = Array.isArray(row.content) ? row.content : row.content.split(/\n\s*\n/).filter(Boolean)
   return {
-    id: row.id, slug: row.slug, title: row.title, excerpt: row.excerpt, content,
-    thumbnailUrl: row.thumbnail_url, category: category ?? 'Berita', status: row.status,
-    publishedAt: row.published_at, viewCount: row.view_count ?? 0,
-    createdAt: row.created_at ?? undefined, updatedAt: row.updated_at ?? undefined,
+    slug: row.slug,
+    category: category ?? 'Berita',
+    title: row.title,
+    date: row.published_at ? new Date(row.published_at).toLocaleDateString('id-ID') : '',
+    image: row.thumbnail_url ?? sitePath('/hero-bg.png'),
+    excerpt: row.excerpt,
+    content: [],
+    publishedAt: row.published_at,
+    viewCount: row.view_count ?? 0,
   }
 }
 
 async function fetchNews(): Promise<HomeNewsItem[] | null> {
   const { data, error } = await supabase.from('news')
-    .select('id,title,slug,excerpt,content,thumbnail_url,category_id,status,published_at,view_count,created_at,updated_at,categories(name)')
+    .select('title,slug,excerpt,thumbnail_url,published_at,view_count,categories(name)')
     .eq('status','published').not('published_at','is',null).lte('published_at',new Date().toISOString())
     .order('published_at',{ascending:false})
   if (error) return null
-  return ((data ?? []) as unknown as NewsRow[]).map(mapRow).map((record) => ({
-    ...newsRecordToLegacy(record),
-    publishedAt: record.publishedAt ?? null,
-    viewCount: record.viewCount ?? 0,
-  }))
+  return ((data ?? []) as unknown as NewsRow[]).map(mapRow)
 }
 
 function formatDate(value: string | null | undefined) {
