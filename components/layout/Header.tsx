@@ -39,6 +39,11 @@ function formatToday() {
   return new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())
 }
 
+function normalizePath(path: string) {
+  if (path === '/') return '/'
+  return path.replace(/\/+$/, '')
+}
+
 export default function Header({ searchItems }: { searchItems: SearchEntry[] }) {
   const pathname = usePathname() || '/'
   const [menuOpen, setMenuOpen] = useState(false)
@@ -71,7 +76,11 @@ export default function Header({ searchItems }: { searchItems: SearchEntry[] }) 
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [])
 
-  const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href.replace(/\/$/, ''))
+  const currentPath = normalizePath(pathname)
+  const isActive = (href: string) => {
+    const targetPath = normalizePath(href)
+    return targetPath === '/' ? currentPath === '/' : currentPath === targetPath || currentPath.startsWith(`${targetPath}/`)
+  }
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return []
