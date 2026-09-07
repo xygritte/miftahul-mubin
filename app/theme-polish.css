@@ -1,43 +1,6 @@
-/* Global theme system for Miftahul Mubin. Loaded after base and polish styles. */
-
-:root {
-  --mm-bg: #f6f8f6;
-  --mm-surface: #ffffff;
-  --mm-surface-2: #fbfcfb;
-  --mm-text: #17211d;
-  --mm-text-strong: #10201a;
-  --mm-muted: #697570;
-  --mm-line: #e1e8e4;
-  --mm-line-strong: #cad7d1;
-  --mm-green: #0d5c48;
-  --mm-green-dark: #083d31;
-  --mm-gold: #b79652;
-  --mm-overlay: rgba(8, 24, 20, .62);
-  --mm-shadow: rgba(8, 61, 49, .08);
-}
-
-html[data-theme='dark'] {
-  --mm-bg: #0d1311;
-  --mm-surface: #151d1a;
-  --mm-surface-2: #19231f;
-  --mm-text: #e5eeea;
-  --mm-text-strong: #f4f8f6;
-  --mm-muted: #a5b3ad;
-  --mm-line: #2a3732;
-  --mm-line-strong: #3a4943;
-  --mm-green: #43a98f;
-  --mm-green-dark: #8ed0bd;
-  --mm-gold: #d6b56d;
-  --mm-overlay: rgba(0, 0, 0, .72);
-  --mm-shadow: rgba(0, 0, 0, .24);
-}
-
-html { color-scheme: light; }
-html[data-theme='dark'] { color-scheme: dark; }
+/* Theme-specific component overrides. Global tokens live in design-tokens.css. */
 
 body {
-  background: var(--mm-bg);
-  color: var(--mm-text);
   transition: background-color .18s ease, color .18s ease;
 }
 
