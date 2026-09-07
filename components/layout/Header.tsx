@@ -6,16 +6,32 @@ import { useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 
 type SearchEntry = { title: string; href: string; category: string }
+type NavItem = { label: string; href: string }
 
-const primaryLinks = [
-  ['Beranda', '/'], ['Berita', '/berita/'], ['Keislaman', '/keislaman/'], ['Kegiatan', '/kegiatan/'],
-  ['Kepengurusan', '/kepengurusan/'], ['Keuangan', '/keuangan/'], ['Profil', '/profil/'], ['Kontak', '/kontak/'],
-] as const
+type NavGroups = {
+  primary: readonly NavItem[]
+  secondary: readonly NavItem[]
+  utility: readonly NavItem[]
+}
 
-const categoryLinks = [
-  ['Pengumuman', '/pengumuman/'], ['Khutbah', '/keislaman/'], ['Dokumentasi', '/dokumentasi/'],
-  ['Kepengurusan', '/kepengurusan/'], ['Pendidikan', '/kegiatan/'], ['Sosial', '/kegiatan/'],
-] as const
+const navigation: NavGroups = {
+  primary: [
+    { label: 'Beranda', href: '/' },
+    { label: 'Berita', href: '/berita/' },
+    { label: 'Keislaman', href: '/keislaman/' },
+    { label: 'Kegiatan', href: '/kegiatan/' },
+    { label: 'Kepengurusan', href: '/kepengurusan/' },
+    { label: 'Keuangan', href: '/keuangan/' },
+  ],
+  secondary: [
+    { label: 'Pengumuman', href: '/pengumuman/' },
+    { label: 'Dokumentasi', href: '/dokumentasi/' },
+  ],
+  utility: [
+    { label: 'Profil', href: '/profil/' },
+    { label: 'Kontak', href: '/kontak/' },
+  ],
+} as const
 
 const logoSrc = '/miftahul-mubin/logo.svg'
 
@@ -69,6 +85,18 @@ export default function Header({ searchItems }: { searchItems: SearchEntry[] }) 
     window.localStorage.setItem('mm-theme', next ? 'dark' : 'light')
   }
 
+  const renderNavLinks = (items: readonly NavItem[], onClick?: () => void) => items.map(({ label, href }) => (
+    <Link
+      key={label}
+      className={isActive(href) ? 'active' : ''}
+      aria-current={isActive(href) ? 'page' : undefined}
+      href={href}
+      onClick={onClick}
+    >
+      {label}
+    </Link>
+  ))
+
   return <>
     <a className="skip-link" href="#main-content">Lewati ke konten utama</a>
     <header className="mm-header">
@@ -77,7 +105,7 @@ export default function Header({ searchItems }: { searchItems: SearchEntry[] }) 
           <img className="mm-brand-logo" src={logoSrc} alt="Miftahul Mubin" />
         </Link>
         <div className="mm-header-tools">
-          <button className="mm-search-trigger" type="button" aria-label="Cari informasi" aria-expanded={searchOpen} onClick={() => { setMenuOpen(false); setLanguageOpen(false); setSearchOpen(true) }}><Search size={21}/><span>Cari Berita</span></button>
+          <button className="mm-search-trigger" type="button" aria-label="Cari informasi" aria-expanded={searchOpen} onClick={() => { setMenuOpen(false); setLanguageOpen(false); setSearchOpen(true) }}><Search size={21}/><span>Cari</span></button>
           <button className="mm-theme-toggle" type="button" aria-label={dark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'} aria-pressed={dark} onClick={toggleTheme}><span className="mm-theme-knob">{dark ? <Sun size={13}/> : <Moon size={13}/>}</span></button>
           <div className="mm-language">
             <button className="mm-language-btn" type="button" aria-label="Pilih bahasa" aria-expanded={languageOpen} onClick={() => setLanguageOpen((open) => !open)}><span className="mm-flag" aria-hidden="true">🇮🇩</span><ChevronDown size={17}/></button>
@@ -88,17 +116,22 @@ export default function Header({ searchItems }: { searchItems: SearchEntry[] }) 
       </div>
       <div className="container mm-primary-wrap">
         <nav className="mm-primary-nav" aria-label="Navigasi utama">
-          {primaryLinks.map(([label, href]) => <Link key={label} className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} href={href}>{label}</Link>)}
+          {renderNavLinks(navigation.primary)}
         </nav>
       </div>
       <div className="mm-secondary-row">
         <div className="container mm-secondary-inner">
-          <nav className="mm-secondary-nav" aria-label="Kategori portal">{categoryLinks.map(([label, href]) => <Link key={label} href={href}>{label}</Link>)}</nav>
+          <nav className="mm-secondary-nav" aria-label="Jelajah portal">
+            {renderNavLinks(navigation.secondary)}
+          </nav>
+          <nav className="mm-utility-nav" aria-label="Informasi situs">
+            {renderNavLinks(navigation.utility)}
+          </nav>
           <time className="mm-date" dateTime={today ? new Date().toISOString().slice(0, 10) : undefined}>{today || 'Hari ini'}</time>
         </div>
       </div>
     </header>
-    {menuOpen && <div className="mm-mobile-menu" id="mm-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu utama"><div className="container mm-mobile-inner"><p className="mm-mobile-label">Navigasi Miftahul Mubin</p>{primaryLinks.map(([label, href]) => <Link key={label} className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} href={href} onClick={closeAll}><span>{label}</span><ChevronRight size={19}/></Link>)}<div className="mm-mobile-categories"><p>Kategori</p><div>{categoryLinks.map(([label, href]) => <Link key={label} href={href} onClick={closeAll}>{label}</Link>)}</div></div><button className="mm-mobile-theme" type="button" onClick={toggleTheme}><span>{dark ? <Sun size={17}/> : <Moon size={17}/>}<span>{dark ? 'Mode terang' : 'Mode gelap'}</span></span><span aria-hidden="true">{dark ? '☀' : '◐'}</span></button></div></div>}
+    {menuOpen && <div className="mm-mobile-menu" id="mm-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu utama"><div className="container mm-mobile-inner"><p className="mm-mobile-label">Navigasi Miftahul Mubin</p>{renderNavLinks(navigation.primary, closeAll)}<div className="mm-mobile-categories"><p>Jelajah</p><div>{renderNavLinks(navigation.secondary, closeAll)}</div></div><div className="mm-mobile-categories"><p>Informasi</p><div>{renderNavLinks(navigation.utility, closeAll)}</div></div><button className="mm-mobile-theme" type="button" onClick={toggleTheme}><span>{dark ? <Sun size={17}/> : <Moon size={17}/>}<span>{dark ? 'Mode terang' : 'Mode gelap'}</span></span><span aria-hidden="true">{dark ? '☀' : '◐'}</span></button></div></div>}
     {searchOpen && <div className="mm-search-overlay" role="dialog" aria-modal="true" aria-label="Pencarian" onMouseDown={(event) => { if (event.target === event.currentTarget) closeAll() }}><div className="mm-search-panel"><div className="mm-search-head"><div><span className="eyebrow">Pencarian</span><h2>Cari informasi Miftahul Mubin</h2></div><button className="mm-close-btn" type="button" aria-label="Tutup pencarian" onClick={closeAll}><X size={21}/></button></div><label className="mm-search-field"><Search size={21}/><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari berita, kegiatan, pengumuman, atau informasi..."/></label><div className="mm-search-results" aria-live="polite">{!query && <p className="search-helper">Cari berita, kegiatan, keislaman, pengurus, keuangan, atau halaman portal lainnya.</p>}{query && results.length === 0 && <p className="search-helper">Tidak ada hasil untuk “{query}”.</p>}{results.map((result) => <Link key={result.href + result.title} href={result.href} onClick={closeAll}><span><small>{result.category}</small>{result.title}</span><ChevronRight size={17}/></Link>)}</div></div></div>}
   </>
 }
