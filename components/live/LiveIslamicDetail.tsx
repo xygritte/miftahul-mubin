@@ -3,10 +3,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { formatIndonesianDate, islamicRecordToLegacy } from '@/lib/data/presentation'
+import { formatIndonesianDate, islamicRecordToLegacy, type IslamicItem } from '@/lib/data/presentation'
 import { supabasePublicRepository } from '@/lib/data/supabasePublicRepository'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
-import type { IslamicItem } from '@/lib/islamic'
 
 export default function LiveIslamicDetail({ slug, initialItem }: { slug: string; initialItem: IslamicItem | null }) {
   const [item, setItem] = useState<IslamicItem | null>(initialItem)
