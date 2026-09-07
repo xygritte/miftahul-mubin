@@ -1,5 +1,5 @@
 import AdminShell from '@/components/admin/AdminShell'
-import AdminManagementManagerFixed from '@/components/admin/AdminManagementManagerFixed'
+import AdminManagementManager from '@/components/admin/AdminManagementManager'
 
 export default function AdminKepengurusanPage() {
   return (
@@ -9,7 +9,7 @@ export default function AdminKepengurusanPage() {
         <h1>Kelola Kepengurusan</h1>
         <p>Kelola periode kepengurusan dan anggota, jabatan, urutan, foto, serta status aktif.</p>
       </div>
-      <AdminManagementManagerFixed />
+      <AdminManagementManager />
     </AdminShell>
   )
 }
