@@ -2,11 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import FilterableIslamic from '@/components/content/FilterableIslamic'
-import { islamicRecordToLegacy } from '@/lib/data/presentation'
+import { islamicRecordToLegacy, type IslamicItem } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { IslamicItemRecord } from '@/types/content'
-import type { IslamicItem } from '@/lib/islamic'
 
 type Props = { initialItems: IslamicItem[]; limit?: number }
 
