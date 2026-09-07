@@ -38,8 +38,8 @@ function mapNewsRow(row: NewsRow): NewsRecord {
     status: row.status,
     publishedAt: row.published_at,
     viewCount: row.view_count ?? 0,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
+    createdAt: row.created_at ?? undefined,
+    updatedAt: row.updated_at ?? undefined,
   }
 }
 
