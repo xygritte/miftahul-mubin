@@ -1,9 +1,8 @@
 'use client'
 
 import { ArrowRight, CalendarDays, Clock3, MapPin } from 'lucide-react'
-import { sitePath } from '@/lib/data/presentation'
+import { sitePath, type EventItem } from '@/lib/data/presentation'
 import { useMemo, useState } from 'react'
-import type { EventItem } from '@/lib/content'
 
 const filters = ['Semua', 'Kajian', 'Sosial', 'Pendidikan', 'Pengurus']
 
