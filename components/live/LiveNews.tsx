@@ -77,7 +77,7 @@ function ShareButton({ title, slug }: { title: string; slug: string }) {
 }
 
 export default function LiveNews({ initialItems }: Props) {
-  const [items,setItems] = useState<HomeNewsItem[]>(initialItems)
+  const [items, setItems] = useState<HomeNewsItem[]>(initialItems)
   const refresh = useCallback(async () => { const next = await fetchNews(); if (next !== null) setItems(next) }, [])
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
@@ -87,7 +87,7 @@ export default function LiveNews({ initialItems }: Props) {
     <div className="home-news-layout">
       <div className="home-featured-news-wrap">
         <Link className="home-featured-news" href={`/berita/${featured.slug}/`}>
-          <div className="home-news-image"><img src={featured.image} alt={featured.title}/><span className="tag">{featured.category}</span><div className="home-news-image-shade"/></div>
+          <div className="home-news-image"><img src={featured.image} alt={featured.title} fetchPriority="high" decoding="async"/><span className="tag">{featured.category}</span><div className="home-news-image-shade"/></div>
           <div className="home-news-copy">
             <div className="home-news-meta"><span>{formatDate(featured.publishedAt)}</span><span><Eye size={14}/> {formatViews(featured.viewCount)}</span></div>
             <span className="home-news-kicker">Berita utama</span>
