@@ -11,7 +11,7 @@ import type {
   NewsRecord,
 } from '@/types/content'
 
-/** UI-facing contract shared by static and Supabase implementations. */
+/** UI-facing contract for public content data. */
 export type PublicContentRepository = {
   listNews(): Promise<NewsRecord[]>
   getNewsBySlug(slug: string): Promise<NewsRecord | null>
