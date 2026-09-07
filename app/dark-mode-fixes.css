@@ -1,18 +1,4 @@
 /* Dark-mode completion layer. Loaded last so legacy and inline component styles are normalized. */
-html[data-theme='dark'] {
-  --mm-bg-deep: #0d1311;
-  --mm-surface: #151d1a;
-  --mm-surface-2: #1b2521;
-  --mm-surface-3: #202d28;
-  --mm-text: #e6eeea;
-  --mm-text-strong: #f4f8f6;
-  --mm-muted: #a6b4ae;
-  --mm-border: #2d3b35;
-  --mm-border-strong: #405149;
-  --mm-accent: #43a98f;
-  --mm-accent-soft: #18382f;
-  --mm-gold: #d7b76c;
-}
 
 html[data-theme='dark'] body,
 html[data-theme='dark'] .inner-page,
