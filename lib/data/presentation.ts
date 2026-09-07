@@ -1,6 +1,37 @@
-import type { EventItem, NewsItem } from '@/lib/content'
-import type { IslamicItem } from '@/lib/islamic'
 import type { EventRecord, IslamicItemRecord, NewsRecord } from '@/types/content'
+
+export type NewsItem = {
+  slug: string
+  category: string
+  title: string
+  date: string
+  image: string
+  excerpt: string
+  content: string[]
+  publishedAt?: string | null
+  viewCount?: number
+}
+
+export type EventItem = {
+  slug: string
+  day: string
+  month: string
+  date: string
+  title: string
+  time: string
+  place: string
+  category: string
+  description: string
+}
+
+export type IslamicItem = {
+  slug: string
+  category: string
+  title: string
+  date: string
+  excerpt: string
+  content: string[]
+}
 
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
 const WEEKDAYS = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
