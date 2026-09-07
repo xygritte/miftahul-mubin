@@ -1,15 +1,4 @@
 /* Miftahul Mubin editorial header — visual language inspired by modern news portals. */
-:root {
-  --mm-header-white: #ffffff;
-  --mm-nav: #079a8d;
-  --mm-nav-deep: #05796f;
-  --mm-nav-text: #ffffff;
-  --mm-header-ink: #20252b;
-  --mm-header-muted: #737984;
-  --mm-header-line: #e7e9ed;
-  --mm-header-soft: #f3f4f7;
-}
-
 .mm-utility-bar { background: var(--mm-header-white); color: var(--mm-header-muted); border-bottom: 1px solid var(--mm-header-line); font-size: 11px; }
 .mm-utility-inner { min-height: 34px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .mm-utility-right { display: flex; align-items: center; gap: 9px; white-space: nowrap; }
