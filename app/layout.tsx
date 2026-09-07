@@ -10,9 +10,7 @@ import './popular-polish.css'
 import './embed-polish.css'
 import './admin.css'
 import './admin-settings.css'
-import './profile-settings.css'
 import './dark-mode-fixes.css'
-import './management-photo-fix.css'
 import './design-tokens.css'
 
 export const metadata: Metadata = {
