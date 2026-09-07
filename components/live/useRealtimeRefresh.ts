@@ -10,19 +10,37 @@ let subscriptionSequence = 0
 export function useRealtimeRefresh(table: TableName, refresh: () => void | Promise<void>) {
   useEffect(() => {
     const run = () => { void refresh() }
-    const onVisibility = () => { if (document.visibilityState === 'visible') run() }
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        startPolling()
+        run()
+      } else {
+        stopPolling()
+      }
+    }
+
+    let interval: number | undefined
+    const startPolling = () => {
+      if (interval !== undefined || document.visibilityState !== 'visible') return
+      interval = window.setInterval(run, 15000)
+    }
+    const stopPolling = () => {
+      if (interval === undefined) return
+      window.clearInterval(interval)
+      interval = undefined
+    }
 
     window.addEventListener('focus', run)
     window.addEventListener('pageshow', run)
     document.addEventListener('visibilitychange', onVisibility)
-    const interval = window.setInterval(run, 15000)
+    startPolling()
 
     if (!supabase) {
       return () => {
         window.removeEventListener('focus', run)
         window.removeEventListener('pageshow', run)
         document.removeEventListener('visibilitychange', onVisibility)
-        window.clearInterval(interval)
+        stopPolling()
       }
     }
 
@@ -30,15 +48,13 @@ export function useRealtimeRefresh(table: TableName, refresh: () => void | Promi
     const channel = supabase
       .channel(`public:${table}:live:${subscriptionSequence}`)
       .on('postgres_changes', { event: '*', schema: 'public', table }, run)
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') run()
-      })
+      .subscribe()
 
     return () => {
       window.removeEventListener('focus', run)
       window.removeEventListener('pageshow', run)
       document.removeEventListener('visibilitychange', onVisibility)
-      window.clearInterval(interval)
+      stopPolling()
       void supabase.removeChannel(channel)
     }
   }, [table, refresh])
