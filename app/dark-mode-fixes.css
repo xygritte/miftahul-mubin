@@ -155,11 +155,6 @@ html[data-theme='dark'] .event-status {
   color: var(--mm-accent);
 }
 
-html[data-theme='dark'] th {
-  background: var(--mm-surface-2);
-  color: var(--mm-muted);
-}
-
 html[data-theme='dark'] td,
 html[data-theme='dark'] th,
 html[data-theme='dark'] .event-row,
