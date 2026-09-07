@@ -45,20 +45,23 @@ html[data-theme='dark'] .mm-theme-knob { transform: translateX(24px); }
 .mm-mobile-menu-btn { display: none; width: 44px; height: 44px; border: 1px solid var(--mm-header-line); border-radius: 6px; background: #fff; color: var(--mm-header-ink); }
 
 .mm-primary-wrap { position: relative; }
-.mm-primary-nav { min-height: 55px; background: var(--mm-nav); border-radius: 10px 10px 0 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); overflow: hidden; }
-.mm-primary-nav a { min-height: 55px; color: var(--mm-nav-text); display: flex; align-items: center; justify-content: center; padding: 0 10px; font-size: 14px; font-weight: 700; white-space: nowrap; position: relative; }
+.mm-primary-nav { min-height: 55px; background: var(--mm-nav); border-radius: 10px 10px 0 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: hidden; }
+.mm-primary-nav a { min-height: 55px; color: var(--mm-nav-text); display: flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 14px; font-weight: 700; white-space: nowrap; position: relative; }
 .mm-primary-nav a::after { content: ''; position: absolute; left: 22%; right: 22%; bottom: 0; height: 3px; background: #fff; transform: scaleX(0); transition: transform .18s ease; transform-origin: center; }
 .mm-primary-nav a:hover { background: rgba(255,255,255,.07); }
 .mm-primary-nav a:hover::after, .mm-primary-nav a.active::after { transform: scaleX(1); }
 .mm-primary-nav a.active { background: rgba(255,255,255,.08); }
 
 .mm-secondary-row { background: #fff; }
-.mm-secondary-inner { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.mm-secondary-nav { display: flex; align-items: center; gap: 23px; overflow-x: auto; scrollbar-width: none; }
+.mm-secondary-inner { min-height: 52px; display: flex; align-items: center; gap: 24px; }
+.mm-secondary-nav { min-width: 0; flex: 1; display: flex; align-items: center; gap: 23px; overflow-x: auto; scrollbar-width: none; }
 .mm-secondary-nav::-webkit-scrollbar { display: none; }
 .mm-secondary-nav a { color: #4f5661; font-size: 14px; white-space: nowrap; }
 .mm-secondary-nav a:hover { color: var(--mm-nav-deep); }
-.mm-date { color: #7d838d; font-size: 13px; white-space: nowrap; }
+.mm-utility-nav { display: flex; align-items: center; gap: 18px; padding-left: 20px; border-left: 1px solid var(--mm-header-line); flex: 0 0 auto; }
+.mm-utility-nav a { color: #4f5661; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.mm-utility-nav a:hover, .mm-utility-nav a.active { color: var(--mm-nav-deep); }
+.mm-date { color: #7d838d; font-size: 13px; white-space: nowrap; flex: 0 0 auto; }
 
 .mm-mobile-menu { position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 80; background: rgba(248,249,248,.98); overflow: auto; padding-top: 18px; }
 .mm-mobile-inner { padding-bottom: 50px; }
@@ -84,8 +87,9 @@ html[data-theme='dark'] .mm-theme-knob { transform: translateX(24px); }
 html[data-theme='dark'] body { background: #101615; color: #e7eeeb; }
 html[data-theme='dark'] .mm-header, html[data-theme='dark'] .mm-utility-bar, html[data-theme='dark'] .mm-secondary-row, html[data-theme='dark'] .mm-language-menu, html[data-theme='dark'] .mm-search-panel { background: #17201d; }
 html[data-theme='dark'] .mm-header { border-color: #2d3935; }
-html[data-theme='dark'] .mm-brand-copy strong, html[data-theme='dark'] .mm-brand-copy small, html[data-theme='dark'] .mm-secondary-nav a, html[data-theme='dark'] .mm-date, html[data-theme='dark'] .mm-utility-bar, html[data-theme='dark'] .mm-search-head h2, html[data-theme='dark'] .mm-language-btn { color: #e7eeeb; }
+html[data-theme='dark'] .mm-brand-copy strong, html[data-theme='dark'] .mm-brand-copy small, html[data-theme='dark'] .mm-secondary-nav a, html[data-theme='dark'] .mm-utility-nav a, html[data-theme='dark'] .mm-date, html[data-theme='dark'] .mm-utility-bar, html[data-theme='dark'] .mm-search-head h2, html[data-theme='dark'] .mm-language-btn { color: #e7eeeb; }
 html[data-theme='dark'] .mm-utility-bar, html[data-theme='dark'] .mm-secondary-row { border-color: #2d3935; }
+html[data-theme='dark'] .mm-utility-nav { border-color: #2d3935; }
 html[data-theme='dark'] .mm-search-trigger { background: #212b28; color: #a8b5b0; }
 html[data-theme='dark'] .mm-search-field, html[data-theme='dark'] .mm-close-btn, html[data-theme='dark'] .mm-mobile-menu-btn, html[data-theme='dark'] .mm-language-menu button { background: #17201d; color: #e7eeeb; border-color: #35443f; }
 html[data-theme='dark'] .mm-search-field input { color: #e7eeeb; }
@@ -95,8 +99,9 @@ html[data-theme='dark'] .mm-mobile-inner > a { color: #e7eeeb; border-color: #2d
 @media (max-width: 1120px) {
   .mm-brand-copy strong { font-size: 30px; }
   .mm-brand { min-width: 240px; }
-  .mm-primary-nav a { font-size: 12px; padding-inline: 7px; }
+  .mm-primary-nav a { font-size: 12px; padding-inline: 8px; }
   .mm-secondary-nav { gap: 17px; }
+  .mm-utility-nav { gap: 14px; padding-left: 16px; }
 }
 
 @media (max-width: 930px) {
@@ -105,10 +110,11 @@ html[data-theme='dark'] .mm-mobile-inner > a { color: #e7eeeb; border-color: #2d
   .mm-brand-copy strong { font-size: 27px; }
   .mm-brand-copy small { font-size: 9px; }
   .mm-search-trigger { width: 250px; }
-  .mm-primary-nav { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .mm-primary-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .mm-primary-nav a { min-height: 48px; font-size: 11px; padding-inline: 6px; }
   .mm-primary-wrap { padding-inline: 0; }
-  .mm-secondary-inner { min-height: 46px; }
+  .mm-secondary-inner { min-height: 46px; gap: 16px; }
+  .mm-utility-nav { display: none; }
   .mm-date { display: none; }
 }
 
@@ -135,6 +141,7 @@ html[data-theme='dark'] .mm-mobile-inner > a { color: #e7eeeb; border-color: #2d
   .mm-secondary-inner { padding-inline: 20px; min-height: 40px; }
   .mm-secondary-nav { gap: 18px; }
   .mm-secondary-nav a { font-size: 11px; }
+  .mm-utility-nav { display: none; }
   .mm-search-overlay { padding: 78px 12px 20px; }
   .mm-search-panel { padding: 20px; border-radius: 8px; }
   .mm-search-head h2 { font-size: 24px; }
