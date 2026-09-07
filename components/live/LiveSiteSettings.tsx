@@ -77,5 +77,8 @@ function PageProfile({ s }: { s: Settings }) {
   return <>
     <div className="profile-feature"><div className="profile-visual" aria-hidden="true">{s.profile_image_url ? <img src={s.profile_image_url} alt={s.site_name ? `Foto ${s.site_name}` : 'Foto Miftahul Mubin'} /> : <><span>MM</span><small>{s.site_name}</small></>}</div><div><span className="eyebrow">{s.profile_eyebrow}</span><h2>{s.about_title}</h2><p>{s.about_text}</p>{facts.length > 0 && <div className="profile-facts">{facts.map(([value,label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>}</div></div>
     <section className="profile-columns"><article><span className="eyebrow">Visi</span><h2>{s.profile_vision_title}</h2><p>{s.profile_vision_text}</p></article><article><span className="eyebrow">Misi</span><h2>{s.profile_mission_title}</h2><p>{s.profile_mission_text}</p></article><article><span className="eyebrow">Fasilitas</span><h2>{s.profile_facilities_title}</h2><p>{s.profile_facilities_text}</p></article></section>
+    <style jsx>{`
+      .profile-feature .profile-visual{overflow:hidden;position:relative}.profile-feature .profile-visual img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}.profile-feature .profile-visual:has(img){padding:0}.profile-feature .profile-visual:has(img)::after{content:'';position:absolute;inset:auto 0 0;height:30%;background:linear-gradient(to top,rgba(0,0,0,.5),transparent);pointer-events:none}.profile-feature .profile-visual:has(img) small{position:absolute;z-index:1;left:24px;bottom:20px;color:#fff}.profile-feature .profile-visual:has(img) span{display:none}
+    `}</style>
   </>
 }
