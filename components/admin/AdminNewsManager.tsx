@@ -6,12 +6,11 @@ import { supabase } from '@/lib/supabase/client'
 import { sitePath } from '@/lib/data/presentation'
 import { uploadPublicStorageFile } from '@/lib/supabase/storage'
 
-type NewsRow = {
+type NewsListRow = {
   id: string
   title: string
   slug: string
   excerpt: string
-  content: string[]
   thumbnail_url: string | null
   category_id: string | null
   status: 'draft' | 'published' | 'archived'
@@ -19,6 +18,8 @@ type NewsRow = {
   created_at: string
   updated_at: string
 }
+
+type NewsDetailRow = NewsListRow & { content: string[] }
 
 type Category = { id: string; name: string; slug: string }
 
@@ -64,10 +65,11 @@ function storageErrorMessage(error: unknown) {
 }
 
 export default function AdminNewsManager() {
-  const [rows, setRows] = useState<NewsRow[]>([])
+  const [rows, setRows] = useState<NewsListRow[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
+  const [loadingEditId, setLoadingEditId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -80,13 +82,13 @@ export default function AdminNewsManager() {
     if (!supabase) { setError('Supabase belum dikonfigurasi.'); setLoading(false); return }
     setLoading(true); setError('')
     const [{ data: news, error: newsError }, { data: cats, error: catError }] = await Promise.all([
-      supabase.from('news').select('id,title,slug,excerpt,content,thumbnail_url,category_id,status,published_at,created_at,updated_at').order('created_at', { ascending: false }),
+      supabase.from('news').select('id,title,slug,excerpt,thumbnail_url,category_id,status,published_at,created_at,updated_at').order('created_at', { ascending: false }),
       supabase.from('categories').select('id,name,slug').order('name'),
     ])
     if (newsError || catError) {
       setError(getErrorMessage(newsError ?? catError, 'load'))
     } else {
-      setRows((news ?? []) as NewsRow[])
+      setRows((news ?? []) as NewsListRow[])
       setCategories((cats ?? []) as Category[])
     }
     setLoading(false)
@@ -101,9 +103,38 @@ export default function AdminNewsManager() {
   }, [query, rows])
 
   function openCreate() { setForm({ ...emptyForm }); setEditorOpen(true); setError(''); setSuccess('') }
-  function openEdit(row: NewsRow) {
-    setForm({ id: row.id, title: row.title, slug: row.slug, excerpt: row.excerpt, content: row.content.join('\n\n'), thumbnailUrl: row.thumbnail_url ?? '', categoryId: row.category_id ?? '', status: row.status === 'published' ? 'published' : 'draft', publishedAt: row.published_at })
-    setEditorOpen(true); setError(''); setSuccess('')
+
+  async function openEdit(row: NewsListRow) {
+    if (!supabase || loadingEditId) return
+    setLoadingEditId(row.id)
+    setError('')
+    setSuccess('')
+    const { data, error: detailError } = await supabase
+      .from('news')
+      .select('id,title,slug,excerpt,content,thumbnail_url,category_id,status,published_at,created_at,updated_at')
+      .eq('id', row.id)
+      .single()
+
+    if (detailError) {
+      setError(getErrorMessage(detailError, 'load'))
+      setLoadingEditId(null)
+      return
+    }
+
+    const detail = data as NewsDetailRow
+    setForm({
+      id: detail.id,
+      title: detail.title,
+      slug: detail.slug,
+      excerpt: detail.excerpt,
+      content: detail.content.join('\n\n'),
+      thumbnailUrl: detail.thumbnail_url ?? '',
+      categoryId: detail.category_id ?? '',
+      status: detail.status === 'published' ? 'published' : 'draft',
+      publishedAt: detail.published_at,
+    })
+    setEditorOpen(true)
+    setLoadingEditId(null)
   }
 
   async function handleThumbnailChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -165,7 +196,7 @@ export default function AdminNewsManager() {
     setSaving(false)
   }
 
-  async function remove(row: NewsRow) {
+  async function remove(row: NewsListRow) {
     if (!supabase || deletingId) return
     if (!window.confirm(`Hapus berita “${row.title}”? Tindakan ini tidak dapat dibatalkan.`)) return
     setDeletingId(row.id); setError(''); setSuccess('')
@@ -183,7 +214,7 @@ export default function AdminNewsManager() {
 
     {error && <p className="admin-form-error" role="alert">{error}</p>}
     {success && <p className="admin-form-success" role="status">{success}</p>}
-    {loading ? <div className="admin-table-state"><Loader2 className="spin" size={20} /> Memuat berita…</div> : filtered.length === 0 ? <div className="admin-table-state"><strong>Tidak ada berita</strong><span>{query ? 'Coba kata kunci lain.' : 'Mulai dengan membuat berita pertama.'}</span></div> : <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Berita</th><th>Status</th><th>Diperbarui</th><th aria-label="Aksi" /></tr></thead><tbody>{filtered.map((row) => <tr key={row.id}><td><div className="admin-table-title"><strong>{row.title}</strong><small>/{row.slug}</small></div></td><td><span className={`admin-status-pill ${row.status}`}>{row.status === 'published' ? 'Published' : row.status === 'draft' ? 'Draft' : 'Archived'}</span></td><td>{formatDate(row.updated_at)}</td><td><div className="admin-row-actions"><button className="admin-icon-button" onClick={() => openEdit(row)} aria-label={`Edit ${row.title}`}><Edit3 size={16} /></button><button className="admin-icon-button" onClick={() => window.open(sitePath(`/berita/${row.slug}/`), '_blank', 'noopener,noreferrer')} aria-label={`Lihat ${row.title}`}><Eye size={16} /></button><button className="admin-icon-button danger" onClick={() => void remove(row)} disabled={deletingId === row.id} aria-label={`Hapus ${row.title}`}>{deletingId === row.id ? <Loader2 className="spin" size={16} /> : <Trash2 size={16} />}</button></div></td></tr>)}</tbody></table></div>}
+    {loading ? <div className="admin-table-state"><Loader2 className="spin" size={20} /> Memuat berita…</div> : filtered.length === 0 ? <div className="admin-table-state"><strong>Tidak ada berita</strong><span>{query ? 'Coba kata kunci lain.' : 'Mulai dengan membuat berita pertama.'}</span></div> : <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Berita</th><th>Status</th><th>Diperbarui</th><th aria-label="Aksi" /></tr></thead><tbody>{filtered.map((row) => <tr key={row.id}><td><div className="admin-table-title"><strong>{row.title}</strong><small>/{row.slug}</small></div></td><td><span className={`admin-status-pill ${row.status}`}>{row.status === 'published' ? 'Published' : row.status === 'draft' ? 'Draft' : 'Archived'}</span></td><td>{formatDate(row.updated_at)}</td><td><div className="admin-row-actions"><button className="admin-icon-button" onClick={() => void openEdit(row)} disabled={loadingEditId === row.id} aria-label={`Edit ${row.title}`}>{loadingEditId === row.id ? <Loader2 className="spin" size={16} /> : <Edit3 size={16} />}</button><button className="admin-icon-button" onClick={() => window.open(sitePath(`/berita/${row.slug}/`), '_blank', 'noopener,noreferrer')} aria-label={`Lihat ${row.title}`}><Eye size={16} /></button><button className="admin-icon-button danger" onClick={() => void remove(row)} disabled={deletingId === row.id} aria-label={`Hapus ${row.title}`}>{deletingId === row.id ? <Loader2 className="spin" size={16} /> : <Trash2 size={16} />}</button></div></td></tr>)}</tbody></table></div>}
 
     {editorOpen && <div className="admin-modal-backdrop" role="presentation"><div className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="news-editor-title"><div className="admin-modal-header"><div><span className="eyebrow">CMS Berita</span><h2 id="news-editor-title">{form.id ? 'Edit berita' : 'Tulis berita'}</h2></div><button className="admin-icon-button" onClick={() => setEditorOpen(false)} aria-label="Tutup" disabled={saving || uploading}><X size={18} /></button></div><form className="admin-editor-form" onSubmit={save}>
       <label><span>Judul</span><input value={form.title} onChange={(e) => setForm((v) => ({ ...v, title: e.target.value, slug: v.id ? v.slug : slugify(e.target.value) }))} required /></label>
