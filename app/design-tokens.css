@@ -8,6 +8,8 @@
   --mm-text: #17211d;
   --mm-text-strong: #10201a;
   --mm-muted: #697570;
+  --mm-text-secondary: #53635d;
+  --mm-text-tertiary: #68756f;
   --mm-line: #e1e8e4;
   --mm-line-strong: #cad7d1;
   --mm-border: #e1e8e4;
@@ -65,6 +67,8 @@ html[data-theme='dark'] {
   --mm-text: #e7eeeb;
   --mm-text-strong: #f4f8f6;
   --mm-muted: #a6b4ae;
+  --mm-text-secondary: #b5c1bc;
+  --mm-text-tertiary: #9aa9a2;
   --mm-line: #2d3935;
   --mm-line-strong: #405149;
   --mm-border: #2d3935;
@@ -133,6 +137,23 @@ a[href] {
 
 button:disabled {
   cursor: not-allowed;
+}
+
+/* Readability baseline */
+body {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+p {
+  line-height: 1.7;
+}
+
+input,
+textarea,
+select,
+button {
+  line-height: 1.4;
 }
 
 /* Dark-mode normalization for legacy homepage surfaces. Keep these rules canonical
