@@ -1,11 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { eventRecordToLegacy } from '@/lib/data/presentation'
+import { eventRecordToLegacy, type EventItem } from '@/lib/data/presentation'
 import { supabasePublicRepository } from '@/lib/data/supabasePublicRepository'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import EventDetail from '@/components/content/EventDetail'
-import type { EventItem } from '@/lib/content'
 
 export default function LiveEventDetail({ slug, initialEvent }: { slug: string; initialEvent: EventItem | null }) {
   const [event, setEvent] = useState<EventItem | null>(initialEvent)
