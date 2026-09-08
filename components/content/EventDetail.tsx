@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, CalendarDays, Clock3, MapPin } from 'lucide-react'
-import type { EventItem } from '@/lib/content'
+import type { EventItem } from '@/lib/data/presentation'
 
 export default function EventDetail({ event }: { event: EventItem }) {
   return (
