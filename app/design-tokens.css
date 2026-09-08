@@ -105,6 +105,8 @@ html[data-theme='dark'] { color-scheme: dark; }
 body {
   background: var(--mm-bg);
   color: var(--mm-text);
+  font-size: 15px;
+  line-height: 1.65;
 }
 
 .container {
@@ -139,12 +141,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Readability baseline */
-body {
-  font-size: 15px;
-  line-height: 1.65;
-}
-
 p {
   line-height: 1.7;
 }
@@ -154,6 +150,99 @@ textarea,
 select,
 button {
   line-height: 1.4;
+}
+
+/* Readability hierarchy. Keep the existing visual language; lift only text that was too small to read comfortably. */
+.meta,
+.search-helper,
+.search-results a,
+.event-card p,
+.event-details,
+.finance-summary-page span,
+.finance-period > span,
+.report-button,
+.event-status,
+.filter-row span,
+.filter-row-interactive button,
+.news-page-card small,
+.news-page-card a,
+.editorial-card small,
+.editorial-card span,
+.editorial-card a,
+.contact-card-page span,
+.gallery-card small,
+.gallery-card > div:last-child > span,
+.management-person-content > span,
+.management-role {
+  font-size: 12px;
+}
+
+.tag,
+.event-label,
+.eyebrow,
+.mm-utility-bar,
+.mm-language-menu button,
+.mm-mobile-menu-label,
+.mm-mobile-categories p {
+  font-size: 11px;
+}
+
+.news-page-card p,
+.editorial-card p,
+.event-card p,
+.role-note p,
+.finance-summary-page span,
+.service-card p,
+.home-highlight p {
+  line-height: 1.7;
+}
+
+.news-body h3 {
+  line-height: 1.35;
+}
+
+.home-latest-meta {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.home-news-meta {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.home-news-kicker {
+  font-size: 10px;
+}
+
+.home-news-share,
+.home-latest-share-row .home-news-share,
+.home-news-more,
+.read-link,
+.home-highlight strong,
+.home-links a {
+  font-size: 12px;
+}
+
+/* Header text should remain compact without becoming visually faint or microscopic. */
+.mm-search-trigger span,
+.mm-secondary-nav a,
+.mm-utility-nav a,
+.mm-date,
+.mm-language-btn,
+.mm-language-menu button,
+.mm-search-results a,
+.mm-search-results small {
+  line-height: 1.4;
+}
+
+.mm-secondary-nav a,
+.mm-utility-nav a {
+  font-size: 13px;
+}
+
+.mm-date {
+  font-size: 12px;
 }
 
 /* Dark-mode normalization for legacy homepage surfaces. Keep these rules canonical
@@ -218,6 +307,26 @@ html[data-theme='dark'] .home-news-image {
 
 @media (max-width: 560px) {
   :root { --mm-gutter: 24px; }
+
+  .mm-secondary-nav a,
+  .mm-date {
+    font-size: 12px;
+  }
+
+  .home-latest-meta,
+  .event-details,
+  .service-card p,
+  .news-page-card p,
+  .editorial-card p,
+  .event-card p {
+    font-size: 13px;
+  }
+
+  .news-page-card small,
+  .editorial-card small,
+  .gallery-card small {
+    font-size: 11px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
