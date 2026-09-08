@@ -6,15 +6,17 @@
 
 ## 1. Tujuan Dokumen
 
-Dokumen ini menjadi acuan kerja untuk redesign repository `miftahul-mubin` tanpa melakukan rewrite besar dalam satu langkah.
+Dokumen ini menjadi acuan kerja untuk redesign repository `miftahul-mubin` tanpa rewrite besar dalam satu langkah.
 
-Roadmap memiliki tiga tujuan utama:
+Tujuan utama:
 
-1. Mengubah beranda dari pola landing-page/institutional homepage menjadi portal informasi masjid yang editorial, informatif, mudah dipindai, dan tetap mempunyai identitas Miftahul Mubin.
+1. Mengubah beranda menjadi portal informasi masjid yang editorial, informatif, mudah dipindai, dan tetap mempunyai identitas Miftahul Mubin.
 2. Menjadikan beranda sebagai reference implementation untuk typography, warna, spacing, surface, card, list, section heading, responsive behavior, dan dark mode.
-3. Memigrasikan halaman public lain secara bertahap agar memakai bahasa visual dan primitive yang sama, lalu menghapus CSS dan abstraction lama yang sudah tidak memiliki consumer.
+3. Menjadikan halaman berita sebagai reference implementation kedua untuk pola halaman detail/editorial.
+4. Memigrasikan halaman public lain secara berkala agar memakai bahasa visual dan primitive yang sama.
+5. Menghapus CSS dan abstraction lama setelah consumer lama benar-benar tidak diperlukan.
 
-Roadmap ini berorientasi pada penyederhanaan dan pengurangan penumpukan, bukan penambahan layer baru.
+Roadmap berorientasi pada penyederhanaan dan pengurangan penumpukan, bukan penambahan layer baru.
 
 ---
 
@@ -38,44 +40,52 @@ Aturan kerja:
 - Jangan membuat design system terpisah untuk setiap halaman.
 - Jangan menambah CSS ketika selector atau primitive yang sudah ada dapat digunakan.
 - Jangan menghapus file atau selector sebelum consumer dipastikan tidak lagi menggunakannya.
-- Jangan membuat dark mode sebagai desain kedua yang berbeda; dark mode harus mengikuti struktur dan hierarchy yang sama.
-- Perubahan besar harus dipecah menjadi commit kecil yang mempunyai satu tujuan.
-- Setiap kelompok perubahan didahului checkpoint `C`.
+- Jangan membuat dark mode sebagai desain kedua yang berbeda; dark mode mengikuti struktur dan hierarchy yang sama.
+- Perubahan besar dipecah menjadi commit kecil dengan satu tujuan teknis.
+- Setiap kelompok perubahan besar didahului checkpoint `C`.
 - Eksekusi dilakukan melalui `L`.
 - Perbaikan error konkret menggunakan `R`.
-- Pemeriksaan deployment hanya melalui `P` dan tidak menjadi bagian dari `C` kecuali diminta secara eksplisit.
+- Pemeriksaan deployment hanya melalui `P`; bukan bagian dari `C` kecuali diminta eksplisit.
 
 ---
 
-## 3. Model Siklus Kerja
+## 3. Siklus Kerja Berkala
 
-Setiap fase mengikuti siklus:
+Setiap fase mengikuti pola berikut:
 
 ```text
-C — Checkpoint / audit / rencana
+C — audit + checkpoint + rencana tahap berikutnya
 ↓
-L — implementasi kecil
+L — implementasi subfase kecil
 ↓
-L — implementasi lanjutan bila masih dalam scope yang sama
+C — evaluasi hasil + checkpoint berikutnya
 ↓
-C — evaluasi hasil dan rencana berikutnya
+L — implementasi subfase berikutnya
+↓
+...
 ```
 
 Untuk error konkret:
 
 ```text
-R — Repair
+R — repair minimal
 ↓
 validation
 ```
 
-Tidak boleh menggabungkan beberapa tujuan yang tidak berhubungan ke dalam satu `L` besar hanya demi mempercepat jumlah commit.
+### Aturan berkala
+
+- Satu `L` tidak boleh menggabungkan banyak tujuan yang tidak berkaitan.
+- Setiap `C` menghasilkan satu arah tujuan yang jelas untuk `L` berikutnya.
+- Setiap fase besar boleh terdiri dari beberapa `C/L`, bukan satu `L` besar.
+- Bila ditemukan scope baru yang tidak direncanakan, pekerjaan berhenti di checkpoint dan tidak langsung diperluas.
+- Setelah satu halaman stabil, halaman tersebut menjadi referensi untuk halaman berikutnya.
 
 ---
 
-# 4. Kondisi Awal
+## 4. Kondisi Awal
 
-Beranda saat ini sudah mempunyai modul data/presentation yang cukup jelas, termasuk:
+Beranda telah mempunyai modul data/presentation yang cukup jelas, termasuk:
 
 - `LiveNews`
 - `LiveEvents`
@@ -83,11 +93,11 @@ Beranda saat ini sudah mempunyai modul data/presentation yang cukup jelas, terma
 - `LiveAnnouncements`
 - `LivePopularNews`
 
-`app/page.tsx` saat ini juga sudah memisahkan konten menjadi beberapa section: berita, hero, highlights, pengumuman, populer, agenda, keislaman, services, dan closing. Struktur ini menjadi bahan yang dipertahankan dan diatur ulang, bukan alasan untuk membangun ulang data layer dari awal.
+`app/page.tsx` telah memisahkan konten menjadi beberapa section: berita, hero, highlights, pengumuman, populer, agenda, keislaman, services, dan closing. Struktur tersebut menjadi bahan yang dipertahankan dan diatur ulang, bukan alasan untuk membangun ulang data layer.
 
-Fondasi design token juga sudah tersedia di `app/design-tokens.css`, termasuk token text semantic dan pasangan light/dark. Beberapa normalisasi typography, mobile readability, header surfaces, dan semantic colors sudah dilakukan sebelum roadmap redesign ini dimulai.
+Fondasi design token tersedia di `app/design-tokens.css`, termasuk token text semantic dan pasangan light/dark. Normalisasi typography, mobile readability, header surfaces, dan semantic colors juga telah dilakukan sebelum redesign besar dimulai.
 
-CSS public saat ini masih tersebar dalam beberapa layer seperti:
+CSS public masih tersebar dalam beberapa layer, antara lain:
 
 ```text
 app/globals.css
@@ -103,83 +113,53 @@ app/popular-polish.css
 app/header-portal.css
 ```
 
-Jangan melakukan konsolidasi massal file-file tersebut di awal roadmap. Konsolidasi dilakukan setelah consumer dan visual contract stabil.
+Konsolidasi massal tidak dilakukan di awal. Konsolidasi dilakukan setelah consumer dan visual contract stabil.
 
 ---
 
 # 5. Target Akhir
 
-Target akhir repository:
-
 ```text
-                    DESIGN TOKENS
-                         │
-                         ▼
-                PUBLIC DESIGN SYSTEM
-                         │
-              ┌──────────┴──────────┐
-              ▼                     ▼
-           HOMEPAGE            SHARED UI PRIMITIVES
-              │                     │
-              └──────────┬──────────┘
-                         ▼
-        ┌────────────────────────────────┐
-        │                                │
-      BERITA                         KEGIATAN
-        │                                │
-      KEISLAMAN                    PENGUMUMAN
-        │                                │
-      PROFIL                      KEPENGURUSAN
-        │                                │
-     KEUANGAN                     DOKUMENTASI
-        │                                │
-      KONTAK                              │
-        └────────────────────────────────┘
-                         │
-                         ▼
-                    ADMIN UI
+DESIGN TOKENS
+      ↓
+PUBLIC DESIGN SYSTEM
+      ↓
+HOMEPAGE — reference implementation
+      ↓
+BERITA — editorial/detail reference
+      ↓
+KEGIATAN / KEISLAMAN / PENGUMUMAN
+      ↓
+PROFIL / KEPENGURUSAN / KEUANGAN / DOKUMENTASI / KONTAK
+      ↓
+ADMIN UI alignment
+      ↓
+CSS + abstraction consolidation
 ```
 
-Makna target tersebut:
-
-- Beranda menjadi reference implementation.
-- Shared primitive dipakai lintas halaman ketika pola benar-benar berulang.
-- Halaman tetap boleh memiliki kebutuhan layout khusus jika fungsi informasinya berbeda.
-- Admin menyerap token dan primitive dasar public, tetapi tidak dipaksa memiliki density dan information architecture yang sama.
+Target akhir bukan membuat semua halaman identik. Targetnya adalah semua halaman terasa berasal dari sistem yang sama, sementara information architecture dan density boleh berbeda sesuai fungsi.
 
 ---
 
-# 6. Fase 0 — Baseline & Freeze
+# 6. FASE 0 — Baseline & Freeze
 
-## Checkpoint 19-A
+## C19 — Baseline
 
 ### Tujuan
 
-Mendokumentasikan kondisi sebelum redesign besar sehingga perubahan berikutnya dapat dilacak dan tidak menciptakan regresi arsitektur.
+Mendokumentasikan kondisi awal sebelum redesign besar.
 
-### File utama
+### Audit
 
-```text
-app/page.tsx
-app/design-tokens.css
-app/globals.css
-app/polish.css
-app/mobile-polish.css
-app/theme-polish.css
-app/dark-mode-fixes.css
-```
-
-### Pekerjaan
-
-- petakan section homepage
-- petakan class CSS yang dipakai homepage
-- petakan token yang sudah tersedia
-- petakan dark-mode overrides
-- petakan responsive overrides
-- tandai selector yang tampak duplikatif
-- tandai CSS khusus homepage
-- tandai CSS yang berpotensi menjadi shared primitive
-- catat dependency antar file
+- section homepage
+- consumer CSS homepage
+- token yang tersedia
+- dark-mode overrides
+- responsive overrides
+- selector yang duplikatif
+- CSS khusus homepage
+- pola yang berpotensi menjadi shared primitive
+- dependency antar file
 
 ### Output
 
@@ -192,23 +172,13 @@ Responsive map
 Legacy selector candidates
 ```
 
-### Larangan
-
-Tidak ada redesign visual pada fase ini.
-
-### Selesai bila
-
-Semua perubahan fase berikutnya mempunyai titik acuan yang jelas.
+Tidak ada redesign visual pada tahap ini.
 
 ---
 
-# 7. Fase 1 — Homepage Structural Redesign
+# 7. FASE 1 — Homepage Structural Redesign
 
-## Checkpoint 20
-
-### Tujuan
-
-Mengubah homepage dari halaman yang berpusat pada hero institusional menjadi portal informasi masjid yang berpusat pada informasi aktual.
+## C20 — Struktur Beranda
 
 ### Struktur target
 
@@ -223,65 +193,58 @@ BANNER / IMPORTANT INFO
 ↓
 FEATURED NEWS
 ↓
-POPULAR
+TERPOPULER
 ↓
-ANNOUNCEMENTS
+PENGUMUMAN
 ↓
-LATEST NEWS
+BERITA TERKINI
 ↓
-AGENDA
+AGENDA MIFTAHUL MUBIN
 ↓
-ISLAMIC CONTENT
+RUANG KEISLAMAN
 ↓
-FINANCIAL SUMMARY
+TRANSPARANSI / FINANCIAL SUMMARY
 ↓
-SERVICES
+LAYANAN MASJID
 ↓
 FOOTER
 ```
 
-### Perubahan utama
+### Arah
 
-- Hero institusional besar tidak lagi menjadi pusat homepage.
-- Berita utama menjadi konten paling dominan.
-- Pengumuman dan agenda diperlakukan sebagai informasi operasional.
-- Finance ditampilkan sebagai summary cepat, bukan section promosi panjang.
-- Services dipadatkan menjadi shortcut.
-- Copy institutional seperti pengenalan masjid diarahkan ke `/profil/` bila tidak dibutuhkan di homepage.
+- berita utama menjadi titik fokus informasi
+- hero institusional besar tidak lagi menjadi pusat homepage
+- pengumuman dan agenda diperlakukan sebagai informasi operasional
+- finance ditampilkan sebagai ringkasan
+- services dipadatkan sebagai shortcut
+- informasi profil yang tidak penting untuk konsumsi cepat diarahkan ke `/profil/`
 
-### Behavior yang harus dipertahankan
+## L20 — Implementasi struktur
 
-- seluruh route yang sudah ada
-- pengambilan data dari live/public repository layer
-- link antar halaman
-- dark mode
-- responsive behavior
+Hanya mengubah urutan, grouping, dan wrapper yang diperlukan. Data/presentation layer tetap dipertahankan.
 
-### Selesai bila
+## C20.1 — Evaluasi
 
-Homepage mempunyai hierarchy informasi yang jelas dan semua modul penting masih dapat diakses.
+Pastikan hierarchy informasi baru jelas sebelum masuk ke visual redesign.
+
+## L20.1 — Penyempurnaan struktur
+
+Perbaiki hasil C20.1 hanya pada temuan yang berhubungan dengan struktur.
 
 ---
 
-# 8. Fase 2 — Homepage Visual Language
+# 8. FASE 2 — Homepage Visual Language
 
-## Checkpoint 21
+## C21 — Bahasa Visual
 
-### Tujuan
-
-Menetapkan bahasa visual homepage yang akan menjadi referensi halaman lain.
-
-### Typography
+Reference yang ditetapkan:
 
 ```text
-Display / editorial heading
-Playfair Display
-
-Body / interface
-DM Sans
+Display / editorial heading — Playfair Display
+Body / interface           — DM Sans
 ```
 
-### Hierarchy target
+Hierarchy:
 
 ```text
 H1
@@ -293,22 +256,13 @@ Tertiary / Meta
 Label
 ```
 
-### Spacing scale target
+Spacing reference:
 
 ```text
-4
-8
-12
-16
-24
-32
-48
-64
+4 / 8 / 12 / 16 / 24 / 32 / 48 / 64
 ```
 
-Tidak berarti semua ukuran lama wajib diubah sekaligus. Scale dipakai sebagai referensi untuk perubahan baru dan refactor berikutnya.
-
-### Surface vocabulary
+Surface vocabulary:
 
 ```text
 canvas
@@ -319,7 +273,7 @@ line
 line-strong
 ```
 
-### Text vocabulary
+Text vocabulary:
 
 ```text
 text-strong
@@ -329,7 +283,7 @@ text-tertiary
 muted
 ```
 
-### Accent vocabulary
+Accent vocabulary:
 
 ```text
 green
@@ -338,19 +292,21 @@ gold
 accent-soft
 ```
 
-### Selesai bila
+## L21 — Typography dan spacing
 
-Homepage tidak lagi membutuhkan warna dan ukuran typography ad-hoc untuk pola yang sebenarnya sudah semantic.
+## C21.1 — Evaluasi typography
+
+## L21.1 — Surface dan semantic token alignment
+
+## C21.2 — Evaluasi visual language
+
+Homepage harus berhenti menghasilkan warna, type size, dan spacing ad-hoc untuk pola yang sebenarnya semantic.
 
 ---
 
-# 9. Fase 3 — Featured News System
+# 9. FASE 3 — Featured News System
 
-## Checkpoint 22
-
-### Tujuan
-
-Membangun satu pola editorial untuk berita utama yang dapat menjadi acuan halaman berita.
+## C22 — Sistem berita utama
 
 ### Struktur target
 
@@ -365,31 +321,33 @@ Membangun satu pola editorial untuk berita utama yang dapat menjadi acuan halama
 └───────────────────────────────┴──────────────────────┘
 ```
 
-### Visual primitives
+### Pola yang distandardisasi
 
-Pola yang harus distandardisasi:
+```text
+CategoryTag
+Meta
+FeaturedNews
+NewsCard
+NewsListItem
+SectionHeading
+ImageFrame
+```
 
-- `CategoryTag`
-- `Meta`
-- `FeaturedNews`
-- `NewsCard`
-- `NewsListItem`
-- section heading + action
-- image ratio
+Komponen baru hanya dibuat bila pattern memiliki reuse dan behavior bersama.
 
-Komponen React baru hanya dibuat bila pola tersebut benar-benar berulang dan mempunyai behavior bersama.
+## L22 — Featured layout
 
-### Selesai bila
+## C22.1 — Evaluasi hierarchy
 
-Berita mempunyai hierarchy visual yang jelas: featured > secondary > supporting.
+## L22.1 — Card/list consistency
 
 ---
 
-# 10. Fase 4 — Homepage Information Modules
+# 10. FASE 4 — Homepage Information Modules
 
-## Checkpoint 23
+## C23 — Modul informasi
 
-### Modul
+Modul:
 
 ```text
 Popular
@@ -401,45 +359,36 @@ Finance
 Services
 ```
 
-### Contract setiap modul
+Contract setiap modul:
 
-Setiap modul harus memiliki definisi yang konsisten untuk:
-
-- section heading
-- section spacing
-- content density
+- heading
+- spacing
+- density
 - typography
 - metadata
 - action link
 - responsive behavior
-- dark-mode behavior
+- dark mode
 
-### Anti-pattern
+Jangan membuat pola visual berbeda untuk fungsi yang sama tanpa alasan.
 
-Jangan membuat setiap section mempunyai pola berbeda tanpa alasan fungsional.
+## L23 — Popular + announcements
 
-Contoh yang harus dihindari:
+## C23.1 — Evaluasi
 
-```text
-section A = bottom border
-section B = decorative underline
-section C = card header
-section D = heading floating
-```
+## L23.1 — Latest news + agenda
 
-Bila semua menyampaikan fungsi yang sama, gunakan satu pattern.
+## C23.2 — Evaluasi
+
+## L23.2 — Islamic + finance + services
 
 ---
 
-# 11. Fase 5 — Mobile-First Homepage
+# 11. FASE 5 — Homepage Mobile
 
-## Checkpoint 24
+## C24 — Mobile-first
 
-### Tujuan
-
-Membuat mobile sebagai layout yang dirancang, bukan desktop yang diperkecil.
-
-### Urutan mobile target
+Target mobile:
 
 ```text
 HEADER
@@ -465,31 +414,29 @@ SERVICES
 FOOTER
 ```
 
-### Target usability
+Target usability:
 
-- headline tetap mudah dibaca
+- headline mudah dibaca
 - metadata tidak terlalu kecil
 - tap target cukup besar
-- thumbnail mempunyai ratio konsisten
-- section spacing tidak terlalu rapat
-- horizontal scrolling hanya digunakan jika memang membantu
-- tidak membuat konten penting tersembunyi di balik overflow
+- image ratio konsisten
+- spacing tidak terlalu padat
+- horizontal scrolling hanya bila membantu
+- konten penting tidak tersembunyi oleh overflow
 
-### Selesai bila
+## L24 — Mobile hierarchy
 
-Homepage mobile mempunyai hierarchy dan density yang sengaja dirancang, bukan hasil shrink dari desktop.
+## C24.1 — Evaluasi
+
+## L24.1 — Mobile spacing dan typography
 
 ---
 
-# 12. Fase 6 — Dark Mode Parity
+# 12. FASE 6 — Homepage Dark Mode
 
-## Checkpoint 25
+## C25 — Dark parity
 
-### Tujuan
-
-Membuat dark mode menjadi pasangan visual yang setara dengan light mode.
-
-### Aturan
+Aturan:
 
 ```text
 same information hierarchy
@@ -497,7 +444,7 @@ same component structure
 same interaction model
 ```
 
-Yang berubah terutama:
+Perubahan utama:
 
 ```text
 surface
@@ -507,7 +454,7 @@ accent contrast
 overlay
 ```
 
-### Target architecture
+Target architecture:
 
 ```text
 design-tokens
@@ -517,35 +464,21 @@ component styles
 responsive styles
 ```
 
-Hindari rantai:
+Hindari patch bertingkat yang tidak perlu.
 
-```text
-component
-↓
-theme-polish
-↓
-dark-mode-fixes
-↓
-mobile override
-↓
-another exception
-```
+## L25 — Dark surface parity
 
-### Selesai bila
+## C25.1 — Evaluasi contrast
 
-Sebagian besar dark-mode behavior dapat dikendalikan melalui semantic token tanpa patch selector yang tidak perlu.
+## L25.1 — Dark text / border parity
 
 ---
 
-# 13. Fase 7 — Homepage Stabilization
+# 13. FASE 7 — Homepage Stabilization
 
-## Checkpoint 26
+## C26 — Homepage reference lock
 
-### Tujuan
-
-Menjadikan homepage sebagai reference implementation sebelum mengubah halaman lain.
-
-### Audit
+Audit:
 
 - duplicate selector
 - duplicate color
@@ -556,11 +489,7 @@ Menjadikan homepage sebagai reference implementation sebelum mengubah halaman la
 - redundant mobile override
 - redundant dark override
 
-### Aturan
-
-Jangan melakukan redesign halaman lain sebelum homepage lulus fase stabilisasi.
-
-### Output
+Output:
 
 ```text
 Homepage stable
@@ -568,17 +497,17 @@ Homepage reference implementation
 Homepage design contract
 ```
 
+Tidak ada redesign halaman lain sebelum fase ini dinyatakan selesai.
+
+## L26 — Cleanup homepage
+
 ---
 
-# 14. Fase 8 — Extract Design System
+# 14. FASE 8 — Extract Design System
 
-## Checkpoint 27
+## C27 — Primitive yang terbukti berulang
 
-### Tujuan
-
-Mengambil pola yang benar-benar terbukti berulang dari homepage dan menjadikannya primitive bersama.
-
-### Candidate primitives
+Candidate:
 
 ```text
 Container
@@ -595,7 +524,7 @@ Divider
 Status
 ```
 
-### Candidate tokens
+Candidate tokens:
 
 ```text
 colors
@@ -610,17 +539,21 @@ breakpoints
 focus states
 ```
 
-### Aturan penting
-
 Tidak semua pattern harus menjadi React component.
 
-Jika sebuah pattern hanya berupa 1–2 declaration tanpa behavior bersama, cukup gunakan CSS/token.
+## L27 — Shared primitives
+
+## C27.1 — Evaluasi reuse
+
+## L27.1 — Shared token cleanup
 
 ---
 
-# 15. Fase 9 — Redesign Berita
+# 15. FASE 9 — Redesign Halaman Berita
 
-## Checkpoint 28
+> Halaman berita menjadi reference implementation kedua setelah homepage. Struktur editorial diambil dari pola artikel yang telah dipelajari: header artikel, hero media, author/share, reading column, rekomendasi inline, sidebar desktop, related content, dan responsive reordering.
+
+## C28 — Audit dan contract halaman berita
 
 ### Target route
 
@@ -629,9 +562,11 @@ Jika sebuah pattern hanya berupa 1–2 declaration tanpa behavior bersama, cukup
 /berita/[slug]
 ```
 
-### Prinsip
+### Tujuan
 
-Gunakan contract homepage:
+Memetakan halaman berita saat ini sebelum perubahan visual, lalu menyelaraskannya dengan contract homepage.
+
+### Contract wajib dari homepage
 
 ```text
 same typography
@@ -644,42 +579,405 @@ same responsive logic
 same dark mode
 ```
 
-### Detail article target
+### Pattern target
 
 ```text
-Category
+GLOBAL HEADER
 ↓
-Title
+PRIMARY NAVIGATION
 ↓
-Meta
+CONTEXT / DATE
 ↓
-Lead
+ARTICLE CATEGORY
 ↓
-Hero image
+ARTICLE TITLE
 ↓
-Article body
+EXCERPT / LEAD
 ↓
-Related content
+AUTHOR + DATE
+↓
+HERO IMAGE
+↓
+CAPTION
+↓
+AUTHOR BLOCK + SHARE
+↓
+ARTICLE BODY
+  ├ BACA JUGA
+  └ PARAGRAPHS
+↓
+TAGS
+↓
+RELATED / TERKAIT
+↓
+SECONDARY CONTENT
+↓
+FOOTER
 ```
 
-### Tidak boleh
+### Desktop target
 
-Membuat design language kedua khusus halaman berita.
+```text
+┌──────────────────────────────────┬─────────────────────┐
+│                                  │ TERPOPULER          │
+│             ARTICLE              │                     │
+│                                  ├─────────────────────┤
+│                                  │ TERKINI             │
+│                                  │                     │
+│                                  ├─────────────────────┤
+│                                  │ PENGUMUMAN / EXTRA  │
+└──────────────────────────────────┴─────────────────────┘
+```
+
+Sidebar adalah secondary content rail dan dapat sticky pada desktop.
+
+### Mobile target
+
+```text
+ARTICLE
+↓
+TAGS
+↓
+TERKAIT
+↓
+TERPOPULER
+↓
+TERKINI
+↓
+PENGUMUMAN
+```
+
+## L28 — Audit structure / article shell
+
+Hanya struktur/wrapper yang diubah. Belum melakukan polish besar.
+
+## C28.1 — Checkpoint artikel shell
+
+Validasi:
+
+- hierarchy artikel jelas
+- data lama tetap mengalir
+- tidak ada duplication data layer
+- tidak ada scope visual baru yang belum diperlukan
 
 ---
 
-# 16. Fase 10 — Redesign Kegiatan
+## C29 — Article Header + Hero
 
-## Checkpoint 29
+### Pola
 
-### Target route
+```text
+R01 Header system
+R02 Category label
+R03 Article header
+R04 Hero media
+```
+
+### Requirement
+
+- category jelas
+- title menjadi elemen dominan
+- metadata mudah dibaca
+- lead/excerpt tidak mengalahkan title
+- hero image mempunyai ratio konsisten dengan homepage
+- caption tetap tersedia bila ada
+
+## L29 — Implementasi header dan hero
+
+## C29.1 — Evaluasi type hierarchy dan media ratio
+
+Tidak melakukan perubahan pada body artikel sebelum hierarchy header stabil.
+
+---
+
+## C30 — Author + Share
+
+### Pola
+
+```text
+R05 Author block
+R06 Share actions
+```
+
+### Target
+
+Author dan tanggal tetap terlihat tetapi tidak mengambil hierarchy lebih besar dari title/lead.
+
+Share actions mengikuti interaction language yang sama dengan homepage.
+
+## L30 — Author + share
+
+## C30.1 — Evaluasi spacing, icon, dan tap target
+
+---
+
+## C31 — Reading Experience
+
+### Pola
+
+```text
+R07 Reading column
+```
+
+### Target
+
+- column artikel nyaman dibaca
+- line-height konsisten dengan readability baseline
+- paragraph spacing konsisten
+- heading artikel mempunyai hierarchy jelas
+- inline media tidak merusak reading flow
+- block quote/list/code bila ada mengikuti primitive yang sama
+
+## L31 — Article body typography
+
+## C31.1 — Evaluasi readability
+
+## L31.1 — Penyempurnaan article body
+
+---
+
+## C32 — Baca Juga / Inline Recommendation
+
+### Pola
+
+```text
+R08 Inline recommendation
+```
+
+### Tujuan
+
+Menyediakan rekomendasi kontekstual di tengah artikel tanpa membuatnya terlihat seperti iklan.
+
+### Contract
+
+```text
+contextual
+compact
+visually distinct
+same surface language
+same link language
+```
+
+### Aturan
+
+- tidak menambahkan infrastruktur iklan
+- tidak membuat pattern baru bila `Card`/`ListItem` yang ada sudah cukup
+- recommendation tetap sekunder terhadap paragraph utama
+
+## L32 — Inline recommendation
+
+## C32.1 — Evaluasi placement dan hierarchy
+
+---
+
+## C33 — Secondary Content Rail
+
+### Pola
+
+```text
+R09 Sticky secondary rail
+R10 Popular list
+R11 Latest list
+```
+
+### Terpopuler
+
+Gunakan numbered list yang mudah dipindai:
+
+```text
+01
+02
+03
+04
+05
+06
+```
+
+### Terkini
+
+Gunakan:
+
+```text
+category
+headline
+meta/date
+separator
+```
+
+### Aturan desktop
+
+- sidebar menjadi secondary content rail
+- sticky hanya bila menguntungkan pembacaan
+- tidak boleh mengalahkan article column
+
+## L33 — Sidebar / popular / latest
+
+## C33.1 — Evaluasi desktop balance
+
+Tidak mengubah mobile order sebelum desktop rail stabil.
+
+---
+
+## C34 — Tags + Related Content
+
+### Pola
+
+```text
+R12 Tags
+R13 Related content
+```
+
+### Target
+
+Tags berada dekat akhir artikel.
+
+Related/terkait menjadi koleksi konten setelah article body, bukan bercampur dengan isi utama.
+
+### Desktop
+
+Related content dapat memakai 2-column list/grid bila ruang memungkinkan.
+
+### Mobile
+
+Related content menjadi satu alur setelah tags.
+
+## L34 — Tags + related
+
+## C34.1 — Evaluasi hierarchy dan spacing
+
+---
+
+## C35 — Responsive Article
+
+### Pola
+
+```text
+R14 Responsive content reordering
+```
+
+### Desktop
+
+```text
+main article + secondary rail
+```
+
+### Mobile
+
+```text
+main article
+↓
+tags
+↓
+related
+↓
+popular
+↓
+latest
+↓
+announcement
+```
+
+### Target usability
+
+- title tetap dominan
+- reading column tidak terlalu sempit
+- share buttons cukup besar
+- sidebar tidak dipaksa tetap berada di samping
+- tidak ada horizontal overflow
+
+## L35 — Mobile article
+
+## C35.1 — Evaluasi responsive
+
+---
+
+## C36 — Dark Mode Berita
+
+### Tujuan
+
+Halaman berita memakai dark mode yang sama dengan homepage, bukan sistem kedua.
+
+### Yang berubah
+
+```text
+article surface
+text
+muted text
+border
+image caption
+inline recommendation surface
+sidebar surface
+```
+
+## L36 — Dark article parity
+
+## C36.1 — Evaluasi contrast
+
+---
+
+## C37 — Berita Stabilization
+
+### Audit
+
+- duplicate article selector
+- duplicate card pattern
+- duplicate metadata
+- duplicate spacing
+- unnecessary sidebar patches
+- redundant mobile overrides
+- redundant dark overrides
+
+### Output
+
+```text
+News listing stable
+News detail stable
+News design contract
+```
+
+Homepage + berita menjadi dua reference point resmi untuk migrasi halaman berikutnya.
+
+## L37 — Cleanup berita
+
+---
+
+# 16. Urutan Berkala Setelah Berita
+
+Setelah berita stabil, setiap halaman lain mengikuti pola yang sama. Tidak ada perpindahan massal.
+
+```text
+C38 → L38  Kegiatan structure
+C39 → L39  Kegiatan visual
+C40 → L40  Kegiatan responsive
+C41 → L41  Kegiatan dark mode + cleanup
+
+C42 → L42  Keislaman structure
+C43 → L43  Keislaman visual
+C44 → L44  Keislaman responsive
+C45 → L45  Keislaman dark mode + cleanup
+
+C46 → L46  Pengumuman structure
+C47 → L47  Pengumuman visual
+C48 → L48  Pengumuman responsive
+C49 → L49  Pengumuman dark mode + cleanup
+```
+
+Pola yang sama diteruskan untuk halaman berikutnya.
+
+---
+
+# 17. FASE 10 — Redesign Kegiatan
+
+Target:
 
 ```text
 /kegiatan
 /kegiatan/[slug]
 ```
 
-### Pattern
+Reference: agenda homepage.
+
+Pattern:
 
 ```text
 Date
@@ -695,26 +993,20 @@ Description
 Action
 ```
 
-### Visual relation
-
-Agenda card homepage menjadi reference untuk event list/detail.
+Gunakan primitive homepage/news bila pola benar-benar sama.
 
 ---
 
-# 17. Fase 11 — Redesign Keislaman
+# 18. FASE 11 — Redesign Keislaman
 
-## Checkpoint 30
-
-### Target route
+Target:
 
 ```text
 /keislaman
 /keislaman/[slug]
 ```
 
-### Pattern
-
-Gunakan editorial system homepage dengan aksen tematik yang tetap berada di dalam token system.
+Gunakan editorial system homepage/berita dengan aksen tematik yang tetap berada dalam token system.
 
 Accent yang diizinkan:
 
@@ -728,17 +1020,15 @@ Tidak membuat palette baru.
 
 ---
 
-# 18. Fase 12 — Redesign Pengumuman
+# 19. FASE 12 — Redesign Pengumuman
 
-## Checkpoint 31
-
-### Target route
+Target:
 
 ```text
 /pengumuman
 ```
 
-### Pattern
+Pattern:
 
 ```text
 Announcement
@@ -750,26 +1040,20 @@ Title
 Summary
 ```
 
-### Target
-
-Compact, mudah dipindai, dan lebih operasional daripada editorial.
+Compact dan lebih operasional daripada editorial.
 
 ---
 
-# 19. Fase 13 — Redesign Profil & Kepengurusan
+# 20. FASE 13 — Redesign Profil & Kepengurusan
 
-## Checkpoint 32
-
-### Target route
+Target:
 
 ```text
 /profil
 /kepengurusan
 ```
 
-### Prinsip
-
-Halaman institutional boleh berbeda dari portal berita dalam information architecture, tetapi harus tetap memakai:
+Information architecture boleh lebih institutional, tetapi tetap memakai:
 
 - typography system
 - spacing system
@@ -779,7 +1063,7 @@ Halaman institutional boleh berbeda dari portal berita dalam information archite
 - responsive system
 - dark mode
 
-### Target structure
+Target structure:
 
 ```text
 Page Intro
@@ -793,17 +1077,15 @@ Structured Content
 
 ---
 
-# 20. Fase 14 — Redesign Keuangan
+# 21. FASE 14 — Redesign Keuangan
 
-## Checkpoint 33
-
-### Target route
+Target:
 
 ```text
 /keuangan
 ```
 
-### Pattern
+Pattern:
 
 ```text
 Summary
@@ -815,23 +1097,19 @@ Transaction table
 Disclosure / notes
 ```
 
-### Catatan
-
-Finance boleh mempunyai information density lebih tinggi karena sifatnya administratif. Konsistensi tidak berarti memaksa semua halaman mempunyai density yang sama.
+Finance boleh mempunyai information density lebih tinggi karena sifat administratif.
 
 ---
 
-# 21. Fase 15 — Redesign Dokumentasi
+# 22. FASE 15 — Redesign Dokumentasi
 
-## Checkpoint 34
-
-### Target route
+Target:
 
 ```text
 /dokumentasi
 ```
 
-### Pattern
+Pattern:
 
 - gallery ratio
 - category
@@ -841,23 +1119,19 @@ Finance boleh mempunyai information density lebih tinggi karena sifatnya adminis
 - section heading
 - responsive gallery behavior
 
-### Target
-
-Image treatment menjadi konsisten dengan image language homepage.
+Image treatment mengikuti image language homepage.
 
 ---
 
-# 22. Fase 16 — Redesign Kontak
+# 23. FASE 16 — Redesign Kontak
 
-## Checkpoint 35
-
-### Target route
+Target:
 
 ```text
 /kontak
 ```
 
-### Pattern
+Pattern:
 
 ```text
 Page Intro
@@ -869,17 +1143,13 @@ Location / map
 Contact Action
 ```
 
-Tetap memakai shared primitive dan token yang sama.
-
 ---
 
-# 23. Fase 17 — Admin UI Alignment
+# 24. FASE 17 — Admin UI Alignment
 
-## Checkpoint 36
+Admin dikerjakan setelah public website stabil.
 
-Tahap admin dilakukan setelah public website stabil.
-
-### Yang diseragamkan
+Yang diseragamkan:
 
 ```text
 Design tokens
@@ -894,7 +1164,7 @@ Focus
 Dark mode
 ```
 
-### Yang boleh berbeda
+Yang boleh berbeda:
 
 ```text
 Dashboard density
@@ -905,19 +1175,13 @@ Permission indicators
 Operational layout
 ```
 
-### Tujuan
-
-Admin terasa bagian dari produk yang sama, tetapi tetap optimal untuk pekerjaan administratif.
+Admin harus terasa bagian dari produk yang sama, tetapi tetap optimal untuk pekerjaan administratif.
 
 ---
 
-# 24. Fase 18 — CSS Consolidation
+# 25. FASE 18 — CSS Consolidation
 
-## Checkpoint 37
-
-### Tahap akhir
-
-Baru setelah halaman public bermigrasi dan visual contract stabil, audit seluruh CSS layer:
+Tahap akhir baru mengaudit seluruh CSS layer:
 
 ```text
 app/globals.css
@@ -933,9 +1197,7 @@ app/popular-polish.css
 app/header-portal.css
 ```
 
-### Klasifikasi
-
-Setiap file/selector masuk salah satu kategori:
+Setiap selector/file masuk:
 
 ```text
 KEEP
@@ -944,7 +1206,7 @@ MOVE
 DELETE
 ```
 
-### Target arsitektur
+Target architecture:
 
 ```text
 design-tokens.css
@@ -960,85 +1222,90 @@ minimal theme overrides
 
 ### Syarat penghapusan
 
-Sebuah selector atau file hanya boleh dihapus jika:
+Sebuah selector/file hanya boleh dihapus jika:
 
-1. seluruh consumer sudah ditemukan,
-2. tidak ada behavior penting yang bergantung padanya,
-3. replacement sudah aktif,
+1. seluruh consumer ditemukan,
+2. behavior penting tidak bergantung padanya,
+3. replacement aktif,
 4. tidak ada route yang masih membutuhkan style tersebut,
-5. validation dilakukan pada code/build sesuai kebutuhan tahap.
+5. validation code/build dilakukan sesuai kebutuhan tahap.
 
 ---
 
-# 25. Urutan Commit Berkala yang Direkomendasikan
+# 26. Commit Cadence
 
-Perubahan besar harus dibagi menjadi kelompok kecil.
-
-Contoh urutan utama:
+Contoh cadence resmi:
 
 ```text
 C19  Baseline
 L19  Baseline cleanup
 
 C20  Homepage structure
-L20  Homepage structure pass
-L21  Homepage editorial hierarchy
+L20  Structure pass
+C20.1 Evaluation
+L20.1 Structural refinement
 
 C21  Homepage visual language
-L22  Typography / spacing normalization
-L23  Surface / token alignment
+L21  Typography / spacing
+C21.1 Evaluation
+L21.1 Token / surface alignment
 
-C22  Featured news system
-L24  Featured layout
-L25  News card/list consistency
+C22  Featured news
+L22  Featured layout
+C22.1 Evaluation
+L22.1 Card/list consistency
 
 C23  Information modules
-L26  Popular + announcements
-L27  Latest news + agenda
+L23  Module group A
+C23.1 Evaluation
+L23.1 Module group B
+C23.2 Evaluation
+L23.2 Module group C
 
 C24  Mobile
-L28  Mobile homepage hierarchy
-L29  Mobile spacing / type cleanup
+L24  Mobile hierarchy
+C24.1 Evaluation
+L24.1 Mobile type/spacing
 
 C25  Dark mode
-L30  Dark surface parity
-L31  Dark text / border parity
+L25  Dark surfaces
+C25.1 Evaluation
+L25.1 Dark text/border
 
 C26  Stabilization
-L32  Homepage cleanup
+L26  Homepage cleanup
 
 C27  Design system extraction
-L33  Shared primitives
-L34  Shared token cleanup
+L27  Shared primitives
+C27.1 Evaluation
+L27.1 Token cleanup
 
-C28–C35  Public page migration
+C28–C37  Berita detail, satu subfase per checkpoint
 
-C36  Admin alignment
+C38+  Halaman berikutnya, satu kelompok kecil per checkpoint
 
-C37  CSS consolidation
+Final  CSS consolidation
 ```
 
-Nomor `L` dapat bertambah bila suatu fase membutuhkan beberapa commit, tetapi satu commit tetap harus memiliki satu tujuan teknis yang mudah dijelaskan.
+Nomor `L` boleh bertambah. Satu commit tetap memiliki satu tujuan teknis.
 
 ---
 
-# 26. Acceptance Criteria Homepage
-
-Homepage dianggap selesai pada tahap redesign utama jika semua kondisi berikut terpenuhi.
+# 27. Acceptance Criteria Homepage
 
 ## Information Architecture
 
-- Berita utama menjadi titik fokus informasi.
+- Berita utama menjadi fokus informasi.
 - Navigation mudah ditemukan.
 - Pengumuman dan agenda mudah dipindai.
-- Populer dan berita terkini mempunyai hierarchy yang berbeda.
+- Populer dan berita terkini memiliki hierarchy berbeda.
 - Finance dan services tidak mengambil porsi visual berlebihan.
-- Footer tetap sederhana.
+- Footer sederhana.
 
 ## Visual
 
 - Typography hierarchy konsisten.
-- Semantic color digunakan untuk teks dan surface yang memang bersifat semantic.
+- Semantic color digunakan untuk peran semantic.
 - Accent tidak bertambah tanpa alasan.
 - Image ratio konsisten.
 - Section heading konsisten.
@@ -1046,31 +1313,63 @@ Homepage dianggap selesai pada tahap redesign utama jika semua kondisi berikut t
 
 ## Responsive
 
-- Desktop, tablet, dan mobile mempunyai hierarchy yang sengaja dirancang.
+- Desktop, tablet, mobile mempunyai hierarchy yang dirancang.
 - Supporting text tidak kembali terlalu kecil.
 - Tap target cukup besar.
-- Tidak ada horizontal overflow yang tidak disengaja.
+- Tidak ada overflow horizontal yang tidak disengaja.
 
 ## Dark Mode
 
 - Tidak ada teks yang hilang karena kontras.
-- Surface tetap dapat dibedakan.
-- Border tetap terlihat seperlunya.
+- Surface dapat dibedakan.
+- Border terlihat seperlunya.
 - Accent mempunyai kontras yang cukup.
-- Tidak membutuhkan patch selector berlebihan.
-
-## Maintainability
-
-- Tidak ada data duplication hanya untuk memenuhi layout baru.
-- Tidak ada stylesheet baru tanpa alasan kuat.
-- Selector baru mempunyai scope yang jelas.
-- Legacy selector yang sudah tidak diperlukan ditandai untuk fase cleanup.
+- Patch selector tidak berlebihan.
 
 ---
 
-# 27. Acceptance Criteria Konsistensi Seluruh Public Website
+# 28. Acceptance Criteria Halaman Berita
 
-Setelah fase migrasi selesai, halaman berikut harus terasa berasal dari sistem yang sama:
+## Structural
+
+- listing dan detail memakai contract homepage
+- article shell jelas
+- main article menjadi konten dominan
+- secondary rail tetap sekunder
+
+## Editorial
+
+- category mudah ditemukan
+- title dominan
+- lead dan metadata terbaca
+- hero media konsisten
+- article body nyaman dibaca
+- inline recommendation tidak mengganggu reading flow
+
+## Navigation
+
+- popular mudah dipindai
+- latest mempunyai separator/category/date yang konsisten
+- tags berada di akhir artikel
+- related content jelas terpisah dari body
+
+## Responsive
+
+- mobile menjadi alur linear
+- sidebar berpindah ke bawah konten utama
+- tap target cukup besar
+- tidak ada horizontal overflow
+
+## Dark Mode
+
+- article surface, text, border, caption, sidebar, dan inline recommendation mempunyai contrast yang tepat
+- tidak ada secondary dark-mode design
+
+---
+
+# 29. Acceptance Criteria Konsistensi Public Website
+
+Halaman berikut harus terasa berasal dari sistem yang sama:
 
 ```text
 /
@@ -1088,7 +1387,7 @@ Setelah fase migrasi selesai, halaman berikut harus terasa berasal dari sistem y
 /kontak
 ```
 
-Yang harus konsisten:
+Yang konsisten:
 
 ```text
 header language
@@ -1117,73 +1416,56 @@ editorial vs administrative layout
 
 ---
 
-# 28. Risiko dan Mitigasi
+# 30. Risiko dan Mitigasi
 
-## Risiko 1 — Redesign terlalu besar dalam satu commit
+## Redesign terlalu besar
 
-Mitigasi:
+Mitigasi: pecah berdasarkan section/fungsi dan berhenti di checkpoint sebelum scope baru.
 
-- pecah berdasarkan section/fungsi
-- gunakan checkpoint sebelum fase baru
-- jangan mencampur structural dan cleanup besar tanpa alasan
+## Regresi CSS lama
 
-## Risiko 2 — Regresi karena CSS lama
+Mitigasi: migrate consumer dahulu, hapus orphan selector kemudian.
 
-Mitigasi:
+## Dark mode rusak
 
-- jangan hapus CSS terlebih dahulu
-- migrasikan consumer
-- verifikasi bahwa selector benar-benar orphaned
+Mitigasi: semantic token harus memiliki pasangan dark dan setiap fase mempertahankan parity.
 
-## Risiko 3 — Dark mode rusak setelah tokenisasi
+## Pattern baru kembali muncul di halaman berikutnya
 
-Mitigasi:
+Mitigasi: homepage + berita menjadi reference resmi dan wajib dibandingkan pada setiap checkpoint halaman baru.
 
-- setiap token semantic harus memiliki pasangan dark
-- jangan ganti warna khusus menjadi semantic token secara membabi buta
+## Shared component terlalu dini
 
-## Risiko 4 — Homepage konsisten tetapi halaman lain kembali membuat pattern baru
-
-Mitigasi:
-
-- homepage dijadikan reference implementation resmi
-- setiap redesign page baru wajib membandingkan component/pattern dengan homepage
-
-## Risiko 5 — Shared component terlalu dini
-
-Mitigasi:
-
-- ekstrak primitive setelah pattern terbukti berulang
-- jangan membuat abstraction hanya untuk mengurangi beberapa baris JSX
+Mitigasi: ekstrak primitive setelah reuse dan behavior bersama terbukti.
 
 ---
 
-# 29. Definition of Done per Phase
+# 31. Definition of Done per Phase
 
 Setiap fase hanya dianggap selesai jika:
 
 1. scope fase terpenuhi,
 2. behavior existing yang harus dipertahankan tidak sengaja dihapus,
-3. perubahan tidak memperluas scope tanpa keputusan checkpoint baru,
-4. dark mode tetap diperhitungkan untuk public UI,
-5. responsive behavior diperhitungkan bila selector terkait public layout,
-6. tidak ada file atau selector yang dihapus tanpa alasan yang terdokumentasi,
-7. commit message menjelaskan satu tujuan utama fase.
+3. perubahan tidak memperluas scope tanpa checkpoint baru,
+4. dark mode diperhitungkan untuk public UI,
+5. responsive behavior diperhitungkan bila layout terkait,
+6. tidak ada file/selector dihapus tanpa alasan terdokumentasi,
+7. commit message menjelaskan satu tujuan utama.
 
 ---
 
-# 30. Definition of Done Program Redesign
-
-Program redesign keseluruhan selesai ketika:
+# 32. Definition of Done Program Redesign
 
 ```text
 Homepage stable
         ↓
-Homepage becomes design reference
+Homepage reference
         ↓
 Shared primitives extracted
         ↓
-Public pages migrated
+News detail reference stable
+        ↓
+Public pages migrated periodically
         ↓
 Admin aligned
         ↓
@@ -1192,79 +1474,23 @@ Legacy CSS removed
 Repository simplified
 ```
 
-Target akhirnya bukan jumlah perubahan terbesar.
-
 Target akhirnya adalah repository yang:
 
 - lebih konsisten,
 - lebih mudah dibaca,
-- lebih mudah dipelihara,
-- memiliki lebih sedikit duplication,
-- memiliki lebih sedikit CSS conflict,
-- mempunyai dark mode yang lebih terstruktur,
-- memiliki responsive behavior yang lebih dapat diprediksi,
-- dan tetap mempertahankan behavior serta data flow yang sudah berjalan.
+- lebih mudah dirawat,
+- lebih sedikit duplikasi,
+- lebih sedikit exception CSS,
+- tetap mempertahankan behavior dan data layer yang diperlukan.
 
 ---
 
-# 31. Command Protocol untuk Roadmap Ini
+## 33. Change Log
 
-Dokumen ini mengikuti protokol kerja berikut.
+### 2026-09-08
 
-### `C`
-
-Gunakan untuk:
-
-- audit
-- checkpoint
-- pemetaan dependency
-- rencana tahap berikutnya
-- keputusan file yang akan disentuh
-
-`C` tidak mengubah repository dan tidak melakukan deployment checking kecuali diminta.
-
-### `L`
-
-Gunakan untuk:
-
-- implementasi scope checkpoint
-- perubahan kecil yang dapat divalidasi
-- commit ke repository
-- laporan diff
-
-### `R`
-
-Gunakan hanya untuk memperbaiki error konkret yang sudah dilaporkan.
-
-### `P`
-
-Gunakan untuk preview/deployment inspection secara read-only.
-
----
-
-# 32. Status Roadmap
-
-Current planning milestone:
-
-```text
-CHECKPOINT 19
-Homepage + whole-site progressive redesign roadmap
-```
-
-Current direction:
-
-```text
-Homepage redesign first
-↓
-Homepage stabilization
-↓
-Design system extraction
-↓
-Public page migration
-↓
-Admin alignment
-↓
-CSS consolidation
-```
-
-No redesign implementation is implied by this document alone. Implementation harus dilakukan melalui checkpoint dan commit bertahap sesuai urutan roadmap.
+- Menetapkan redesign dilakukan secara berkala dengan pola `C → L → C → L`.
+- Menjadikan homepage sebagai reference implementation utama.
+- Menambahkan halaman berita sebagai reference implementation kedua.
+- Menambahkan checkpoint bertahap untuk article shell, header/hero, author/share, reading experience, Baca Juga, sidebar, tags/related, responsive, dark mode, dan stabilization.
+- Menegaskan bahwa halaman lain dimigrasikan satu per satu setelah halaman berita stabil.
