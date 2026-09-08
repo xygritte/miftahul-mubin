@@ -1,11 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { newsRecordToLegacy } from '@/lib/data/presentation'
+import { newsRecordToLegacy, type NewsItem } from '@/lib/data/presentation'
 import { supabasePublicRepository } from '@/lib/data/supabasePublicRepository'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import ArticleDetail from '@/components/content/ArticleDetail'
-import type { NewsItem } from '@/lib/content'
 
 export default function LiveArticleDetail({ slug, initialArticle }: { slug: string; initialArticle: NewsItem | null }) {
   const [article, setArticle] = useState<NewsItem | null>(initialArticle)
