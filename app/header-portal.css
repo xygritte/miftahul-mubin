@@ -73,18 +73,6 @@ html[data-theme='dark'] .mm-theme-knob { transform: translateX(24px); }
 .mm-search-results a:hover { color: var(--mm-nav-deep); }
 .mm-search-results small { display: block; margin-bottom: 3px; color: #6c817a; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; }
 
-html[data-theme='dark'] body { background: #101615; color: #e7eeeb; }
-html[data-theme='dark'] .mm-header, html[data-theme='dark'] .mm-utility-bar, html[data-theme='dark'] .mm-secondary-row, html[data-theme='dark'] .mm-language-menu, html[data-theme='dark'] .mm-search-panel { background: #17201d; }
-html[data-theme='dark'] .mm-header { border-color: #2d3935; }
-html[data-theme='dark'] .mm-brand-copy strong, html[data-theme='dark'] .mm-brand-copy small, html[data-theme='dark'] .mm-secondary-nav a, html[data-theme='dark'] .mm-utility-nav a, html[data-theme='dark'] .mm-date, html[data-theme='dark'] .mm-utility-bar, html[data-theme='dark'] .mm-search-head h2, html[data-theme='dark'] .mm-language-btn { color: #e7eeeb; }
-html[data-theme='dark'] .mm-utility-bar, html[data-theme='dark'] .mm-secondary-row { border-color: #2d3935; }
-html[data-theme='dark'] .mm-utility-nav { border-color: #2d3935; }
-html[data-theme='dark'] .mm-search-trigger { background: #212b28; color: #a8b5b0; }
-html[data-theme='dark'] .mm-search-field, html[data-theme='dark'] .mm-close-btn, html[data-theme='dark'] .mm-mobile-menu-btn, html[data-theme='dark'] .mm-language-menu button { background: #17201d; color: #e7eeeb; border-color: #35443f; }
-html[data-theme='dark'] .mm-search-field input { color: #e7eeeb; }
-html[data-theme='dark'] .mm-mobile-menu { background: rgba(16,22,21,.98); }
-html[data-theme='dark'] .mm-mobile-inner > a { color: #e7eeeb; border-color: #2d3935; }
-
 @media (max-width: 1120px) {
   .mm-brand-copy strong { font-size: 30px; }
   .mm-brand { min-width: 240px; }
