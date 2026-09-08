@@ -115,8 +115,24 @@ select {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Global interaction baseline */
 :focus-visible {
-  outline-color: var(--mm-focus);
+  outline: 2px solid var(--mm-focus);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--mm-accent-soft);
+  color: var(--mm-text-strong);
+}
+
+button:not(:disabled),
+a[href] {
+  transition: color var(--mm-transition-fast), background-color var(--mm-transition-fast), border-color var(--mm-transition-fast), box-shadow var(--mm-transition-fast), transform var(--mm-transition-fast);
+}
+
+button:disabled {
+  cursor: not-allowed;
 }
 
 /* Dark-mode normalization for legacy homepage surfaces. Keep these rules canonical
@@ -181,4 +197,11 @@ html[data-theme='dark'] .home-news-image {
 
 @media (max-width: 560px) {
   :root { --mm-gutter: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled),
+  a[href] {
+    transition: none !important;
+  }
 }
