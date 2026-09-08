@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import SiteShell from '@/components/layout/SiteShell'
+import DeferredSection from '@/components/layout/DeferredSection'
 import LiveNews from '@/components/live/LiveNews'
 import LiveEvents from '@/components/live/LiveEvents'
 import LiveIslamic from '@/components/live/LiveIslamic'
@@ -62,23 +63,31 @@ export default function Home() {
         <div className="home-editorial-grid">
           <div>
             <div className="home-section-heading compact"><div><span className="eyebrow">Informasi</span><h2 id="pengumuman-terpopuler">Pengumuman</h2></div><Link href="/pengumuman/">Lihat semua <ArrowRight size={15} /></Link></div>
-            <LiveAnnouncements initialItems={[]} limit={3} />
+            <DeferredSection minHeight={220}>
+              <LiveAnnouncements initialItems={[]} limit={3} />
+            </DeferredSection>
           </div>
           <div>
             <div className="home-section-heading compact"><div><span className="eyebrow">Pilihan Jamaah</span><h2>Terpopuler</h2></div><Link href="/berita/">Semua berita <ArrowRight size={15} /></Link></div>
-            <LivePopularNews initialItems={[]} />
+            <DeferredSection minHeight={220}>
+              <LivePopularNews initialItems={[]} />
+            </DeferredSection>
           </div>
         </div>
       </section>
 
       <section className="home-agenda container" aria-labelledby="agenda-terdekat">
         <div className="home-section-heading"><div><span className="eyebrow">Agenda</span><h2 id="agenda-terdekat">Kegiatan Terdekat</h2></div><Link href="/kegiatan/">Semua kegiatan <ArrowRight size={16} /></Link></div>
-        <LiveEvents initialItems={[]} limit={3} />
+        <DeferredSection minHeight={240}>
+          <LiveEvents initialItems={[]} limit={3} />
+        </DeferredSection>
       </section>
 
       <section className="home-islamic container" aria-labelledby="ruang-keislaman">
         <div className="home-section-heading"><div><span className="eyebrow">Ruang Keislaman</span><h2 id="ruang-keislaman">Kajian &amp; Hikmah</h2></div><Link href="/keislaman/">Semua materi <ArrowRight size={16} /></Link></div>
-        <LiveIslamic initialItems={[]} limit={3} />
+        <DeferredSection minHeight={240}>
+          <LiveIslamic initialItems={[]} limit={3} />
+        </DeferredSection>
       </section>
 
       <section className="home-services container" aria-labelledby="layanan-masjid">
