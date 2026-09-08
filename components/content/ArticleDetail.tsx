@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, CalendarDays } from 'lucide-react'
-import type { NewsItem } from '@/lib/content'
+import type { NewsItem } from '@/lib/data/presentation'
 import SafeRichContent from '@/components/content/SafeRichContent'
 
 export default function ArticleDetail({ article }: { article: NewsItem }) {
