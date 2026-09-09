@@ -1,10 +1,11 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import FilterableEvents from '@/components/content/FilterableEvents'
 import { eventRecordToLegacy, type EventItem } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import LiveLoadingState from './LiveLoadingState'
+import { useLiveContent } from './useLiveContent'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { EventStatus } from '@/types/content'
 
@@ -29,10 +30,7 @@ type EventRow = {
 }
 
 export default function LiveEvents({ initialItems, limit }: Props) {
-  const [items, setItems] = useState(initialItems)
-  const [loading, setLoading] = useState(initialItems.length === 0)
-  const [error, setError] = useState(false)
-  const refresh = useCallback(async () => {
+  const fetcher = useCallback(async () => {
     let query = supabase
       .from('events')
       .select('id,slug,title,description,event_date,start_time,end_time,location,speaker,status,cover_url,category_id,created_at,updated_at,categories(name)')
@@ -40,13 +38,9 @@ export default function LiveEvents({ initialItems, limit }: Props) {
       .order('event_date', { ascending: true })
       .order('start_time', { ascending: true })
     if (limit) query = query.limit(limit)
-    const { data, error: fetchError } = await query
-    if (fetchError) {
-      setError(true)
-      setLoading(false)
-      return
-    }
-    const mapped = (data ?? []).map((row) => {
+    const { data, error } = await query
+    if (error) return null
+    return (data ?? []).map((row) => {
       const item = row as unknown as EventRow
       const category = Array.isArray(item.categories) ? item.categories[0]?.name : item.categories?.name
       return eventRecordToLegacy({
@@ -66,11 +60,9 @@ export default function LiveEvents({ initialItems, limit }: Props) {
         updatedAt: item.updated_at,
       })
     })
-    setItems(mapped)
-    setError(false)
-    setLoading(false)
   }, [limit])
 
+  const { items, loading, error, refresh } = useLiveContent(initialItems, fetcher)
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('events', refresh)
 
