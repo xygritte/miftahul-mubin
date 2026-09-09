@@ -12,7 +12,6 @@ import { contentRepository } from '@/lib/data'
 type HomeNews = Awaited<ReturnType<typeof contentRepository.listNews>>[number]
 
 const highlights = [
-  { kicker: 'Kabar Masjid', title: 'Berita Miftahul Mubin', text: 'Ikuti kabar, pengumuman, dan cerita kegiatan terbaru dari masjid.', href: '/berita/' },
   { kicker: 'Jadwal Umat', title: 'Agenda Kegiatan', text: 'Temukan kajian, kegiatan sosial, pendidikan, dan agenda jamaah.', href: '/kegiatan/' },
   { kicker: 'Amanah Bersama', title: 'Transparansi Keuangan', text: 'Lihat ringkasan pengelolaan dana masjid secara terbuka dan terstruktur.', href: '/keuangan/' },
 ]
