@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { ArrowRight, Clock3, Eye, Share2 } from 'lucide-react'
 import { sitePath, type NewsItem } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import LiveLoadingState from './LiveLoadingState'
+import { useLiveContent } from './useLiveContent'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 
 type Props = { initialItems: NewsItem[] }
@@ -19,7 +20,9 @@ type NewsRow = {
   categories?: { name: string } | { name: string }[] | null
 }
 
-function mapRow(row: NewsRow): NewsItem & { publishedAt?: string | null; viewCount?: number } {
+type LiveNewsItem = NewsItem & { publishedAt?: string | null; viewCount?: number }
+
+function mapRow(row: NewsRow): LiveNewsItem {
   const category = Array.isArray(row.categories) ? row.categories[0]?.name : row.categories?.name
   return {
     slug: row.slug,
@@ -34,7 +37,7 @@ function mapRow(row: NewsRow): NewsItem & { publishedAt?: string | null; viewCou
   }
 }
 
-async function fetchNews(): Promise<(NewsItem & { publishedAt?: string | null; viewCount?: number })[] | null> {
+async function fetchNews(): Promise<LiveNewsItem[] | null> {
   const { data, error } = await supabase.from('news')
     .select('title,slug,excerpt,thumbnail_url,published_at,view_count,categories(name)')
     .eq('status','published').not('published_at','is',null).lte('published_at',new Date().toISOString())
@@ -73,20 +76,8 @@ function ShareButton({ title, slug }: { title: string; slug: string }) {
 }
 
 export default function LiveNews({ initialItems }: Props) {
-  const [items, setItems] = useState<(NewsItem & { publishedAt?: string | null; viewCount?: number })[]>(initialItems)
-  const [loading, setLoading] = useState(initialItems.length === 0)
-  const [error, setError] = useState(false)
-  const refresh = useCallback(async () => {
-    const next = await fetchNews()
-    if (next === null) {
-      setError(true)
-      setLoading(false)
-      return
-    }
-    setItems(next)
-    setError(false)
-    setLoading(false)
-  }, [])
+  const fetcher = useCallback(fetchNews, [])
+  const { items, loading, error, refresh } = useLiveContent<LiveNewsItem>(initialItems as LiveNewsItem[], fetcher)
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
   if (loading) return <LiveLoadingState label="Memuat berita terbaru…" />
