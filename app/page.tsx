@@ -87,7 +87,7 @@ export default async function Home() {
           </div>
           <Link href="/berita/">Semua berita <ArrowRight size={16} /></Link>
         </div>
-        <LiveNews initialItems={[]} />
+        <LiveNews initialItems={[]} excludeSlug={latestNews?.slug} />
       </section>
 
       <section className="home-editorial container" aria-labelledby="pengumuman-terpopuler">
