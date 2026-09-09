@@ -30,6 +30,11 @@ function pickLatestNews(items: HomeNews[]) {
     .sort((a, b) => new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime())[0] ?? null
 }
 
+function formatNewsDate(value: string | null | undefined) {
+  if (!value) return ''
+  return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value))
+}
+
 export default async function Home() {
   const latestNews = pickLatestNews(await contentRepository.listNews())
 
@@ -52,15 +57,20 @@ export default async function Home() {
                 <div className="home-hero-news-image" style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden' }}>
                   <img src={latestNews.thumbnailUrl ?? '/miftahul-mubin/hero-bg.png'} alt={latestNews.title} decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
+                <div className="home-hero-news-meta">
+                  <span className="eyebrow">Berita Terbaru</span>
+                  <span className="home-hero-news-details">
+                    <span>{latestNews.category}</span>
+                    <span>{formatNewsDate(latestNews.publishedAt)}</span>
+                  </span>
+                </div>
                 <strong>{latestNews.title}</strong>
               </Link>
             ) : (
-              <>
-                <div className="home-hero-news-image" style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden' }}>
-                  <img src="/miftahul-mubin/hero-bg.png" alt="" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
+              <div className="home-hero-news-empty">
+                <span className="eyebrow">Berita Terbaru</span>
                 <strong>Belum ada berita terbaru.</strong>
-              </>
+              </div>
             )}
           </div>
         </div>
