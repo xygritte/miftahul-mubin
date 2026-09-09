@@ -49,16 +49,18 @@ export default async function Home() {
           <div className="home-hero-card">
             {latestNews ? (
               <Link className="home-hero-news" href={`/berita/${latestNews.slug}/`}>
-                <div className="home-hero-news-image">
-                  <img src={latestNews.thumbnailUrl ?? '/miftahul-mubin/hero-bg.png'} alt="" decoding="async" />
+                <div className="home-hero-news-image" style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden' }}>
+                  <img src={latestNews.thumbnailUrl ?? '/miftahul-mubin/hero-bg.png'} alt={latestNews.title} decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
-                <h2>{latestNews.title}</h2>
+                <strong>{latestNews.title}</strong>
               </Link>
             ) : (
-              <div className="home-hero-news-empty">
-                <span className="eyebrow">Berita Terbaru</span>
+              <>
+                <div className="home-hero-news-image" style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden' }}>
+                  <img src="/miftahul-mubin/hero-bg.png" alt="" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
                 <strong>Belum ada berita terbaru.</strong>
-              </div>
+              </>
             )}
           </div>
         </div>
