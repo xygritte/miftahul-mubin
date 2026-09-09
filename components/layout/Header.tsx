@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ChevronDown, ChevronRight, Menu, Moon, Search, Sun, X } from 'lucide-react'
+import { ArrowLeft, ChevronDown, ChevronRight, Menu, Moon, Search, Sun, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 
@@ -93,6 +93,14 @@ export default function Header({ searchItems }: { searchItems: SearchEntry[] }) 
     document.documentElement.dataset.theme = next ? 'dark' : 'light'
     window.localStorage.setItem('mm-theme', next ? 'dark' : 'light')
   }
+  const goBack = () => {
+    const referrer = document.referrer
+    if (window.history.length > 1 && referrer.startsWith(window.location.origin)) {
+      window.history.back()
+      return
+    }
+    window.location.assign('/')
+  }
 
   const renderNavLinks = (items: readonly NavItem[], onClick?: () => void) => items.map(({ label, href }) => (
     <Link
@@ -130,6 +138,10 @@ export default function Header({ searchItems }: { searchItems: SearchEntry[] }) 
       </div>
       <div className="mm-secondary-row">
         <div className="container mm-secondary-inner">
+          <button className="mm-mobile-back-btn" type="button" aria-label="Kembali ke halaman sebelumnya" onClick={goBack}>
+            <ArrowLeft size={16} aria-hidden="true" />
+            <span>Kembali</span>
+          </button>
           <nav className="mm-secondary-nav" aria-label="Jelajah portal">
             {renderNavLinks(navigation.secondary)}
           </nav>
