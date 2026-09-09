@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import LiveLoadingState from './LiveLoadingState'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 
 type PopularNewsItem = {
@@ -25,8 +26,10 @@ function mapNewsRow(row: NewsRow): PopularNewsItem {
 
 export default function LivePopularNews({ initialItems }: { initialItems: PopularNewsItem[] }) {
   const [items, setItems] = useState(initialItems)
+  const [loading, setLoading] = useState(initialItems.length === 0)
+  const [error, setError] = useState(false)
   const refresh = useCallback(async () => {
-    const { data, error } = await supabase
+    const { data, error: fetchError } = await supabase
       .from('news')
       .select('slug,title,categories(name)')
       .eq('status', 'published')
@@ -35,11 +38,21 @@ export default function LivePopularNews({ initialItems }: { initialItems: Popula
       .order('view_count', { ascending: false })
       .order('published_at', { ascending: false })
       .limit(4)
-    if (!error) setItems(((data ?? []) as unknown as NewsRow[]).map(mapNewsRow))
+    if (fetchError) {
+      setError(true)
+      setLoading(false)
+      return
+    }
+    setItems(((data ?? []) as unknown as NewsRow[]).map(mapNewsRow))
+    setError(false)
+    setLoading(false)
   }, [])
 
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
 
+  if (loading) return <LiveLoadingState label="Memuat berita terpopuler…" />
+  if (error && !items.length) return <div className="empty-state"><strong>Konten belum dapat dimuat</strong><p>Coba lagi beberapa saat lagi.</p></div>
+  if (!items.length) return <div className="empty-state"><strong>Belum ada berita populer</strong><p>Belum tersedia berita yang dapat ditampilkan.</p></div>
   return <div className="popular-list">{items.map((item, index) => <Link key={item.slug} href={`/berita/${item.slug}/`}><span className="popular-rank">0{index + 1}</span><span><small>{item.category}</small><strong>{item.title}</strong></span><ChevronRight size={16} /></Link>)}</div>
 }
