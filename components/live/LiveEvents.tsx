@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import FilterableEvents from '@/components/content/FilterableEvents'
 import { eventRecordToLegacy, type EventItem } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
+import LiveLoadingState from './LiveLoadingState'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { EventStatus } from '@/types/content'
 
@@ -29,6 +30,8 @@ type EventRow = {
 
 export default function LiveEvents({ initialItems, limit }: Props) {
   const [items, setItems] = useState(initialItems)
+  const [loading, setLoading] = useState(initialItems.length === 0)
+  const [error, setError] = useState(false)
   const refresh = useCallback(async () => {
     let query = supabase
       .from('events')
@@ -37,8 +40,12 @@ export default function LiveEvents({ initialItems, limit }: Props) {
       .order('event_date', { ascending: true })
       .order('start_time', { ascending: true })
     if (limit) query = query.limit(limit)
-    const { data, error } = await query
-    if (error) return
+    const { data, error: fetchError } = await query
+    if (fetchError) {
+      setError(true)
+      setLoading(false)
+      return
+    }
     const mapped = (data ?? []).map((row) => {
       const item = row as unknown as EventRow
       const category = Array.isArray(item.categories) ? item.categories[0]?.name : item.categories?.name
@@ -60,10 +67,14 @@ export default function LiveEvents({ initialItems, limit }: Props) {
       })
     })
     setItems(mapped)
+    setError(false)
+    setLoading(false)
   }, [limit])
 
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('events', refresh)
 
+  if (loading) return <LiveLoadingState label="Memuat kegiatan terbaru…" />
+  if (error && !items.length) return <div className="empty-state"><strong>Konten belum dapat dimuat</strong><p>Coba lagi beberapa saat lagi.</p></div>
   return <FilterableEvents items={items} />
 }
