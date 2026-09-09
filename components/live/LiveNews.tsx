@@ -9,7 +9,7 @@ import LiveLoadingState from './LiveLoadingState'
 import { useLiveContent } from './useLiveContent'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 
-type Props = { initialItems: NewsItem[] }
+type Props = { initialItems: NewsItem[]; excludeSlug?: string | null }
 type NewsRow = {
   title: string
   slug: string
@@ -37,12 +37,14 @@ function mapRow(row: NewsRow): LiveNewsItem {
   }
 }
 
-async function fetchNews(): Promise<LiveNewsItem[] | null> {
-  const { data, error } = await supabase.from('news')
+async function fetchNews(excludeSlug?: string | null): Promise<LiveNewsItem[] | null> {
+  let query = supabase.from('news')
     .select('title,slug,excerpt,thumbnail_url,published_at,view_count,categories(name)')
     .eq('status','published').not('published_at','is',null).lte('published_at',new Date().toISOString())
     .order('published_at',{ascending:false})
     .limit(4)
+  if (excludeSlug) query = query.neq('slug', excludeSlug)
+  const { data, error } = await query
   if (error) return null
   return ((data ?? []) as unknown as NewsRow[]).map(mapRow)
 }
@@ -75,8 +77,8 @@ function ShareButton({ title, slug }: { title: string; slug: string }) {
   )
 }
 
-export default function LiveNews({ initialItems }: Props) {
-  const fetcher = useCallback(fetchNews, [])
+export default function LiveNews({ initialItems, excludeSlug }: Props) {
+  const fetcher = useCallback(() => fetchNews(excludeSlug), [excludeSlug])
   const { items, loading, error, refresh } = useLiveContent<LiveNewsItem>(initialItems as LiveNewsItem[], fetcher)
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
