@@ -145,6 +145,9 @@ export default function Header({ searchItems }: { searchItems: SearchEntry[] }) 
           <nav className="mm-secondary-nav" aria-label="Jelajah portal">
             {renderNavLinks(navigation.secondary)}
           </nav>
+          <nav className="mm-mobile-primary-nav" aria-label="Navigasi utama mobile">
+            {renderNavLinks(navigation.primary)}
+          </nav>
           <nav className="mm-utility-nav" aria-label="Informasi situs">
             {renderNavLinks(navigation.utility)}
           </nav>
