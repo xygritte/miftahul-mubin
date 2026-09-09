@@ -7,6 +7,9 @@ import LiveEvents from '@/components/live/LiveEvents'
 import LiveIslamic from '@/components/live/LiveIslamic'
 import LiveAnnouncements from '@/components/live/LiveAnnouncements'
 import LivePopularNews from '@/components/live/LivePopularNews'
+import { contentRepository } from '@/lib/data'
+
+type HomeNews = Awaited<ReturnType<typeof contentRepository.listNews>>[number]
 
 const highlights = [
   { kicker: 'Kabar Masjid', title: 'Berita Miftahul Mubin', text: 'Ikuti kabar, pengumuman, dan cerita kegiatan terbaru dari masjid.', href: '/berita/' },
@@ -21,7 +24,20 @@ const services = [
   ['Dokumentasi', 'Arsip kegiatan dan momen kebersamaan Miftahul Mubin.', '/dokumentasi/'],
 ] as const
 
-export default function Home() {
+function pickLatestNews(items: HomeNews[]) {
+  return items
+    .filter((item) => item.status === 'published' && item.publishedAt)
+    .sort((a, b) => new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime())[0] ?? null
+}
+
+function formatNewsDate(value: string | null | undefined) {
+  if (!value) return ''
+  return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value))
+}
+
+export default async function Home() {
+  const latestNews = pickLatestNews(await contentRepository.listNews())
+
   return <SiteShell>
     <main id="main-content">
       <section className="home-hero">
@@ -36,10 +52,19 @@ export default function Home() {
             </div>
           </div>
           <div className="home-hero-card">
-            <div className="hero-card-top"><span className="eyebrow">Informasi Utama</span><Sparkles size={17} aria-hidden="true" /></div>
-            <strong>Portal resmi Miftahul Mubin</strong>
-            <p>Temukan berita, kegiatan, keislaman, kepengurusan, dokumentasi, dan laporan keuangan dalam satu tempat.</p>
-            <Link href="/kontak/">Hubungi pengurus <ArrowRight size={15} /></Link>
+            {latestNews ? <>
+              <div className="hero-card-top"><span className="eyebrow">Berita Terbaru</span><Sparkles size={17} aria-hidden="true" /></div>
+              <span className="eyebrow">{latestNews.category}</span>
+              <strong>{latestNews.title}</strong>
+              <p>{latestNews.excerpt}</p>
+              <div className="hero-card-meta">{formatNewsDate(latestNews.publishedAt)}</div>
+              <Link href={`/berita/${latestNews.slug}/`}>Baca berita <ArrowRight size={15} /></Link>
+            </> : <>
+              <div className="hero-card-top"><span className="eyebrow">Informasi Utama</span><Sparkles size={17} aria-hidden="true" /></div>
+              <strong>Portal resmi Miftahul Mubin</strong>
+              <p>Berita, kegiatan, keislaman, kepengurusan, dokumentasi, dan laporan keuangan dalam satu tempat.</p>
+              <Link href="/berita/">Lihat berita <ArrowRight size={15} /></Link>
+            </>}
           </div>
         </div>
       </section>
