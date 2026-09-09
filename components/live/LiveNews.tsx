@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-import { ArrowRight, Clock3, Eye, Share2 } from 'lucide-react'
+import { ArrowRight, Clock3, Eye, Loader2, Share2 } from 'lucide-react'
 import { sitePath, type NewsItem } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
@@ -71,11 +71,24 @@ function ShareButton({ title, slug }: { title: string; slug: string }) {
   )
 }
 
+function NewsLoadingState() {
+  return <div className="home-news-loading" aria-live="polite" aria-busy="true">
+    <div className="home-news-loading-featured"><Loader2 className="spin" size={22} aria-hidden="true" /><span>Memuat berita terbaru…</span></div>
+    <div className="home-news-loading-list"><span /><span /><span /></div>
+  </div>
+}
+
 export default function LiveNews({ initialItems }: Props) {
   const [items, setItems] = useState<(NewsItem & { publishedAt?: string | null; viewCount?: number })[]>(initialItems)
-  const refresh = useCallback(async () => { const next = await fetchNews(); if (next !== null) setItems(next) }, [])
+  const [loading, setLoading] = useState(initialItems.length === 0)
+  const refresh = useCallback(async () => {
+    const next = await fetchNews()
+    if (next !== null) setItems(next)
+    setLoading(false)
+  }, [])
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
+  if (loading) return <NewsLoadingState />
   if (!items.length) return <div className="empty-state"><strong>Belum ada berita</strong><p>Belum tersedia berita yang dipublikasikan.</p></div>
   const [featured,...latest] = items
   return (
