@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 import LiveLoadingState from './LiveLoadingState'
+import { useLiveContent } from './useLiveContent'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 
 type PopularNewsItem = {
@@ -25,11 +26,8 @@ function mapNewsRow(row: NewsRow): PopularNewsItem {
 }
 
 export default function LivePopularNews({ initialItems }: { initialItems: PopularNewsItem[] }) {
-  const [items, setItems] = useState(initialItems)
-  const [loading, setLoading] = useState(initialItems.length === 0)
-  const [error, setError] = useState(false)
-  const refresh = useCallback(async () => {
-    const { data, error: fetchError } = await supabase
+  const fetcher = useCallback(async () => {
+    const { data, error } = await supabase
       .from('news')
       .select('slug,title,categories(name)')
       .eq('status', 'published')
@@ -38,16 +36,11 @@ export default function LivePopularNews({ initialItems }: { initialItems: Popula
       .order('view_count', { ascending: false })
       .order('published_at', { ascending: false })
       .limit(4)
-    if (fetchError) {
-      setError(true)
-      setLoading(false)
-      return
-    }
-    setItems(((data ?? []) as unknown as NewsRow[]).map(mapNewsRow))
-    setError(false)
-    setLoading(false)
+    if (error) return null
+    return ((data ?? []) as unknown as NewsRow[]).map(mapNewsRow)
   }, [])
 
+  const { items, loading, error, refresh } = useLiveContent(initialItems, fetcher)
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
 
