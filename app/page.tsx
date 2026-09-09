@@ -30,11 +30,6 @@ function pickLatestNews(items: HomeNews[]) {
     .sort((a, b) => new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime())[0] ?? null
 }
 
-function formatNewsDate(value: string | null | undefined) {
-  if (!value) return ''
-  return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value))
-}
-
 export default async function Home() {
   const latestNews = pickLatestNews(await contentRepository.listNews())
 
@@ -52,23 +47,19 @@ export default async function Home() {
             </div>
           </div>
           <div className="home-hero-card">
-            {latestNews ? <>
-              <div className="hero-card-top">
+            {latestNews ? (
+              <Link className="home-hero-news" href={`/berita/${latestNews.slug}/`}>
+                <div className="home-hero-news-image">
+                  <img src={latestNews.thumbnailUrl ?? '/miftahul-mubin/hero-bg.png'} alt="" decoding="async" />
+                </div>
+                <h2>{latestNews.title}</h2>
+              </Link>
+            ) : (
+              <div className="home-hero-news-empty">
                 <span className="eyebrow">Berita Terbaru</span>
-                <span className="hero-news-date">{formatNewsDate(latestNews.publishedAt)}</span>
+                <strong>Belum ada berita terbaru.</strong>
               </div>
-              <span className="eyebrow">{latestNews.category}</span>
-              <strong>{latestNews.title}</strong>
-              <p>{latestNews.excerpt}</p>
-              <Link href={`/berita/${latestNews.slug}/`}>Baca berita <ArrowRight size={15} /></Link>
-            </> : <>
-              <div className="hero-card-top">
-                <span className="eyebrow">Berita Terbaru</span>
-              </div>
-              <strong>Belum ada berita terbaru.</strong>
-              <p>Konten berita yang dipublikasikan akan muncul di sini.</p>
-              <Link href="/berita/">Lihat berita <ArrowRight size={15} /></Link>
-            </>}
+            )}
           </div>
         </div>
       </section>
