@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { formatIndonesianDate } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
+import LiveLoadingState from './LiveLoadingState'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { AnnouncementRecord } from '@/types/content'
 
@@ -11,6 +12,8 @@ type Props = { initialItems: AnnouncementRecord[]; limit?: number }
 
 export default function LiveAnnouncements({ initialItems, limit }: Props) {
   const [items, setItems] = useState(initialItems)
+  const [loading, setLoading] = useState(initialItems.length === 0)
+  const [error, setError] = useState(false)
   const refresh = useCallback(async () => {
     let query = supabase
       .from('announcements')
@@ -20,13 +23,22 @@ export default function LiveAnnouncements({ initialItems, limit }: Props) {
       .lte('published_at', new Date().toISOString())
       .order('published_at', { ascending: false })
     if (limit) query = query.limit(limit)
-    const { data, error } = await query
-    if (!error) setItems((data ?? []) as AnnouncementRecord[])
+    const { data, error: fetchError } = await query
+    if (fetchError) {
+      setError(true)
+      setLoading(false)
+      return
+    }
+    setItems((data ?? []) as AnnouncementRecord[])
+    setError(false)
+    setLoading(false)
   }, [limit])
 
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('announcements', refresh)
 
+  if (loading) return <LiveLoadingState label="Memuat pengumuman terbaru…" />
+  if (error && !items.length) return <div className="empty-state"><strong>Konten belum dapat dimuat</strong><p>Coba lagi beberapa saat lagi.</p></div>
   if (!items.length) return <div className="empty-state"><strong>Belum ada pengumuman</strong><p>Belum tersedia pengumuman yang dipublikasikan.</p></div>
   return <div className="notice-list">{items.map((notice, index) => <article key={notice.id ?? notice.title}><div className="notice-index">{String(index + 1).padStart(2, '0')}</div><div><span>Informasi Resmi</span><h2>{notice.title}</h2><small>{formatIndonesianDate(notice.publishedAt)}</small><p>{notice.content}</p></div><ArrowRight className="notice-arrow" size={16} aria-hidden="true" /></article>)}</div>
 }
