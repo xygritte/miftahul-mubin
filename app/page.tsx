@@ -24,17 +24,6 @@ const services = [
 export default function Home() {
   return <SiteShell>
     <main id="main-content">
-      <section className="home-news container" aria-labelledby="berita-terbaru">
-        <div className="home-section-heading home-section-heading-featured">
-          <div>
-            <span className="eyebrow">Kabar Terkini</span>
-            <h2 id="berita-terbaru">Berita Miftahul Mubin</h2>
-          </div>
-          <Link href="/berita/">Semua berita <ArrowRight size={16} /></Link>
-        </div>
-        <LiveNews initialItems={[]} />
-      </section>
-
       <section className="home-hero">
         <div className="container home-hero-grid">
           <div className="home-hero-copy">
@@ -59,18 +48,29 @@ export default function Home() {
         {highlights.map((item) => <Link className="home-highlight" key={item.title} href={item.href}><span className="eyebrow">{item.kicker}</span><h2>{item.title}</h2><p>{item.text}</p><strong>Jelajahi <ArrowRight size={16} /></strong></Link>)}
       </section>
 
+      <section className="home-news container" aria-labelledby="berita-terbaru">
+        <div className="home-section-heading home-section-heading-featured">
+          <div>
+            <span className="eyebrow">Kabar Terkini</span>
+            <h2 id="berita-terbaru">Berita Miftahul Mubin</h2>
+          </div>
+          <Link href="/berita/">Semua berita <ArrowRight size={16} /></Link>
+        </div>
+        <LiveNews initialItems={[]} />
+      </section>
+
       <section className="home-editorial container" aria-labelledby="pengumuman-terpopuler">
         <div className="home-editorial-grid">
           <div>
-            <div className="home-section-heading compact"><div><span className="eyebrow">Informasi</span><h2 id="pengumuman-terpopuler">Pengumuman</h2></div><Link href="/pengumuman/">Lihat semua <ArrowRight size={15} /></Link></div>
+            <div className="home-section-heading compact"><div><span className="eyebrow">Pilihan Jamaah</span><h2 id="pengumuman-terpopuler">Terpopuler</h2></div><Link href="/berita/">Semua berita <ArrowRight size={15} /></Link></div>
             <DeferredSection minHeight={220}>
-              <LiveAnnouncements initialItems={[]} limit={3} />
+              <LivePopularNews initialItems={[]} />
             </DeferredSection>
           </div>
           <div>
-            <div className="home-section-heading compact"><div><span className="eyebrow">Pilihan Jamaah</span><h2>Terpopuler</h2></div><Link href="/berita/">Semua berita <ArrowRight size={15} /></Link></div>
+            <div className="home-section-heading compact"><div><span className="eyebrow">Informasi</span><h2>Pengumuman</h2></div><Link href="/pengumuman/">Lihat semua <ArrowRight size={15} /></Link></div>
             <DeferredSection minHeight={220}>
-              <LivePopularNews initialItems={[]} />
+              <LiveAnnouncements initialItems={[]} limit={3} />
             </DeferredSection>
           </div>
         </div>
