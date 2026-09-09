@@ -1,20 +1,18 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { formatIndonesianDate } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import LiveLoadingState from './LiveLoadingState'
+import { useLiveContent } from './useLiveContent'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { AnnouncementRecord } from '@/types/content'
 
 type Props = { initialItems: AnnouncementRecord[]; limit?: number }
 
 export default function LiveAnnouncements({ initialItems, limit }: Props) {
-  const [items, setItems] = useState(initialItems)
-  const [loading, setLoading] = useState(initialItems.length === 0)
-  const [error, setError] = useState(false)
-  const refresh = useCallback(async () => {
+  const fetcher = useCallback(async () => {
     let query = supabase
       .from('announcements')
       .select('id,title,content,published_at,author_id,created_at,updated_at,status')
@@ -23,17 +21,12 @@ export default function LiveAnnouncements({ initialItems, limit }: Props) {
       .lte('published_at', new Date().toISOString())
       .order('published_at', { ascending: false })
     if (limit) query = query.limit(limit)
-    const { data, error: fetchError } = await query
-    if (fetchError) {
-      setError(true)
-      setLoading(false)
-      return
-    }
-    setItems((data ?? []) as AnnouncementRecord[])
-    setError(false)
-    setLoading(false)
+    const { data, error } = await query
+    if (error) return null
+    return (data ?? []) as AnnouncementRecord[]
   }, [limit])
 
+  const { items, loading, error, refresh } = useLiveContent(initialItems, fetcher)
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('announcements', refresh)
 
