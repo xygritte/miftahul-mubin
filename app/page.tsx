@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import SiteShell from '@/components/layout/SiteShell'
 import DeferredSection from '@/components/layout/DeferredSection'
 import LiveNews from '@/components/live/LiveNews'
@@ -53,16 +53,20 @@ export default async function Home() {
           </div>
           <div className="home-hero-card">
             {latestNews ? <>
-              <div className="hero-card-top"><span className="eyebrow">Berita Terbaru</span><Sparkles size={17} aria-hidden="true" /></div>
+              <div className="hero-card-top">
+                <span className="eyebrow">Berita Terbaru</span>
+                <span className="hero-news-date">{formatNewsDate(latestNews.publishedAt)}</span>
+              </div>
               <span className="eyebrow">{latestNews.category}</span>
               <strong>{latestNews.title}</strong>
               <p>{latestNews.excerpt}</p>
-              <div className="hero-card-meta">{formatNewsDate(latestNews.publishedAt)}</div>
               <Link href={`/berita/${latestNews.slug}/`}>Baca berita <ArrowRight size={15} /></Link>
             </> : <>
-              <div className="hero-card-top"><span className="eyebrow">Informasi Utama</span><Sparkles size={17} aria-hidden="true" /></div>
-              <strong>Portal resmi Miftahul Mubin</strong>
-              <p>Berita, kegiatan, keislaman, kepengurusan, dokumentasi, dan laporan keuangan dalam satu tempat.</p>
+              <div className="hero-card-top">
+                <span className="eyebrow">Berita Terbaru</span>
+              </div>
+              <strong>Belum ada berita terbaru.</strong>
+              <p>Konten berita yang dipublikasikan akan muncul di sini.</p>
               <Link href="/berita/">Lihat berita <ArrowRight size={15} /></Link>
             </>}
           </div>
