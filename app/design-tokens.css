@@ -39,6 +39,19 @@
 
   --mm-font-sans: 'DM Sans', system-ui, sans-serif;
   --mm-font-display: 'Playfair Display', Georgia, serif;
+  --mm-font-size-display: 52px;
+  --mm-font-size-h1: 44px;
+  --mm-font-size-h2: 32px;
+  --mm-font-size-h3: 22px;
+  --mm-font-size-body: 15px;
+  --mm-font-size-body-sm: 13px;
+  --mm-font-size-meta: 12px;
+  --mm-font-size-label: 11px;
+  --mm-leading-tight: 1.15;
+  --mm-leading-snug: 1.3;
+  --mm-leading-body: 1.7;
+  --mm-leading-meta: 1.5;
+
   --mm-content-width: 1180px;
   --mm-gutter: 40px;
   --mm-radius-sm: 6px;
@@ -52,8 +65,8 @@
   --mm-space-5: 20px;
   --mm-space-6: 24px;
   --mm-space-7: 32px;
-  --mm-space-8: 42px;
-  --mm-space-9: 55px;
+  --mm-space-8: 48px;
+  --mm-space-9: 64px;
   --mm-transition-fast: .18s ease;
   --mm-transition: .22s ease;
 }
@@ -105,8 +118,8 @@ html[data-theme='dark'] { color-scheme: dark; }
 body {
   background: var(--mm-bg);
   color: var(--mm-text);
-  font-size: 15px;
-  line-height: 1.65;
+  font-size: var(--mm-font-size-body);
+  line-height: var(--mm-leading-body);
 }
 
 .container {
@@ -142,7 +155,7 @@ button:disabled {
 }
 
 p {
-  line-height: 1.7;
+  line-height: var(--mm-leading-body);
 }
 
 input,
@@ -174,7 +187,7 @@ button {
 .gallery-card > div:last-child > span,
 .management-person-content > span,
 .management-role {
-  font-size: 12px;
+  font-size: var(--mm-font-size-meta);
 }
 
 .tag,
@@ -184,7 +197,7 @@ button {
 .mm-language-menu button,
 .mm-mobile-menu-label,
 .mm-mobile-categories p {
-  font-size: 11px;
+  font-size: var(--mm-font-size-label);
 }
 
 .news-page-card p,
@@ -194,7 +207,7 @@ button {
 .finance-summary-page span,
 .service-card p,
 .home-highlight p {
-  line-height: 1.7;
+  line-height: var(--mm-leading-body);
 }
 
 .news-body h3 {
@@ -202,17 +215,17 @@ button {
 }
 
 .home-latest-meta {
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: var(--mm-font-size-meta);
+  line-height: var(--mm-leading-meta);
 }
 
 .home-news-meta {
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: var(--mm-font-size-meta);
+  line-height: var(--mm-leading-meta);
 }
 
 .home-news-kicker {
-  font-size: 10px;
+  font-size: var(--mm-font-size-label);
 }
 
 .home-news-share,
@@ -221,7 +234,7 @@ button {
 .read-link,
 .home-highlight strong,
 .home-links a {
-  font-size: 12px;
+  font-size: var(--mm-font-size-meta);
 }
 
 /* Header text should remain compact without becoming visually faint or microscopic. */
@@ -242,7 +255,7 @@ button {
 }
 
 .mm-date {
-  font-size: 12px;
+  font-size: var(--mm-font-size-meta);
 }
 
 /* Dark-mode normalization for legacy homepage surfaces. Keep these rules canonical
@@ -319,13 +332,13 @@ html[data-theme='dark'] .home-news-image {
   .news-page-card p,
   .editorial-card p,
   .event-card p {
-    font-size: 13px;
+    font-size: var(--mm-font-size-body-sm);
   }
 
   .news-page-card small,
   .editorial-card small,
   .gallery-card small {
-    font-size: 11px;
+    font-size: var(--mm-font-size-label);
   }
 }
 
