@@ -1,0 +1,24 @@
+/* Shared vertical rhythm for public inner pages. Keep page-level spacing separate from component internals. */
+:root {
+  --mm-page-content-gap: var(--mm-space-7);
+  --mm-page-bottom-space: var(--mm-space-9);
+}
+
+.inner-page {
+  padding-bottom: var(--mm-page-bottom-space);
+}
+
+.inner-page > .container > .page-intro + * {
+  margin-top: var(--mm-space-4);
+}
+
+.inner-page > .container > :first-child:not(.page-intro) {
+  margin-top: var(--mm-page-content-gap);
+}
+
+@media (max-width: 560px) {
+  :root {
+    --mm-page-content-gap: var(--mm-space-6);
+    --mm-page-bottom-space: var(--mm-space-8);
+  }
+}
