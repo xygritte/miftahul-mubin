@@ -17,3 +17,13 @@ export function legacyNewsContentToDocument(value: unknown): ArticleDocument {
     })),
   }
 }
+
+export function articleDocumentToLegacyParagraphs(document: ArticleDocument): string[] {
+  return document.content.map((block) => {
+    if (block.type !== 'paragraph') return ''
+    return (block.content ?? [])
+      .filter((inline): inline is Extract<(typeof block.content)[number], { type: 'text' }> => inline.type === 'text')
+      .map((inline) => inline.text)
+      .join('')
+  })
+}
