@@ -1,11 +1,12 @@
 # STATUS — NEWS EDITOR & DOCX FEATURE
 
-> **Current phase:** PHASE 0 — Baseline & Scope Audit
-> **Overall progress:** Planning completed; implementation has not started.
-> **Last completed:** Feature scope, architecture, phased roadmap, workload split, risk levels, and validation gates defined.
-> **Next action:** `C` — PHASE 1: Audit News Pipeline.
-> **Next implementation:** `L1` — only after the PHASE 1 consumer/dependency audit is complete and the **News Dependency Map** checkpoint is satisfied.
-> **Repository changes for this feature:** None yet.
+> **Current phase:** PHASE 3 — Legacy Compatibility Layer (validated)
+> **Overall progress:** L1, L2, and L3 implementation checkpoints completed; runtime integration has not started.
+> **Last completed:** L3 — canonical inline-node correction + legacy news content adapter.
+> **Next action:** `C` — PHASE 3 verification / presentation integration audit.
+> **Next implementation:** `L4` — integrate ArticleDocument compatibility into the presentation layer, only after the L3 validation gate passes.
+> **Repository changes for this feature:** Canonical Article Document contract, validator, and legacy adapter added; existing runtime consumers remain unchanged.
+> **Open verification item:** Effective news INSERT/UPDATE/DELETE authorization still requires live Supabase policy verification before changing the rich-editor write path.
 > **Status rule:** Update this section after each completed `L`/checkpoint; do not mark a phase complete until its validation gate and checkpoint are satisfied.
 
 ---
@@ -1229,7 +1230,7 @@ Pembagiannya:
 | L22 | DOCX import UI           | sedang       |
 | L23 | official template        | kecil        |
 | L24 | publish workflow         | sedang       |
-| L25 | legacy cleanup           | sedang       |
+| L25 | legacy cleanup            | sedang       |
 
 Dengan ini tidak ada satu commit yang melakukan:
 
