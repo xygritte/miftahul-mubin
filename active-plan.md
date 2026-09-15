@@ -1,3 +1,15 @@
+# STATUS — NEWS EDITOR & DOCX FEATURE
+
+> **Current phase:** PHASE 0 — Baseline & Scope Audit
+> **Overall progress:** Planning completed; implementation has not started.
+> **Last completed:** Feature scope, architecture, phased roadmap, workload split, risk levels, and validation gates defined.
+> **Next action:** `C` — PHASE 1: Audit News Pipeline.
+> **Next implementation:** `L1` — only after the PHASE 1 consumer/dependency audit is complete and the **News Dependency Map** checkpoint is satisfied.
+> **Repository changes for this feature:** None yet.
+> **Status rule:** Update this section after each completed `L`/checkpoint; do not mark a phase complete until its validation gate and checkpoint are satisfied.
+
+---
+
 Ya. Untuk fitur sebesar ini, saya tidak menyarankan membaginya berdasarkan "fitur" saja, tetapi berdasarkan **beban perubahan repository dalam satu kali `L`**, risiko regresi, dan ketergantungan antarbagian.
 
 Karena aturan kerja kita adalah `C → L → C → L`, saya akan memetakan setiap fase menjadi:
