@@ -1,4 +1,4 @@
-/* Shared vertical rhythm for public inner pages. Keep page-level spacing separate from component internals. */
+/* Shared vertical rhythm for public inner pages. Keep page-level and component rhythm explicit. */
 :root {
   --mm-page-content-gap: var(--mm-space-7);
   --mm-page-bottom-space: var(--mm-space-9);
@@ -9,16 +9,47 @@
 }
 
 .inner-page > .container > .page-intro + * {
-  margin-top: var(--mm-space-4);
+  margin-top: var(--mm-page-content-gap);
 }
 
 .inner-page > .container > :first-child:not(.page-intro) {
   margin-top: var(--mm-page-content-gap);
 }
 
+/* Shared content rhythm: section heading to its content stays consistent across pages. */
+.section-head,
+.home-section-heading {
+  margin-top: var(--mm-rhythm-section);
+  margin-bottom: var(--mm-rhythm-content);
+}
+
+.section-head + *,
+.home-section-heading + * {
+  margin-top: 0;
+}
+
+/* Repeated page content blocks use the same vertical separation. */
+.finance-period + .finance-table-wrap,
+.finance-period + .finance-disclosure,
+.role-note + *,
+.profile-facts + .profile-columns,
+.article-share + *,
+.event-info-grid + *,
+.editorial-list + *,
+.notice-list + *,
+.gallery-page + *,
+.contact-grid-page + * {
+  margin-top: var(--mm-rhythm-content);
+}
+
 @media (max-width: 560px) {
   :root {
     --mm-page-content-gap: var(--mm-space-6);
-    --mm-page-bottom-space: var(--mm-space-8);
+  }
+
+  .section-head,
+  .home-section-heading {
+    margin-top: var(--mm-rhythm-subsection);
+    margin-bottom: var(--mm-rhythm-compact);
   }
 }
