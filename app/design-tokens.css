@@ -67,6 +67,10 @@
   --mm-space-7: 32px;
   --mm-space-8: 48px;
   --mm-space-9: 64px;
+  --mm-rhythm-section: var(--mm-space-8);
+  --mm-rhythm-subsection: var(--mm-space-7);
+  --mm-rhythm-content: var(--mm-space-6);
+  --mm-rhythm-compact: var(--mm-space-4);
   --mm-transition-fast: .18s ease;
   --mm-transition: .22s ease;
 }
