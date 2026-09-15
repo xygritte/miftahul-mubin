@@ -14,9 +14,8 @@ export type ArticleBlock =
   | ArticleBlockquote
   | ArticleImage
   | ArticleHorizontalRule
-  | ArticleHardBreak
 
-export type ArticleInline = ArticleText
+export type ArticleInline = ArticleText | ArticleHardBreak
 
 export type ArticleMark =
   | ArticleBoldMark
@@ -28,6 +27,10 @@ export type ArticleText = {
   type: 'text'
   text: string
   marks?: ArticleMark[]
+}
+
+export type ArticleHardBreak = {
+  type: 'hardBreak'
 }
 
 export type ArticleParagraph = {
@@ -74,10 +77,6 @@ export type ArticleImage = {
 
 export type ArticleHorizontalRule = {
   type: 'horizontalRule'
-}
-
-export type ArticleHardBreak = {
-  type: 'hardBreak'
 }
 
 export type ArticleBoldMark = {
@@ -130,9 +129,7 @@ function validateMarks(value: unknown, path: string, errors: string[]) {
       return
     }
 
-    if (mark.type === 'bold' || mark.type === 'italic' || mark.type === 'underline') {
-      return
-    }
+    if (mark.type === 'bold' || mark.type === 'italic' || mark.type === 'underline') return
 
     if (mark.type !== 'link') {
       errors.push(`${markPath}.type is not supported`)
@@ -159,10 +156,18 @@ function validateInlineContent(value: unknown, path: string, errors: string[]) {
 
   value.forEach((node, index) => {
     const nodePath = `${path}[${index}]`
-    if (!isRecord(node) || node.type !== 'text' || typeof node.text !== 'string') {
-      errors.push(`${nodePath} must be a text node`)
+    if (!isRecord(node) || typeof node.type !== 'string') {
+      errors.push(`${nodePath} must be an inline node`)
       return
     }
+
+    if (node.type === 'hardBreak') return
+
+    if (node.type !== 'text' || typeof node.text !== 'string') {
+      errors.push(`${nodePath} must be a supported inline node`)
+      return
+    }
+
     validateMarks(node.marks, `${nodePath}.marks`, errors)
   })
 }
@@ -232,7 +237,6 @@ function validateBlock(value: unknown, path: string, errors: string[]) {
     }
 
     case 'horizontalRule':
-    case 'hardBreak':
       return
 
     default:
@@ -243,9 +247,7 @@ function validateBlock(value: unknown, path: string, errors: string[]) {
 export function validateArticleDocument(value: unknown): ArticleDocumentValidationResult {
   const errors: string[] = []
 
-  if (!isRecord(value)) {
-    return { valid: false, errors: ['Document must be an object'] }
-  }
+  if (!isRecord(value)) return { valid: false, errors: ['Document must be an object'] }
 
   if (value.type !== 'doc') errors.push('Document type must be "doc"')
   if (value.version !== ARTICLE_DOCUMENT_VERSION) errors.push(`Document version must be ${ARTICLE_DOCUMENT_VERSION}`)
