@@ -22,8 +22,7 @@ export function articleDocumentToLegacyParagraphs(document: ArticleDocument): st
   return document.content.map((block) => {
     if (block.type !== 'paragraph') return ''
     return (block.content ?? [])
-      .filter((inline): inline is Extract<(typeof block.content)[number], { type: 'text' }> => inline.type === 'text')
-      .map((inline) => inline.text)
+      .map((inline) => inline.type === 'text' ? inline.text : '')
       .join('')
   })
 }
