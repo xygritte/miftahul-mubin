@@ -1,6 +1,6 @@
 import type { EventRecord, IslamicItemRecord, NewsRecord } from '@/types/content'
 import type { ArticleDocument } from '@/types/article-document'
-import { articleDocumentToLegacyParagraphs, legacyNewsContentToDocument } from '@/lib/data/articleDocumentLegacy'
+import { newsContentToArticleDocument } from '@/lib/data/articleDocumentLegacy'
 
 export type NewsItem = {
   slug: string
@@ -9,7 +9,7 @@ export type NewsItem = {
   date: string
   image: string
   excerpt: string
-  content: string[]
+  content: ArticleDocument
   publishedAt?: string | null
   viewCount?: number
 }
@@ -75,7 +75,7 @@ export function formatEventTime(value: string | null | undefined): string {
 }
 
 export function newsRecordToArticleDocument(item: NewsRecord): ArticleDocument {
-  return legacyNewsContentToDocument(item.content)
+  return newsContentToArticleDocument(item.content)
 }
 
 export function newsRecordToLegacy(item: NewsRecord): NewsItem {
@@ -88,7 +88,7 @@ export function newsRecordToLegacy(item: NewsRecord): NewsItem {
     date: formatIndonesianDate(item.publishedAt ?? item.createdAt ?? null, false),
     image: item.thumbnailUrl ?? sitePath('/hero-bg.png'),
     excerpt: item.excerpt,
-    content: articleDocumentToLegacyParagraphs(document),
+    content: document,
     publishedAt: item.publishedAt ?? null,
     viewCount: item.viewCount,
   }

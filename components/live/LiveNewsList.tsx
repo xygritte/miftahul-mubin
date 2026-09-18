@@ -6,13 +6,13 @@ import { newsRecordToLegacy, type NewsItem } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import type { NewsRecord } from '@/types/content'
+import { emptyArticleDocument } from '@/lib/data/articleDocumentLegacy'
 
 type NewsRow = {
   id: string
   title: string
   slug: string
   excerpt: string
-  content: string | string[]
   thumbnail_url: string | null
   category_id: string | null
   status: NewsRecord['status']
@@ -24,14 +24,13 @@ type NewsRow = {
 }
 
 function mapNewsRow(row: NewsRow): NewsRecord {
-  const content = Array.isArray(row.content) ? row.content : row.content.split(/\n\s*\n/).filter(Boolean)
   const category = Array.isArray(row.categories) ? row.categories[0]?.name : row.categories?.name
   return {
     id: row.id,
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt,
-    content,
+    content: emptyArticleDocument(),
     thumbnailUrl: row.thumbnail_url,
     category: category ?? 'Berita',
     status: row.status,
@@ -47,7 +46,7 @@ export default function LiveNewsList({ initialItems }: { initialItems: NewsItem[
   const refresh = useCallback(async () => {
     const { data, error } = await supabase
       .from('news')
-      .select('id,title,slug,excerpt,content,thumbnail_url,category_id,status,published_at,view_count,created_at,updated_at,categories(name)')
+      .select('id,title,slug,excerpt,thumbnail_url,category_id,status,published_at,view_count,created_at,updated_at,categories(name)')
       .eq('status', 'published')
       .not('published_at', 'is', null)
       .lte('published_at', new Date().toISOString())

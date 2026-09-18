@@ -11,6 +11,7 @@ import './embed-polish.css'
 import './dark-mode-fixes.css'
 import './design-tokens.css'
 import './page-spacing.css'
+import './article-content.css'
 
 export const metadata: Metadata = {
   title: {

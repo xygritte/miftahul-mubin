@@ -1,6 +1,7 @@
 import { publicSupabase } from '@/lib/supabase/public'
 import type { PublicContentRepository } from './repository'
 import type { AnnouncementRecord, EventRecord, FinancePeriod, FinanceTransaction, IslamicItemRecord, ManagementMember, ManagementPeriod, MediaAlbum, MediaItem, NewsRecord } from '@/types/content'
+import { emptyArticleDocument, newsContentToArticleDocument } from './articleDocumentLegacy'
 
 type Row = Record<string, any>
 
@@ -9,16 +10,16 @@ const category = (row: Row): string => Array.isArray(row.categories) && row.cate
 
 export const supabasePublicRepository: PublicContentRepository = {
   async listNews() {
-    const { data, error } = await publicSupabase.from('news').select('*, categories(name)').order('published_at', { ascending: false })
+    const { data, error } = await publicSupabase.from('news').select('id,slug,title,excerpt,thumbnail_url,category_id,author_id,status,published_at,view_count,created_at,updated_at,categories(name)').order('published_at', { ascending: false })
     if (error) throw error
-    return (data ?? []).map((r: Row) => ({ id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt, content: paragraphs(r.content), thumbnailUrl: r.thumbnail_url, category: category(r), authorId: r.author_id, status: r.status, publishedAt: r.published_at, viewCount: Number(r.view_count ?? 0), createdAt: r.created_at, updatedAt: r.updated_at })) as NewsRecord[]
+    return (data ?? []).map((r: Row) => ({ id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt, content: emptyArticleDocument(), thumbnailUrl: r.thumbnail_url, category: category(r), authorId: r.author_id, status: r.status, publishedAt: r.published_at, viewCount: Number(r.view_count ?? 0), createdAt: r.created_at, updatedAt: r.updated_at })) as NewsRecord[]
   },
   async getNewsBySlug(slug) {
     const { data, error } = await publicSupabase.from('news').select('*, categories(name)').eq('slug', slug).maybeSingle()
     if (error) throw error
     if (!data) return null
     const r: Row = data
-    return { id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt, content: paragraphs(r.content), thumbnailUrl: r.thumbnail_url, category: category(r), authorId: r.author_id, status: r.status, publishedAt: r.published_at, viewCount: Number(r.view_count ?? 0), createdAt: r.created_at, updatedAt: r.updated_at } as NewsRecord
+    return { id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt, content: newsContentToArticleDocument(r.content), thumbnailUrl: r.thumbnail_url, category: category(r), authorId: r.author_id, status: r.status, publishedAt: r.published_at, viewCount: Number(r.view_count ?? 0), createdAt: r.created_at, updatedAt: r.updated_at } as NewsRecord
   },
   async listIslamic() {
     const { data, error } = await publicSupabase.from('islamic_articles').select('*, categories(name)').order('published_at', { ascending: false })

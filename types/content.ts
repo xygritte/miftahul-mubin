@@ -1,3 +1,5 @@
+import type { ArticleDocument } from '@/types/article-document'
+
 export type PublishStatus = 'draft' | 'published' | 'archived'
 export type EventStatus = 'draft' | 'published' | 'cancelled' | 'completed'
 export type FinanceType = 'income' | 'expense'
@@ -14,7 +16,8 @@ export type NewsRecord = {
   slug: string
   title: string
   excerpt: string
-  content: string[]
+  /** Legacy paragraph arrays remain readable while new articles use ArticleDocument. */
+  content: ArticleDocument | string[]
   thumbnailUrl?: string | null
   category: string
   authorId?: string | null

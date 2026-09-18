@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, CalendarDays } from 'lucide-react'
 import type { NewsItem } from '@/lib/data/presentation'
-import SafeRichContent from '@/components/content/SafeRichContent'
+import ArticleContentRenderer from '@/components/content/ArticleContentRenderer'
 
 export default function ArticleDetail({ article }: { article: NewsItem }) {
   return (
@@ -14,7 +14,7 @@ export default function ArticleDetail({ article }: { article: NewsItem }) {
           <p className="article-lead">{article.excerpt}</p>
           <div className="article-hero"><img src={article.image} alt={article.title}/></div>
           <div className="article-caption">Dokumentasi ilustrasi Miftahul Mubin · 2026</div>
-          <div className="article-copy"><SafeRichContent paragraphs={article.content} /></div>
+          <div className="article-copy"><ArticleContentRenderer document={article.content} /></div>
           <div className="article-share"><span>Dipublikasikan untuk jamaah dan masyarakat.</span><Link href="/kontak/">Hubungi pengurus <ArrowRight size={15}/></Link></div>
         </article>
         <aside className="article-sidebar">

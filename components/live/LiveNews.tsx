@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase/client'
 import LiveLoadingState from './LiveLoadingState'
 import { useLiveContent } from './useLiveContent'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
+import { emptyArticleDocument } from '@/lib/data/articleDocumentLegacy'
 
 type Props = { initialItems: NewsItem[]; excludeSlug?: string | null }
 type NewsRow = {
@@ -31,7 +32,7 @@ function mapRow(row: NewsRow): LiveNewsItem {
     date: row.published_at ? new Date(row.published_at).toLocaleDateString('id-ID') : '',
     image: row.thumbnail_url ?? sitePath('/hero-bg.png'),
     excerpt: row.excerpt,
-    content: [],
+    content: emptyArticleDocument(),
     publishedAt: row.published_at,
     viewCount: row.view_count ?? 0,
   }
