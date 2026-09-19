@@ -99,7 +99,10 @@ function appendBlock(parent: HTMLElement, block: ArticleBlock) {
   figure.dataset.articleImage = 'true'
   figure.dataset.caption = block.attrs.caption ?? ''
   figure.dataset.alignment = block.attrs.alignment ?? 'center'
-  if (block.attrs.width) figure.dataset.width = String(block.attrs.width)
+  if (block.attrs.width) {
+    figure.dataset.width = String(block.attrs.width)
+    figure.style.maxWidth = `${block.attrs.width}px`
+  }
   figure.contentEditable = 'false'
   figure.className = `editor-image align-${block.attrs.alignment ?? 'center'}`
   const image = document.createElement('img')
@@ -329,8 +332,13 @@ export default function RichArticleEditor({ value, onChange, onUploadImage, onUp
       selectedImage.className = `editor-image align-${update.alignment}`
     }
     if (update.width !== undefined) {
-      if (update.width > 0) selectedImage.dataset.width = String(update.width)
-      else delete selectedImage.dataset.width
+      if (update.width > 0) {
+        selectedImage.dataset.width = String(update.width)
+        selectedImage.style.maxWidth = `${update.width}px`
+      } else {
+        delete selectedImage.dataset.width
+        selectedImage.style.removeProperty('max-width')
+      }
     }
     const currentCaption = selectedImage.querySelector('figcaption')
     if (selectedImage.dataset.caption) {
