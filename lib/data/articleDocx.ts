@@ -148,14 +148,23 @@ function paragraphStyle(paragraph: Element) {
   return { styleName, numberId }
 }
 
+function resolveMediaPath(target: string) {
+  try {
+    const normalizedTarget = target.replace(/^\/+/, '')
+    return decodeURIComponent(new URL(normalizedTarget, 'https://docx.local/word/').pathname.replace(/^\/+/, ''))
+  } catch {
+    return null
+  }
+}
+
 function parseImages(paragraph: Element, relationMap: RelationshipMap, entries: Map<string, ArchiveEntry>, knownImages: Map<string, ImportedImage>, warnings: string[]) {
   const imageBlocks: ArticleBlock[] = []
-  Array.from(paragraph.getElementsByTagNameNS('*', 'blip')).forEach((blip, index) => {
+  Array.from(paragraph.getElementsByTagNameNS('*', 'blip')).forEach((blip) => {
     const relationId = attribute(blip, 'embed', REL_NS)
     const target = relationId ? relationMap.get(relationId) : null
     if (!target) { warnings.push('Satu gambar DOCX tidak memiliki relasi media yang dapat dibaca.'); return }
-    const path = target.startsWith('/') ? target.slice(1) : `word/${target.replace(/^\.\//, '')}`
-    const entry = entries.get(path)
+    const path = resolveMediaPath(target)
+    const entry = path ? entries.get(path) : undefined
     if (!entry) { warnings.push(`Media DOCX “${target}” tidak ditemukan.`); return }
     let image = knownImages.get(path)
     if (!image) {

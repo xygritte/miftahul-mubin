@@ -3,6 +3,28 @@ import type { ArticleBlock, ArticleDocument, ArticleInline, ArticleMark } from '
 
 const URL_PATTERN = /(https?:\/\/[^\s<]+)/gi
 
+function youtubeEmbedUrl(value: string) {
+  try {
+    const url = new URL(value.trim())
+    const host = url.hostname.toLowerCase()
+    let videoId = ''
+
+    if (host === 'youtu.be' || host === 'www.youtu.be') {
+      videoId = url.pathname.split('/').filter(Boolean)[0] ?? ''
+    } else if (host.endsWith('youtube.com') || host.endsWith('youtube-nocookie.com')) {
+      if (url.pathname === '/watch') videoId = url.searchParams.get('v') ?? ''
+      else if (url.pathname.startsWith('/embed/')) videoId = url.pathname.split('/')[2] ?? ''
+      else if (url.pathname.startsWith('/shorts/')) videoId = url.pathname.split('/')[2] ?? ''
+    }
+
+    return /^[A-Za-z0-9_-]{6,}$/.test(videoId)
+      ? `https://www.youtube-nocookie.com/embed/${videoId}?rel=0`
+      : null
+  } catch {
+    return null
+  }
+}
+
 function safeExternalUrl(value: string) {
   try {
     const url = new URL(value)
@@ -49,8 +71,26 @@ function renderListItem(item: { content: ArticleBlock[] }, index: number) {
 
 function renderBlock(block: ArticleBlock, index: number): ReactNode {
   switch (block.type) {
-    case 'paragraph':
+    case 'paragraph': {
+      const first = block.content?.length === 1 ? block.content[0] : null
+      const youtubeUrl = first?.type === 'text' && !first.marks?.length ? youtubeEmbedUrl(first.text) : null
+
+      if (youtubeUrl) {
+        return (
+          <div key={`youtube-${index}`} className="article-inline-video">
+            <iframe
+              src={youtubeUrl}
+              title="Video YouTube"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        )
+      }
+
       return <p key={`paragraph-${index}`}>{renderInlineContent(block.content)}</p>
+    }
     case 'heading': {
       const Tag = `h${block.level}` as 'h1' | 'h2' | 'h3'
       return <Tag key={`heading-${index}`}>{renderInlineContent(block.content)}</Tag>

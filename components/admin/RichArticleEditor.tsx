@@ -194,10 +194,12 @@ function renderDocument(root: HTMLDivElement, value: ArticleDocument) {
 
 function imageDetails(figure: HTMLElement | null) {
   const image = figure?.querySelector('img')
+  const rawWidth = Number(figure?.dataset.width)
   return {
     alt: image?.alt ?? '',
     caption: figure?.dataset.caption ?? '',
     alignment: figure?.dataset.alignment === 'left' || figure?.dataset.alignment === 'right' ? figure.dataset.alignment : 'center',
+    width: Number.isInteger(rawWidth) && rawWidth > 0 ? rawWidth : undefined,
   } as const
 }
 
@@ -326,6 +328,10 @@ export default function RichArticleEditor({ value, onChange, onUploadImage, onUp
       selectedImage.dataset.alignment = update.alignment
       selectedImage.className = `editor-image align-${update.alignment}`
     }
+    if (update.width !== undefined) {
+      if (update.width > 0) selectedImage.dataset.width = String(update.width)
+      else delete selectedImage.dataset.width
+    }
     const currentCaption = selectedImage.querySelector('figcaption')
     if (selectedImage.dataset.caption) {
       const caption = currentCaption ?? document.createElement('figcaption')
@@ -359,6 +365,7 @@ export default function RichArticleEditor({ value, onChange, onUploadImage, onUp
     {selectedImage && <div className="article-editor-image-controls" aria-label="Pengaturan gambar terpilih">
       <label><span>Teks alternatif</span><input value={currentImage.alt} onChange={(event) => updateSelectedImage({ alt: event.target.value })} /></label>
       <label><span>Keterangan gambar</span><input value={currentImage.caption} onChange={(event) => updateSelectedImage({ caption: event.target.value })} /></label>
+      <label><span>Lebar (px)</span><input type="number" min="160" max="1600" step="10" value={currentImage.width ?? ''} onChange={(event) => updateSelectedImage({ width: event.target.value ? Number(event.target.value) : 0 })} /></label>
       <span className="article-editor-align" aria-label="Perataan gambar">{toolbarButton('Rata kiri', <AlignLeft size={16} />, () => updateSelectedImage({ alignment: 'left' }), currentImage.alignment === 'left')}{toolbarButton('Rata tengah', <AlignCenter size={16} />, () => updateSelectedImage({ alignment: 'center' }), currentImage.alignment === 'center')}{toolbarButton('Rata kanan', <AlignRight size={16} />, () => updateSelectedImage({ alignment: 'right' }), currentImage.alignment === 'right')}</span>
       <button type="button" className="article-editor-delete-image" onClick={() => { selectedImage.remove(); setSelectedImage(null); emitChange() }}>Hapus gambar</button>
     </div>}

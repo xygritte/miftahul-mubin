@@ -58,11 +58,3 @@ export function articleDocumentHasContent(document: ArticleDocument) {
   })
 }
 
-export function articleDocumentToLegacyParagraphs(document: ArticleDocument): string[] {
-  return document.content.map((block) => {
-    if (block.type !== 'paragraph') return ''
-    return (block.content ?? [])
-      .map((inline) => inline.type === 'text' ? inline.text : '')
-      .join('')
-  })
-}
