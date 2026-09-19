@@ -4,8 +4,8 @@ import type { ArticleBlock, ArticleDocument, ArticleInline } from '@/types/artic
 import type { NewsItem } from '@/lib/data/presentation'
 import ArticleContentRenderer from '@/components/content/ArticleContentRenderer'
 
-function inlineText(content: ArticleInline[]) {
-  return content
+function inlineText(content: ArticleInline[] | undefined) {
+  return (content ?? [])
     .filter((node): node is Extract<ArticleInline, { type: 'text' }> => node.type === 'text')
     .map((node) => node.text)
     .join(' ')
