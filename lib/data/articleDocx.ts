@@ -21,10 +21,16 @@ function findEndOfCentralDirectory(bytes: Uint8Array) {
   throw new Error('Berkas DOCX tidak memiliki arsip ZIP yang valid.')
 }
 
+function asArrayBuffer(data: Uint8Array): ArrayBuffer {
+  const buffer = new ArrayBuffer(data.byteLength)
+  new Uint8Array(buffer).set(data)
+  return buffer
+}
+
 async function inflate(data: Uint8Array, method: number) {
   if (method === 0) return data
   if (method !== 8 || typeof DecompressionStream === 'undefined') throw new Error('Format kompresi DOCX tidak didukung oleh browser ini.')
-  const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))
+  const stream = new Blob([asArrayBuffer(data)]).stream().pipeThrough(new DecompressionStream('deflate-raw'))
   return new Uint8Array(await new Response(stream).arrayBuffer())
 }
 
@@ -164,14 +170,15 @@ function parseImages(paragraph: Element, relationMap: RelationshipMap, entries: 
     const target = relationId ? relationMap.get(relationId) : null
     if (!target) { warnings.push('Satu gambar DOCX tidak memiliki relasi media yang dapat dibaca.'); return }
     const path = resolveMediaPath(target)
-    const entry = path ? entries.get(path) : undefined
+    if (!path) { warnings.push(`Media DOCX “${target}” memiliki path yang tidak valid.`); return }
+    const entry = entries.get(path)
     if (!entry) { warnings.push(`Media DOCX “${target}” tidak ditemukan.`); return }
     let image = knownImages.get(path)
     if (!image) {
       const id = `docx-image-${knownImages.size + 1}`
       const fileName = path.split('/').pop() || `${id}.jpg`
       const description = firstDescendant(paragraph, 'docPr')?.getAttribute('descr') || firstDescendant(paragraph, 'docPr')?.getAttribute('name') || ''
-      image = { id, file: new File([entry.data], fileName, { type: mimeType(fileName) }), alt: description }
+      image = { id, file: new File([asArrayBuffer(entry.data)], fileName, { type: mimeType(fileName) }), alt: description }
       knownImages.set(path, image)
     }
     if (!imageBlocks.some((block) => block.type === 'image' && block.attrs.src === `docx:${image.id}`)) {
@@ -217,7 +224,7 @@ export async function importDocxArticle(file: File): Promise<DocxImportResult> {
   const warnings: string[] = []
   const importedImages = new Map<string, ImportedImage>()
   const content: ArticleBlock[] = []
-  let activeList: { type: 'bulletList' | 'orderedList'; items: Array<{ type: 'listItem'; content: ArticleBlock[] }> } | null = null
+  let activeList: { type: 'bulletList' | 'orderedList'; content: Array<{ type: 'listItem'; content: ArticleBlock[] }> } | null = null
   const flushList = () => {
     if (activeList) content.push(activeList)
     activeList = null
@@ -239,8 +246,8 @@ export async function importDocxArticle(file: File): Promise<DocxImportResult> {
     const format = listFormat(numbering, numberId)
     if (format) {
       const type = format === 'bullet' ? 'bulletList' : 'orderedList'
-      if (!activeList || activeList.type !== type) { flushList(); activeList = { type, items: [] } }
-      activeList.items.push({ type: 'listItem', content: blocks })
+      if (!activeList || activeList.type !== type) { flushList(); activeList = { type, content: [] } }
+      activeList.content.push({ type: 'listItem', content: blocks })
     } else { flushList(); content.push(...blocks) }
   })
   flushList()
