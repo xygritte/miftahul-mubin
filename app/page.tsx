@@ -9,6 +9,18 @@ import LiveIslamic from '@/components/live/LiveIslamic'
 import LiveAnnouncements from '@/components/live/LiveAnnouncements'
 import LivePopularNews from '@/components/live/LivePopularNews'
 
+const highlights = [
+  { kicker: 'Jadwal Umat', title: 'Agenda Kegiatan', text: 'Temukan kajian, kegiatan sosial, pendidikan, dan agenda jamaah.', href: '/kegiatan/' },
+  { kicker: 'Amanah Bersama', title: 'Transparansi Keuangan', text: 'Lihat ringkasan pengelolaan dana masjid secara terbuka dan terstruktur.', href: '/keuangan/' },
+]
+
+const services = [
+  ['Kajian & Dakwah', 'Materi dan agenda untuk menumbuhkan ilmu serta kebersamaan.', '/keislaman/'],
+  ['Pendidikan', 'Program pembelajaran Al-Qur’an dan kegiatan pendidikan jamaah.', '/kegiatan/'],
+  ['Pelayanan Sosial', 'Ruang kolaborasi untuk santunan, bakti sosial, dan kepedulian warga.', '/kegiatan/'],
+  ['Dokumentasi', 'Arsip kegiatan dan momen kebersamaan Miftahul Mubin.', '/dokumentasi/'],
+] as const
+
 export default function Home() {
   return <SiteShell>
     <main id="main-content">
