@@ -3,40 +3,13 @@ import { ArrowRight } from 'lucide-react'
 import SiteShell from '@/components/layout/SiteShell'
 import DeferredSection from '@/components/layout/DeferredSection'
 import LiveNews from '@/components/live/LiveNews'
+import LiveHeroNews from '@/components/live/LiveHeroNews'
 import LiveEvents from '@/components/live/LiveEvents'
 import LiveIslamic from '@/components/live/LiveIslamic'
 import LiveAnnouncements from '@/components/live/LiveAnnouncements'
 import LivePopularNews from '@/components/live/LivePopularNews'
-import { contentRepository } from '@/lib/data'
 
-type HomeNews = Awaited<ReturnType<typeof contentRepository.listNews>>[number]
-
-const highlights = [
-  { kicker: 'Jadwal Umat', title: 'Agenda Kegiatan', text: 'Temukan kajian, kegiatan sosial, pendidikan, dan agenda jamaah.', href: '/kegiatan/' },
-  { kicker: 'Amanah Bersama', title: 'Transparansi Keuangan', text: 'Lihat ringkasan pengelolaan dana masjid secara terbuka dan terstruktur.', href: '/keuangan/' },
-]
-
-const services = [
-  ['Kajian & Dakwah', 'Materi dan agenda untuk menumbuhkan ilmu serta kebersamaan.', '/keislaman/'],
-  ['Pendidikan', 'Program pembelajaran Al-Qur’an dan kegiatan pendidikan jamaah.', '/kegiatan/'],
-  ['Pelayanan Sosial', 'Ruang kolaborasi untuk santunan, bakti sosial, dan kepedulian warga.', '/kegiatan/'],
-  ['Dokumentasi', 'Arsip kegiatan dan momen kebersamaan Miftahul Mubin.', '/dokumentasi/'],
-] as const
-
-function pickLatestNews(items: HomeNews[]) {
-  return items
-    .filter((item) => item.status === 'published' && item.publishedAt)
-    .sort((a, b) => new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime())[0] ?? null
-}
-
-function formatNewsDate(value: string | null | undefined) {
-  if (!value) return ''
-  return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value))
-}
-
-export default async function Home() {
-  const latestNews = pickLatestNews(await contentRepository.listNews())
-
+export default function Home() {
   return <SiteShell>
     <main id="main-content">
       <section className="home-hero">
@@ -51,26 +24,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="home-hero-card">
-            {latestNews ? (
-              <Link className="home-hero-news" href={`/berita/${latestNews.slug}/`}>
-                <div className="home-hero-news-image" style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden' }}>
-                  <img src={latestNews.thumbnailUrl ?? '/miftahul-mubin/hero-bg.png'} alt={latestNews.title} decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div className="home-hero-news-meta">
-                  <span className="eyebrow">Berita Terbaru</span>
-                  <span className="home-hero-news-details">
-                    <span>{latestNews.category}</span>
-                    <span>{formatNewsDate(latestNews.publishedAt)}</span>
-                  </span>
-                </div>
-                <strong>{latestNews.title}</strong>
-              </Link>
-            ) : (
-              <div className="home-hero-news-empty">
-                <span className="eyebrow">Berita Terbaru</span>
-                <strong>Belum ada berita terbaru.</strong>
-              </div>
-            )}
+            <LiveHeroNews />
           </div>
         </div>
       </section>
@@ -87,7 +41,7 @@ export default async function Home() {
           </div>
           <Link href="/berita/">Semua berita <ArrowRight size={16} /></Link>
         </div>
-        <LiveNews initialItems={[]} excludeSlug={latestNews?.slug} />
+        <LiveNews initialItems={[]} />
       </section>
 
       <section className="home-editorial container" aria-labelledby="pengumuman-terpopuler">
