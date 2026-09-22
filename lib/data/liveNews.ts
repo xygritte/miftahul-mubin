@@ -1,15 +1,12 @@
 import { supabase } from '@/lib/supabase/client'
-import { emptyArticleDocument } from '@/lib/data/articleDocumentLegacy'
 import { sitePath } from '@/lib/data/presentation'
 
 export type LiveNewsItem = {
   slug: string
   category: string
   title: string
-  date: string
   image: string
   excerpt: string
-  content: ReturnType<typeof emptyArticleDocument>
   publishedAt: string | null
   viewCount: number
 }
@@ -31,10 +28,8 @@ function mapRow(row: NewsRow): LiveNewsItem {
     slug: row.slug,
     category: category ?? 'Berita',
     title: row.title,
-    date: row.published_at ? new Date(row.published_at).toLocaleDateString('id-ID') : '',
     image: row.thumbnail_url ?? sitePath('/hero-bg.png'),
     excerpt: row.excerpt,
-    content: emptyArticleDocument(),
     publishedAt: row.published_at,
     viewCount: row.view_count ?? 0,
   }
