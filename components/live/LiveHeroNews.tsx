@@ -2,13 +2,13 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect } from 'react'
+import { fetchLivePublishedNews, formatLiveNewsDate } from '@/lib/data/liveNews'
 import { useLiveContent } from './useLiveContent'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
-import { fetchLivePublishedNews, formatLiveNewsDate, type LiveNewsItem } from '@/lib/data/liveNews'
 
 export default function LiveHeroNews() {
   const fetcher = useCallback(() => fetchLivePublishedNews(1), [])
-  const { items, loading, error, refresh } = useLiveContent<LiveNewsItem>([], fetcher)
+  const { items, loading, error, refresh } = useLiveContent([], fetcher)
 
   useEffect(() => { void refresh() }, [refresh])
   useRealtimeRefresh('news', refresh)
@@ -35,8 +35,8 @@ export default function LiveHeroNews() {
 
   return (
     <Link className="home-hero-news" href={'/berita/' + latest.slug + '/'}>
-      <div className="home-hero-news-image" style={{ width: '100%', aspectRatio: '16 / 9', overflow: 'hidden' }}>
-        <img src={latest.image} alt={latest.title} decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      <div className="home-hero-news-image">
+        <img src={latest.image} alt={latest.title} decoding="async" />
       </div>
       <div className="home-hero-news-meta">
         <span className="eyebrow">Berita Terbaru</span>
