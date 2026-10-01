@@ -1,5 +1,6 @@
-/* Canonical design tokens. Keep component styles consuming these aliases. */
+/* Canonical design tokens. Keep component styles consuming these roles; migrate legacy aliases gradually. */
 :root {
+  /* Color roles */
   --mm-bg: #f6f8f6;
   --mm-bg-deep: #f6f8f6;
   --mm-surface: #ffffff;
@@ -12,17 +13,19 @@
   --mm-text-tertiary: #68756f;
   --mm-line: #e1e8e4;
   --mm-line-strong: #cad7d1;
-  --mm-border: #e1e8e4;
-  --mm-border-strong: #cad7d1;
+  --mm-border: var(--mm-line);
+  --mm-border-strong: var(--mm-line-strong);
   --mm-green: #0d5c48;
   --mm-green-dark: #083d31;
+  --mm-green-deep: var(--mm-green-dark);
   --mm-gold: #b79652;
-  --mm-accent: #0d5c48;
+  --mm-accent: var(--mm-green);
   --mm-accent-soft: #eef4f1;
   --mm-overlay: rgba(8, 61, 49, .48);
   --mm-focus: rgba(13, 92, 72, .28);
   --mm-shadow: rgba(8, 61, 49, .08);
 
+  /* Compatibility aliases: legacy consumers stay on the same semantic roles during migration. */
   --green: var(--mm-green);
   --green-dark: var(--mm-green-dark);
   --gold: var(--mm-gold);
@@ -31,12 +34,28 @@
   --line: var(--mm-line);
   --canvas: var(--mm-bg);
   --white: var(--mm-surface);
-
+  --surface-page: var(--mm-bg);
   --surface-card: var(--mm-surface);
   --surface-muted: var(--mm-surface-2);
   --border-subtle: var(--mm-line);
+  --text-primary: var(--mm-text);
+  --text: var(--mm-text);
+  --text-strong: var(--mm-text-strong);
+  --text-secondary: var(--mm-text-secondary);
   --text-muted: var(--mm-muted);
+  --accent-soft: var(--mm-accent-soft);
 
+  /* Header roles */
+  --mm-header-white: var(--mm-surface);
+  --mm-header-line: var(--mm-line);
+  --mm-header-soft: var(--mm-surface-2);
+  --mm-header-ink: var(--mm-text-strong);
+  --mm-header-muted: var(--mm-muted);
+  --mm-nav: var(--mm-green);
+  --mm-nav-deep: var(--mm-green-dark);
+  --mm-nav-text: #ffffff;
+
+  /* Typography roles */
   --mm-font-sans: 'DM Sans', system-ui, sans-serif;
   --mm-font-display: 'Playfair Display', Georgia, serif;
   --mm-font-size-display: 52px;
@@ -52,6 +71,7 @@
   --mm-leading-body: 1.7;
   --mm-leading-meta: 1.5;
 
+  /* Layout and interaction roles */
   --mm-content-width: 1180px;
   --mm-gutter: 40px;
   --mm-radius-sm: 6px;
@@ -88,32 +108,16 @@ html[data-theme='dark'] {
   --mm-text-tertiary: #9aa9a2;
   --mm-line: #2d3935;
   --mm-line-strong: #405149;
-  --mm-border: #2d3935;
-  --mm-border-strong: #405149;
+  --mm-border: var(--mm-line);
+  --mm-border-strong: var(--mm-line-strong);
   --mm-green: #24a892;
   --mm-green-dark: #7bd5c4;
   --mm-gold: #d7b76c;
-  --mm-accent: #24a892;
+  --mm-accent: var(--mm-green);
   --mm-accent-soft: #18382f;
   --mm-overlay: rgba(0, 0, 0, .72);
   --mm-focus: rgba(36, 168, 146, .36);
   --mm-shadow: rgba(0, 0, 0, .24);
-}
-
-:root,
-html[data-theme='dark'] {
-  --surface-card: var(--mm-surface);
-  --surface-muted: var(--mm-surface-2);
-  --border-subtle: var(--mm-line);
-  --text-muted: var(--mm-muted);
-  --mm-header-white: var(--mm-surface);
-  --mm-header-line: var(--mm-line);
-  --mm-header-soft: var(--mm-surface-2);
-  --mm-header-ink: var(--mm-text-strong);
-  --mm-header-muted: var(--mm-muted);
-  --mm-nav: var(--mm-green);
-  --mm-nav-deep: var(--mm-green-dark);
-  --mm-nav-text: #ffffff;
 }
 
 html { color-scheme: light; }
