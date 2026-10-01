@@ -1,10 +1,19 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, CalendarDays, Clock3, MapPin } from 'lucide-react'
 import type { EventItem } from '@/lib/data/presentation'
+import ContentContextRail from '@/components/content/ContentContextRail'
 
-export default function EventDetail({ event }: { event: EventItem }) {
+export default function EventDetail({
+  event,
+  relatedEvents = [],
+  relatedLoading = false,
+}: {
+  event: EventItem
+  relatedEvents?: EventItem[]
+  relatedLoading?: boolean
+}) {
   return (
-    <main id="main-content" className="inner-page">
+    <main id="main-content" className="inner-page content-detail-page">
       <div className="container article-layout">
         <article className="event-detail">
           <Link className="back-link" href="/kegiatan/"><ArrowLeft size={15}/> Kembali ke kegiatan</Link>
@@ -20,7 +29,30 @@ export default function EventDetail({ event }: { event: EventItem }) {
           <div className="article-share"><span>Catat agenda ini dalam kalender Anda.</span><Link href="/kontak/">Hubungi pengurus <ArrowRight size={15}/></Link></div>
         </article>
         <aside className="article-sidebar">
-          <div className="sidebar-card"><span className="eyebrow">Agenda Lain</span><h2>Temukan kegiatan lainnya</h2><Link href="/kegiatan/">Semua kegiatan <ArrowRight size={15}/></Link><Link href="/pengumuman/">Pengumuman <ArrowRight size={15}/></Link><Link href="/dokumentasi/">Dokumentasi <ArrowRight size={15}/></Link></div>
+          <ContentContextRail
+            data={{
+              eyebrow: 'Agenda masjid',
+              title: 'Jelajahi kegiatan',
+              links: [
+                { label: 'Semua kegiatan', href: '/kegiatan/', active: true },
+                { label: 'Pengumuman', href: '/pengumuman/' },
+                { label: 'Dokumentasi', href: '/dokumentasi/' },
+              ],
+              note: 'Gunakan agenda ini sebagai rujukan waktu dan lokasi kegiatan masjid.',
+            }}
+            relatedLoading={relatedLoading}
+            relatedGroups={[
+              {
+                label: 'Agenda lain',
+                href: '/kegiatan/',
+                items: relatedEvents.map((item) => ({
+                  title: item.title,
+                  href: `/kegiatan/${item.slug}/`,
+                  meta: `${item.category} · ${item.date}`,
+                })),
+              },
+            ]}
+          />
         </aside>
       </div>
     </main>
