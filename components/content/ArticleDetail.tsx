@@ -171,74 +171,74 @@ export default function ArticleDetail({ article }: { article: NewsItem | Article
         </article>
 
         <aside className="article-sidebar">
+          <section className="article-sidebar-section article-sidebar-latest" aria-labelledby="article-sidebar-latest-title">
+            <div className="article-sidebar-section-head">
+              <span className="eyebrow">Terbaru</span>
+              <h2 id="article-sidebar-latest-title">Dari Miftahul Mubin</h2>
+            </div>
+
+            {!!data.latestNews?.length && (
+              <div className="article-sidebar-latest-group">
+                <div className="article-sidebar-subhead">
+                  <span>Berita</span>
+                  <Link href="/berita/">Semua</Link>
+                </div>
+                <div className="article-sidebar-news-list">
+                  {data.latestNews.map((item, index) => (
+                    <Link key={item.slug} className="article-sidebar-news-item" href={`/berita/${item.slug}/`}>
+                      <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                      <img src={item.image} alt="" loading="lazy" decoding="async" />
+                      <span className="article-sidebar-item-copy">
+                        <strong>{item.title}</strong>
+                        <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {!!data.latestIslamic?.length && (
+              <div className="article-sidebar-latest-group article-sidebar-islamic">
+                <div className="article-sidebar-subhead">
+                  <span>Keislaman</span>
+                  <Link href="/keislaman/">Semua</Link>
+                </div>
+                <div className="article-sidebar-islamic-list">
+                  {data.latestIslamic.map((item, index) => (
+                    <Link key={item.slug} className="article-sidebar-islamic-item" href={`/keislaman/${item.slug}/`}>
+                      <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="article-sidebar-item-copy">
+                        <strong>{item.title}</strong>
+                        <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
+                      </span>
+                      <ArrowRight size={14} aria-hidden="true" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+
           <nav className="sidebar-card article-context-card" aria-label={data.sidebarTitle}>
-            <span className="eyebrow">{data.sidebarEyebrow}</span>
-            <h2>{data.sidebarTitle}</h2>
+            <div className="article-sidebar-section-head">
+              <span className="eyebrow">{data.sidebarEyebrow}</span>
+              <h3>{data.sidebarTitle}</h3>
+            </div>
             <div className="article-sidebar-links">
               {data.sidebarLinks.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <span>{item.label}</span>
-                  <ArrowRight size={15} aria-hidden="true" />
+                  <ArrowRight size={14} aria-hidden="true" />
                 </Link>
               ))}
             </div>
           </nav>
 
-          {!!data.latestNews?.length && (
-            <section className="article-sidebar-section" aria-labelledby="article-sidebar-news-title">
-              <div className="article-sidebar-section-head">
-                <span className="eyebrow">Berita</span>
-                <h3 id="article-sidebar-news-title">Berita terbaru</h3>
-              </div>
-              <div className="article-sidebar-news-list">
-                {data.latestNews.map((item, index) => (
-                  <Link key={item.slug} className="article-sidebar-news-item" href={`/berita/${item.slug}/`}>
-                    <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                    <img src={item.image} alt="" loading="lazy" decoding="async" />
-                    <span className="article-sidebar-item-copy">
-                      <strong>{item.title}</strong>
-                      <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
-                    </span>
-                  </Link>
-                ))}
-              </div>
-              <Link className="article-sidebar-more" href="/berita/">
-                Lihat semua berita
-                <ArrowRight size={14} aria-hidden="true" />
-              </Link>
-            </section>
-          )}
-
-          {!!data.latestIslamic?.length && (
-            <section className="article-sidebar-section article-sidebar-islamic" aria-labelledby="article-sidebar-islamic-title">
-              <div className="article-sidebar-section-head">
-                <span className="eyebrow">Ruang keislaman</span>
-                <h3 id="article-sidebar-islamic-title">Artikel terbaru</h3>
-              </div>
-              <div className="article-sidebar-islamic-list">
-                {data.latestIslamic.map((item, index) => (
-                  <Link key={item.slug} className="article-sidebar-islamic-item" href={`/keislaman/${item.slug}/`}>
-                    <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="article-sidebar-item-copy">
-                      <strong>{item.title}</strong>
-                      <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
-                    </span>
-                    <ArrowRight size={14} aria-hidden="true" />
-                  </Link>
-                ))}
-              </div>
-              <Link className="article-sidebar-more" href="/keislaman/">
-                Lihat semua artikel
-                <ArrowRight size={14} aria-hidden="true" />
-              </Link>
-            </section>
-          )}
-
           <div className="sidebar-note article-sidebar-note">
             <CalendarDays size={18} aria-hidden="true" />
             <p>{data.sidebarNote}</p>
-          </div>
-        </aside>
+          </div>        </aside>
       </div>
     </main>
   )
