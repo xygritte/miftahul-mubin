@@ -1,11 +1,11 @@
 # STATUS — NEWS EDITOR & DOCX FEATURE
 
-> **Current phase:** PHASE 3 — Legacy Compatibility Layer (validated)
-> **Overall progress:** L1, L2, and L3 implementation checkpoints completed; runtime integration has not started.
-> **Last completed:** L3 — canonical inline-node correction + legacy news content adapter.
-> **Next action:** `C` — PHASE 3 verification / presentation integration audit.
-> **Next implementation:** `L4` — integrate ArticleDocument compatibility into the presentation layer, only after the L3 validation gate passes.
-> **Repository changes for this feature:** Canonical Article Document contract, validator, and legacy adapter added; existing runtime consumers remain unchanged.
+> **Current phase:** PHASE 8 — Editor ↔ Public Visual Contract (validation pending)
+> **Overall progress:** L1–L4 compatibility/presentation work and the public article-reading redesign checkpoint are implemented; automated validation is still pending.
+> **Last implementation:** Public article reading experience redesign — shared article detail shell, ArticleContentRenderer presentation improvements, and Islamic detail integration.
+> **Next action:** `V` — run automated and regression validation against the main branch.
+> **Next implementation:** No new `L` until this validation gate passes.
+> **Repository changes for this feature:** ArticleDocument compatibility remains active; the public article detail renderer is shared by News and Islamic detail surfaces.
 > **Open verification item:** Effective news INSERT/UPDATE/DELETE authorization still requires live Supabase policy verification before changing the rich-editor write path.
 > **Status rule:** Update this section after each completed `L`/checkpoint; do not mark a phase complete until its validation gate and checkpoint are satisfied.
 
