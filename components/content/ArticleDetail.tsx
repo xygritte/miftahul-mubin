@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, CalendarDays, Clock3, Eye } from 'lucide-react'
 import type { ArticleBlock, ArticleDocument, ArticleInline } from '@/types/article-document'
 import type { NewsItem } from '@/lib/data/presentation'
 import ArticleContentRenderer from '@/components/content/ArticleContentRenderer'
-import type { ArticleSidebarIslamicItem, ArticleSidebarNewsItem } from '@/lib/data/liveArticleSidebar'
+import { formatArticleSidebarDate, type ArticleSidebarIslamicItem, type ArticleSidebarNewsItem } from '@/lib/data/liveArticleSidebar'
 
 export type ArticleDetailModel = {
   eyebrow: string
@@ -197,7 +197,7 @@ export default function ArticleDetail({ article }: { article: NewsItem | Article
                     <img src={item.image} alt="" loading="lazy" decoding="async" />
                     <span className="article-sidebar-item-copy">
                       <strong>{item.title}</strong>
-                      <small>{item.category} · {item.publishedAt ? new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short' }).format(new Date(item.publishedAt)) : 'Terbaru'}</small>
+                      <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
                     </span>
                   </Link>
                 ))}
@@ -221,7 +221,7 @@ export default function ArticleDetail({ article }: { article: NewsItem | Article
                     <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                     <span className="article-sidebar-item-copy">
                       <strong>{item.title}</strong>
-                      <small>{item.category} · {item.publishedAt ? new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short' }).format(new Date(item.publishedAt)) : 'Terbaru'}</small>
+                      <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
                     </span>
                     <ArrowRight size={14} aria-hidden="true" />
                   </Link>

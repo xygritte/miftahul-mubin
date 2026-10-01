@@ -1,5 +1,4 @@
 import { fetchLivePublishedNews, formatLiveNewsDate, type LiveNewsItem } from '@/lib/data/liveNews'
-import { sitePath } from '@/lib/data/presentation'
 import { supabase } from '@/lib/supabase/client'
 
 export type ArticleSidebarNewsItem = LiveNewsItem
@@ -69,8 +68,4 @@ export async function fetchLiveArticleSidebarContent(options?: {
 
 export function formatArticleSidebarDate(value: string | null | undefined) {
   return formatLiveNewsDate(value) || 'Terbaru'
-}
-
-export function articleSidebarImage(value: string | null | undefined) {
-  return value ?? sitePath('/hero-bg.png')
 }

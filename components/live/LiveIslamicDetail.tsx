@@ -25,7 +25,11 @@ export default function LiveIslamicDetail({ slug, initialItem }: { slug: string;
 
   useEffect(() => { void refresh() }, [refresh])
   useEffect(() => { void refreshSidebar() }, [refreshSidebar])
-  useRealtimeRefresh('islamic_articles', refresh)
+  const refreshIslamicSurface = useCallback(async () => {
+    await Promise.all([refresh(), refreshSidebar()])
+  }, [refresh, refreshSidebar])
+
+  useRealtimeRefresh('islamic_articles', refreshIslamicSurface)
   useRealtimeRefresh('news', refreshSidebar)
 
   if (!item) {

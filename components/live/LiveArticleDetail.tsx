@@ -23,7 +23,11 @@ export default function LiveArticleDetail({ slug, initialArticle }: { slug: stri
 
   useEffect(() => { void refresh() }, [refresh])
   useEffect(() => { void refreshSidebar() }, [refreshSidebar])
-  useRealtimeRefresh('news', refresh)
+  const refreshNewsSurface = useCallback(async () => {
+    await Promise.all([refresh(), refreshSidebar()])
+  }, [refresh, refreshSidebar])
+
+  useRealtimeRefresh('news', refreshNewsSurface)
   useRealtimeRefresh('islamic_articles', refreshSidebar)
 
   if (!article) return <main id="main-content" className="inner-page"><div className="container"><div className="empty-state"><strong>Berita tidak tersedia</strong><p>Berita ini belum dipublikasikan atau sudah tidak tersedia.</p></div></div></main>
