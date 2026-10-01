@@ -1,11 +1,13 @@
 # STATUS — NEWS EDITOR & DOCX FEATURE
 
-> **Current phase:** PHASE 8 — Editor ↔ Public Visual Contract (implementation checkpoint)
-> **Overall progress:** Public article redesign has been reworked toward an editorial reading experience with scoped responsive styles and reduced card-like treatment; validation is pending.
-> **Last implementation:** Editorial public article visual redesign — typography hierarchy, reading rhythm, hero treatment, pull quotes, inline media, and context rail.
-> **Next action:** `V` — validate typecheck, production build, and public regression after the redesign.
-> **Next implementation:** No new `L` until this validation gate passes.
+> **Current phase:** PHASE 8 — Editor ↔ Public Visual Contract (validated)
+> **Overall progress:** Public article redesign checkpoint validated successfully through GitHub Actions; build, typecheck, Pages output, deployment, and public smoke checks passed.
+> **Last implementation:** Editorial public article visual redesign — typography hierarchy, reading rhythm, hero treatment, pull quotes, inline media, context rail, and responsive scoping.
+> **Last validation:** GitHub Actions run #553 for `8b08463e2d1c0d083272c83d8fd3ea111bba65d6` passed all jobs: build, deploy, and smoke.
+> **Next action:** `C` — audit the next implementation slice before any new `L`.
+> **Next implementation:** No new `L` until the next `C` establishes scope and consumers.
 > **Repository changes for this feature:** ArticleDocument data flow remains unchanged; this checkpoint is presentation-only.
+> **Visual limitation:** Automated validation confirms build/deployment integrity, not pixel-level visual fidelity across browsers; manual visual review remains a separate check.
 > **Open verification item:** Effective news INSERT/UPDATE/DELETE authorization still requires live Supabase policy verification before changing the rich-editor write path.
 > **Status rule:** Update this section after each completed `L`/checkpoint; do not mark a phase complete until its validation gate and checkpoint are satisfied.
 
