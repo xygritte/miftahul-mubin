@@ -53,16 +53,19 @@ export async function fetchLiveArticleSidebarContent(options?: {
   excludeNewsSlug?: string
   excludeIslamicSlug?: string
 }): Promise<ArticleSidebarContent | null> {
-  const [news, islamic] = await Promise.all([
+  const [newsResult, islamicResult] = await Promise.allSettled([
     fetchLivePublishedNews(4),
     fetchLivePublishedIslamic(4),
   ])
 
-  if (!news || !islamic) return null
+  const news = newsResult.status === 'fulfilled' ? newsResult.value : null
+  const islamic = islamicResult.status === 'fulfilled' ? islamicResult.value : null
+
+  if (!news && !islamic) return null
 
   return {
-    news: news.filter((item) => item.slug !== options?.excludeNewsSlug).slice(0, 3),
-    islamic: islamic.filter((item) => item.slug !== options?.excludeIslamicSlug).slice(0, 3),
+    news: (news ?? []).filter((item) => item.slug !== options?.excludeNewsSlug).slice(0, 3),
+    islamic: (islamic ?? []).filter((item) => item.slug !== options?.excludeIslamicSlug).slice(0, 3),
   }
 }
 
