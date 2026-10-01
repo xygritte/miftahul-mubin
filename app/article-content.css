@@ -837,7 +837,7 @@ html[data-theme='dark'] .article-page .article-sidebar-note {
 
 html[data-theme='dark'] .article-page .article-detail .article-title,
 html[data-theme='dark'] .article-page .article-content-heading,
-
+html[data-theme='dark'] .article-page .article-context-head h3 {
   color: var(--mm-text-strong);
 }
 
