@@ -3,7 +3,8 @@
 > **Current phase:** PHASE 8 — Editor ↔ Public Visual Contract (implementation checkpoint pending validation)
 > **Overall progress:** CSS foundation cleanup has started with exact duplicate public declarations removed from the homepage polish layer; no page structure, data contract, or database change is included in this checkpoint.
 > **Last implementation:** CSS foundation consolidation — removed exact top-level declaration duplicates from `app/polish.css` where the same selector/property/value is already owned by `app/globals.css`; responsive/media-specific rules were preserved.
-> **Last validation:** This checkpoint is awaiting `V`; visual and build validation must confirm the cascade remains stable after the duplicate declaration cleanup.
+> **Last repair:** CI dependency install failed because npm attempted to fetch unavailable `baseline-browser-mapping@2.11.27`; `package.json` now pins the transitive dependency through npm `overrides` to published `2.11.26`.
+> **Last validation:** CSS checkpoint remains awaiting `V`; the dependency-install repair also requires CI validation.
 > **Next action:** `V` — validate TypeScript, build, CSS loading, and public responsive surfaces before the next CSS slice.
 > **Next implementation:** No new `L` until validation confirms this CSS cleanup.
 > **Repository changes for this feature:** ArticleDocument and database schema remain unchanged; this L changes only duplicate declarations in `app/polish.css`.
