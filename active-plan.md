@@ -1,11 +1,11 @@
 # STATUS — NEWS EDITOR & DOCX FEATURE
 
-> **Current phase:** PHASE 8 — Editor ↔ Public Visual Contract (validation pending)
-> **Overall progress:** L1–L4 compatibility/presentation work and the public article-reading redesign checkpoint are implemented; automated validation is still pending.
-> **Last implementation:** Public article reading experience redesign — shared article detail shell, ArticleContentRenderer presentation improvements, and Islamic detail integration.
-> **Next action:** `V` — run automated and regression validation against the main branch.
+> **Current phase:** PHASE 8 — Editor ↔ Public Visual Contract (implementation checkpoint)
+> **Overall progress:** Public article redesign has been reworked toward an editorial reading experience with scoped responsive styles and reduced card-like treatment; validation is pending.
+> **Last implementation:** Editorial public article visual redesign — typography hierarchy, reading rhythm, hero treatment, pull quotes, inline media, and context rail.
+> **Next action:** `V` — validate typecheck, production build, and public regression after the redesign.
 > **Next implementation:** No new `L` until this validation gate passes.
-> **Repository changes for this feature:** ArticleDocument compatibility remains active; the public article detail renderer is shared by News and Islamic detail surfaces.
+> **Repository changes for this feature:** ArticleDocument data flow remains unchanged; this checkpoint is presentation-only.
 > **Open verification item:** Effective news INSERT/UPDATE/DELETE authorization still requires live Supabase policy verification before changing the rich-editor write path.
 > **Status rule:** Update this section after each completed `L`/checkpoint; do not mark a phase complete until its validation gate and checkpoint are satisfied.
 

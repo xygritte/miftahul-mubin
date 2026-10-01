@@ -118,8 +118,8 @@ export default function ArticleDetail({ article }: { article: NewsItem | Article
               <span className="article-category">{data.category}</span>
             </div>
 
-            <h1>{data.title}</h1>
-            {data.excerpt && <p className="article-lead">{data.excerpt}</p>}
+            <h1 className="article-title">{data.title}</h1>
+            {data.excerpt && <p className="article-lead article-dek">{data.excerpt}</p>}
 
             <div className="article-reading-meta" aria-label="Informasi artikel">
               <span>
