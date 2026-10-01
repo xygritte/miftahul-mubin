@@ -271,23 +271,35 @@ export default function ArticleDetail({ article }: { article: NewsItem | Article
             )}
           </section>
 
-          <nav className="sidebar-card article-context-card" aria-label={data.sidebarTitle}>
-            <div className="article-sidebar-section-head">
+          <nav className="article-context-nav" aria-label={data.sidebarTitle}>
+            <div className="article-context-head">
               <span className="eyebrow">{data.sidebarEyebrow}</span>
               <h3>{data.sidebarTitle}</h3>
             </div>
-            <div className="article-sidebar-links">
-              {data.sidebarLinks.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  <span>{item.label}</span>
-                  <ArrowRight size={14} aria-hidden="true" />
-                </Link>
-              ))}
+            <div className="article-context-links">
+              {data.sidebarLinks.map((item, index) => {
+                const normalizedItemHref = item.href.replace(/\/+$/, '') || '/'
+                const normalizedBackHref = data.backHref.replace(/\/+$/, '') || '/'
+                const active = normalizedItemHref === normalizedBackHref
+
+                return (
+                  <Link
+                    key={item.href}
+                    className={active ? 'active' : undefined}
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                  >
+                    <span className="article-context-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="article-context-label">{item.label}</span>
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                )
+              })}
             </div>
           </nav>
 
-          <div className="sidebar-note article-sidebar-note">
-            <CalendarDays size={18} aria-hidden="true" />
+          <div className="article-sidebar-note">
+            <CalendarDays size={17} aria-hidden="true" />
             <p>{data.sidebarNote}</p>
           </div>        </aside>
       </div>
