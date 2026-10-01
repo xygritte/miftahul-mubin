@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, CalendarDays, Clock3, Eye } from 'lucide-react'
 import type { ArticleBlock, ArticleDocument, ArticleInline } from '@/types/article-document'
 import type { NewsItem } from '@/lib/data/presentation'
 import ArticleContentRenderer from '@/components/content/ArticleContentRenderer'
+import type { ArticleSidebarIslamicItem, ArticleSidebarNewsItem } from '@/lib/data/liveArticleSidebar'
 
 export type ArticleDetailModel = {
   eyebrow: string
@@ -21,6 +22,8 @@ export type ArticleDetailModel = {
   sidebarTitle: string
   sidebarLinks: Array<{ label: string; href: string }>
   sidebarNote: string
+  latestNews?: ArticleSidebarNewsItem[]
+  latestIslamic?: ArticleSidebarIslamicItem[]
   footerText: string
   footerLinkLabel: string
   footerLinkHref: string
@@ -180,6 +183,56 @@ export default function ArticleDetail({ article }: { article: NewsItem | Article
               ))}
             </div>
           </nav>
+
+          {!!data.latestNews?.length && (
+            <section className="article-sidebar-section" aria-labelledby="article-sidebar-news-title">
+              <div className="article-sidebar-section-head">
+                <span className="eyebrow">Berita</span>
+                <h3 id="article-sidebar-news-title">Berita terbaru</h3>
+              </div>
+              <div className="article-sidebar-news-list">
+                {data.latestNews.map((item, index) => (
+                  <Link key={item.slug} className="article-sidebar-news-item" href={`/berita/${item.slug}/`}>
+                    <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                    <img src={item.image} alt="" loading="lazy" decoding="async" />
+                    <span className="article-sidebar-item-copy">
+                      <strong>{item.title}</strong>
+                      <small>{item.category} · {item.publishedAt ? new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short' }).format(new Date(item.publishedAt)) : 'Terbaru'}</small>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+              <Link className="article-sidebar-more" href="/berita/">
+                Lihat semua berita
+                <ArrowRight size={14} aria-hidden="true" />
+              </Link>
+            </section>
+          )}
+
+          {!!data.latestIslamic?.length && (
+            <section className="article-sidebar-section article-sidebar-islamic" aria-labelledby="article-sidebar-islamic-title">
+              <div className="article-sidebar-section-head">
+                <span className="eyebrow">Ruang keislaman</span>
+                <h3 id="article-sidebar-islamic-title">Artikel terbaru</h3>
+              </div>
+              <div className="article-sidebar-islamic-list">
+                {data.latestIslamic.map((item, index) => (
+                  <Link key={item.slug} className="article-sidebar-islamic-item" href={`/keislaman/${item.slug}/`}>
+                    <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="article-sidebar-item-copy">
+                      <strong>{item.title}</strong>
+                      <small>{item.category} · {item.publishedAt ? new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short' }).format(new Date(item.publishedAt)) : 'Terbaru'}</small>
+                    </span>
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                ))}
+              </div>
+              <Link className="article-sidebar-more" href="/keislaman/">
+                Lihat semua artikel
+                <ArrowRight size={14} aria-hidden="true" />
+              </Link>
+            </section>
+          )}
 
           <div className="sidebar-note article-sidebar-note">
             <CalendarDays size={18} aria-hidden="true" />

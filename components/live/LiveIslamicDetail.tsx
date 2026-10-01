@@ -6,9 +6,11 @@ import { formatIndonesianDate, islamicRecordToLegacy, type IslamicItem } from '@
 import { legacyNewsContentToDocument } from '@/lib/data/articleDocumentLegacy'
 import { useRealtimeRefresh } from './useRealtimeRefresh'
 import ArticleDetail, { type ArticleDetailModel } from '@/components/content/ArticleDetail'
+import { fetchLiveArticleSidebarContent, type ArticleSidebarContent } from '@/lib/data/liveArticleSidebar'
 
 export default function LiveIslamicDetail({ slug, initialItem }: { slug: string; initialItem: IslamicItem | null }) {
   const [item, setItem] = useState<IslamicItem | null>(initialItem)
+  const [sidebar, setSidebar] = useState<ArticleSidebarContent>({ news: [], islamic: [] })
 
   const refresh = useCallback(async () => {
     const record = await supabasePublicRepository.getIslamicBySlug(slug)
@@ -16,8 +18,15 @@ export default function LiveIslamicDetail({ slug, initialItem }: { slug: string;
     else setItem(null)
   }, [slug])
 
+  const refreshSidebar = useCallback(async () => {
+    const content = await fetchLiveArticleSidebarContent({ excludeIslamicSlug: slug })
+    if (content) setSidebar(content)
+  }, [slug])
+
   useEffect(() => { void refresh() }, [refresh])
+  useEffect(() => { void refreshSidebar() }, [refreshSidebar])
   useRealtimeRefresh('islamic_articles', refresh)
+  useRealtimeRefresh('news', refreshSidebar)
 
   if (!item) {
     return (
@@ -55,6 +64,8 @@ export default function LiveIslamicDetail({ slug, initialItem }: { slug: string;
     footerText: 'Materi pembelajaran Miftahul Mubin.',
     footerLinkLabel: 'Lihat artikel lainnya',
     footerLinkHref: '/keislaman/',
+    latestNews: sidebar.news,
+    latestIslamic: sidebar.islamic,
   }
 
   return <ArticleDetail article={article} />
