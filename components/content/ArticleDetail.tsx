@@ -24,6 +24,7 @@ export type ArticleDetailModel = {
   sidebarNote: string
   latestNews?: ArticleSidebarNewsItem[]
   latestIslamic?: ArticleSidebarIslamicItem[]
+  latestLoading?: boolean
   footerText: string
   footerLinkLabel: string
   footerLinkHref: string
@@ -171,52 +172,102 @@ export default function ArticleDetail({ article }: { article: NewsItem | Article
         </article>
 
         <aside className="article-sidebar">
-          <section className="article-sidebar-section article-sidebar-latest" aria-labelledby="article-sidebar-latest-title">
+          <section
+            className="article-sidebar-section article-sidebar-latest"
+            aria-labelledby="article-sidebar-latest-title"
+            aria-busy={data.latestLoading || undefined}
+          >
             <div className="article-sidebar-section-head">
               <span className="eyebrow">Terbaru</span>
               <h2 id="article-sidebar-latest-title">Dari Miftahul Mubin</h2>
             </div>
 
-            {!!data.latestNews?.length && (
-              <div className="article-sidebar-latest-group">
-                <div className="article-sidebar-subhead">
-                  <span>Berita</span>
-                  <Link href="/berita/">Semua</Link>
+            {data.latestLoading ? (
+              <div className="article-sidebar-loading" role="status" aria-label="Memuat konten terbaru">
+                <div className="article-sidebar-latest-group" aria-hidden="true">
+                  <div className="article-sidebar-subhead">
+                    <span>Berita</span>
+                  </div>
+                  <div className="article-sidebar-news-list">
+                    {[0, 1, 2].map((index) => (
+                      <div key={index} className="article-sidebar-news-skeleton">
+                        <span className="article-sidebar-skeleton-index" />
+                        <span className="article-sidebar-skeleton-thumb" />
+                        <span className="article-sidebar-item-copy">
+                          <span className="article-sidebar-skeleton-line article-sidebar-skeleton-line-title" />
+                          <span className="article-sidebar-skeleton-line article-sidebar-skeleton-line-meta" />
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="article-sidebar-news-list">
-                  {data.latestNews.map((item, index) => (
-                    <Link key={item.slug} className="article-sidebar-news-item" href={`/berita/${item.slug}/`}>
-                      <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                      <img src={item.image} alt="" loading="lazy" decoding="async" />
-                      <span className="article-sidebar-item-copy">
-                        <strong>{item.title}</strong>
-                        <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {!!data.latestIslamic?.length && (
-              <div className="article-sidebar-latest-group article-sidebar-islamic">
-                <div className="article-sidebar-subhead">
-                  <span>Keislaman</span>
-                  <Link href="/keislaman/">Semua</Link>
-                </div>
-                <div className="article-sidebar-islamic-list">
-                  {data.latestIslamic.map((item, index) => (
-                    <Link key={item.slug} className="article-sidebar-islamic-item" href={`/keislaman/${item.slug}/`}>
-                      <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                      <span className="article-sidebar-item-copy">
-                        <strong>{item.title}</strong>
-                        <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
-                      </span>
-                      <ArrowRight size={14} aria-hidden="true" />
-                    </Link>
-                  ))}
+                <div className="article-sidebar-latest-group article-sidebar-islamic" aria-hidden="true">
+                  <div className="article-sidebar-subhead">
+                    <span>Keislaman</span>
+                  </div>
+                  <div className="article-sidebar-islamic-list">
+                    {[0, 1, 2].map((index) => (
+                      <div key={index} className="article-sidebar-islamic-skeleton">
+                        <span className="article-sidebar-skeleton-index" />
+                        <span className="article-sidebar-item-copy">
+                          <span className="article-sidebar-skeleton-line article-sidebar-skeleton-line-title" />
+                          <span className="article-sidebar-skeleton-line article-sidebar-skeleton-line-meta" />
+                        </span>
+                        <span className="article-sidebar-skeleton-arrow" />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+            ) : (
+              <>
+                {!!data.latestNews?.length && (
+                  <div className="article-sidebar-latest-group">
+                    <div className="article-sidebar-subhead">
+                      <span>Berita</span>
+                      <Link href="/berita/">Semua</Link>
+                    </div>
+                    <div className="article-sidebar-news-list">
+                      {data.latestNews.map((item, index) => (
+                        <Link key={item.slug} className="article-sidebar-news-item" href={`/berita/${item.slug}/`}>
+                          <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                          <img src={item.image} alt="" loading="lazy" decoding="async" />
+                          <span className="article-sidebar-item-copy">
+                            <strong>{item.title}</strong>
+                            <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {!!data.latestIslamic?.length && (
+                  <div className="article-sidebar-latest-group article-sidebar-islamic">
+                    <div className="article-sidebar-subhead">
+                      <span>Keislaman</span>
+                      <Link href="/keislaman/">Semua</Link>
+                    </div>
+                    <div className="article-sidebar-islamic-list">
+                      {data.latestIslamic.map((item, index) => (
+                        <Link key={item.slug} className="article-sidebar-islamic-item" href={`/keislaman/${item.slug}/`}>
+                          <span className="article-sidebar-item-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                          <span className="article-sidebar-item-copy">
+                            <strong>{item.title}</strong>
+                            <small>{item.category} · {formatArticleSidebarDate(item.publishedAt)}</small>
+                          </span>
+                          <ArrowRight size={14} aria-hidden="true" />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {!data.latestNews?.length && !data.latestIslamic?.length && (
+                  <p className="article-sidebar-empty">Belum ada konten terbaru untuk ditampilkan.</p>
+                )}
+              </>
             )}
           </section>
 

@@ -11,6 +11,7 @@ import { fetchLiveArticleSidebarContent, type ArticleSidebarContent } from '@/li
 export default function LiveIslamicDetail({ slug, initialItem }: { slug: string; initialItem: IslamicItem | null }) {
   const [item, setItem] = useState<IslamicItem | null>(initialItem)
   const [sidebar, setSidebar] = useState<ArticleSidebarContent>({ news: [], islamic: [] })
+  const [sidebarLoading, setSidebarLoading] = useState(true)
 
   const refresh = useCallback(async () => {
     const record = await supabasePublicRepository.getIslamicBySlug(slug)
@@ -19,12 +20,19 @@ export default function LiveIslamicDetail({ slug, initialItem }: { slug: string;
   }, [slug])
 
   const refreshSidebar = useCallback(async () => {
-    const content = await fetchLiveArticleSidebarContent({ excludeIslamicSlug: slug })
-    if (content) setSidebar(content)
+    try {
+      const content = await fetchLiveArticleSidebarContent({ excludeIslamicSlug: slug })
+      if (content) setSidebar(content)
+    } finally {
+      setSidebarLoading(false)
+    }
   }, [slug])
 
   useEffect(() => { void refresh() }, [refresh])
-  useEffect(() => { void refreshSidebar() }, [refreshSidebar])
+  useEffect(() => {
+    setSidebarLoading(true)
+    void refreshSidebar()
+  }, [refreshSidebar])
   const refreshIslamicSurface = useCallback(async () => {
     await Promise.all([refresh(), refreshSidebar()])
   }, [refresh, refreshSidebar])
@@ -70,6 +78,7 @@ export default function LiveIslamicDetail({ slug, initialItem }: { slug: string;
     footerLinkHref: '/keislaman/',
     latestNews: sidebar.news,
     latestIslamic: sidebar.islamic,
+    latestLoading: sidebarLoading,
   }
 
   return <ArticleDetail article={article} />

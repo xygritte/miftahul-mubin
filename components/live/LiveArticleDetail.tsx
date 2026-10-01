@@ -10,6 +10,7 @@ import { fetchLiveArticleSidebarContent, type ArticleSidebarContent } from '@/li
 export default function LiveArticleDetail({ slug, initialArticle }: { slug: string; initialArticle: NewsItem | null }) {
   const [article, setArticle] = useState<NewsItem | null>(initialArticle)
   const [sidebar, setSidebar] = useState<ArticleSidebarContent>({ news: [], islamic: [] })
+  const [sidebarLoading, setSidebarLoading] = useState(true)
   const refresh = useCallback(async () => {
     const record = await supabasePublicRepository.getNewsBySlug(slug)
     if (record) setArticle(newsRecordToLegacy(record))
@@ -17,12 +18,19 @@ export default function LiveArticleDetail({ slug, initialArticle }: { slug: stri
   }, [slug])
 
   const refreshSidebar = useCallback(async () => {
-    const content = await fetchLiveArticleSidebarContent({ excludeNewsSlug: slug })
-    if (content) setSidebar(content)
+    try {
+      const content = await fetchLiveArticleSidebarContent({ excludeNewsSlug: slug })
+      if (content) setSidebar(content)
+    } finally {
+      setSidebarLoading(false)
+    }
   }, [slug])
 
   useEffect(() => { void refresh() }, [refresh])
-  useEffect(() => { void refreshSidebar() }, [refreshSidebar])
+  useEffect(() => {
+    setSidebarLoading(true)
+    void refreshSidebar()
+  }, [refreshSidebar])
   const refreshNewsSurface = useCallback(async () => {
     await Promise.all([refresh(), refreshSidebar()])
   }, [refresh, refreshSidebar])
@@ -35,5 +43,6 @@ export default function LiveArticleDetail({ slug, initialArticle }: { slug: stri
     ...article,
     latestNews: sidebar.news,
     latestIslamic: sidebar.islamic,
+    latestLoading: sidebarLoading,
   }} />
 }
