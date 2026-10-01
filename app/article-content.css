@@ -410,96 +410,96 @@
 @media (max-width:760px){.admin-news-editor-modal{width:calc(100vw - 20px);max-height:calc(100dvh - 20px)}.admin-article-field-heading{display:grid}.article-editor-media-actions{margin-left:0}.article-editor-image-controls{grid-template-columns:1fr}.article-editor-media-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.article-editor-canvas{min-height:280px;padding:18px}.article-editor-toolbar{gap:6px}.article-editor-insert{font-size:11px}}
 
 @media (max-width:980px) {
-  .article-layout {
+  .article-page .article-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .article-sidebar {
+  .article-page .article-sidebar {
     position: static;
     padding-top: 0;
   }
 
-  .article-context-card {
+  .article-page .article-context-card {
     max-width: 760px;
   }
 
-  .article-sidebar-note {
+  .article-page .article-sidebar-note {
     max-width: 760px;
   }
 }
 
 @media (max-width:700px) {
-  .article-layout {
+  .article-page .article-layout {
     gap: 28px;
     padding-block: 34px 58px;
   }
 
-  .article-header {
+  .article-page .article-header {
     padding-bottom: 24px;
   }
 
-  .article-back-link {
+  .article-page .article-back-link {
     margin-bottom: 22px;
   }
 
-  .article-kicker {
+  .article-page .article-kicker {
     margin-bottom: 11px;
     font-size: 10px;
   }
 
-  .article-detail h1,
-  .event-detail h1 {
+  .article-page .article-detail h1,
+  .article-page .article-detail h1 {
     max-width: none;
     font-size: clamp(31px, 9vw, 45px);
     line-height: 1.04;
   }
 
-  .article-lead {
+  .article-page .article-lead {
     margin-top: 16px;
     font-size: 16px;
     line-height: 1.72;
   }
 
-  .article-reading-meta {
+  .article-page .article-reading-meta {
     gap: 8px 12px;
     margin-top: 18px;
     font-size: 10px;
   }
 
-  .article-hero {
+  .article-page .article-hero {
     margin-top: 22px;
   }
 
-  .article-copy {
+  .article-page .article-copy {
     padding-top: 28px;
   }
 
-  .article-content-renderer {
+  .article-page .article-content-renderer {
     font-size: 16px;
     line-height: 1.82;
   }
 
-  .article-content-paragraph {
+  .article-page .article-content-paragraph {
     margin-bottom: 19px;
   }
 
-  .article-content-heading-1 {
+  .article-page .article-content-heading-1 {
     margin-top: 38px;
     font-size: 27px;
   }
 
-  .article-content-heading-2 {
+  .article-page .article-content-heading-2 {
     margin-top: 34px;
     padding-top: 15px;
     font-size: 24px;
   }
 
-  .article-content-heading-3 {
+  .article-page .article-content-heading-3 {
     margin-top: 27px;
     font-size: 21px;
   }
 
-  .article-content-renderer blockquote {
+  .article-page .article-content-renderer blockquote {
     grid-template-columns: 18px minmax(0, 1fr);
     gap: 8px;
     margin: 28px 0;
@@ -507,21 +507,21 @@
     font-size: 1.03em;
   }
 
-  .article-quote-mark {
+  .article-page .article-quote-mark {
     font-size: 27px;
   }
 
-  .article-inline-image,
-  .article-inline-video {
+  .article-page .article-inline-image,
+  .article-page .article-inline-video {
     margin-block: 30px;
   }
 
-  .article-inline-image img,
-  .article-inline-video {
+  .article-page .article-inline-image img,
+  .article-page .article-inline-video {
     border-radius: 9px;
   }
 
-  .article-share {
+  .article-page .article-share {
     align-items: flex-start;
     flex-direction: column;
     gap: 14px;
@@ -529,34 +529,34 @@
     padding-top: 18px;
   }
 
-  .article-share > a {
+  .article-page .article-share > a {
     min-height: 40px;
   }
 
-  .article-context-card {
+  .article-page .article-context-card {
     padding: 20px;
   }
 }
 
 @media (max-width:430px) {
-  .article-layout {
+  .article-page .article-layout {
     padding-inline: 0;
   }
 
-  .article-content-renderer {
+  .article-page .article-content-renderer {
     font-size: 15.5px;
   }
 
-  .article-inline-image,
-  .article-inline-video {
+  .article-page .article-inline-image,
+  .article-page .article-inline-video {
     border-radius: 8px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .article-content-renderer *,
-  .article-share a,
-  .article-sidebar-links a {
+  .article-page .article-content-renderer *,
+  .article-page .article-share a,
+  .article-page .article-sidebar-links a {
     scroll-behavior: auto !important;
     transition-duration: .001ms !important;
   }
