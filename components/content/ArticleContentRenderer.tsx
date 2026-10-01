@@ -3,6 +3,30 @@ import type { ArticleBlock, ArticleDocument, ArticleInline, ArticleMark } from '
 
 const URL_PATTERN = /(https?:\/\/[^\s<]+)/gi
 
+function slugifyHeading(value: string) {
+  const slug = value
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+
+  return slug || 'bagian-artikel'
+}
+
+function inlinePlainText(content: ArticleInline[] | undefined) {
+  return (content ?? [])
+    .filter((node): node is Extract<ArticleInline, { type: 'text' }> => node.type === 'text')
+    .map((node) => node.text)
+    .join(' ')
+}
+
+function headingId(content: ArticleInline[] | undefined, index: number) {
+  return `article-heading-${index}-${slugifyHeading(inlinePlainText(content)).slice(0, 70)}`
+}
+
 function youtubeEmbedUrl(value: string) {
   try {
     const url = new URL(value.trim())
@@ -36,10 +60,16 @@ function safeExternalUrl(value: string) {
 
 function textWithAutomaticLinks(value: string, key: string): ReactNode {
   const parts = value.split(URL_PATTERN)
+
   return parts.map((part, index) => {
     const href = safeExternalUrl(part.replace(/[),.;!?]+$/g, ''))
+
     return href
-      ? <a key={`${key}-${index}`} href={href} target="_blank" rel="noopener noreferrer">{part}</a>
+      ? (
+        <a key={`${key}-${index}`} href={href} target="_blank" rel="noopener noreferrer">
+          {part}
+        </a>
+      )
       : <span key={`${key}-${index}`}>{part}</span>
   })
 }
@@ -47,16 +77,21 @@ function textWithAutomaticLinks(value: string, key: string): ReactNode {
 function applyMarks(content: ReactNode, marks: ArticleMark[] | undefined, key: string) {
   return (marks ?? []).reduce<ReactNode>((result, mark, index) => {
     const markKey = `${key}-mark-${index}`
+
     if (mark.type === 'bold') return <strong key={markKey}>{result}</strong>
     if (mark.type === 'italic') return <em key={markKey}>{result}</em>
     if (mark.type === 'underline') return <u key={markKey}>{result}</u>
+
     const href = safeExternalUrl(mark.attrs.href)
-    return href ? <a key={markKey} href={href} target={mark.attrs.target} rel="noopener noreferrer">{result}</a> : result
+    return href
+      ? <a key={markKey} href={href} target={mark.attrs.target} rel="noopener noreferrer">{result}</a>
+      : result
   }, content)
 }
 
 function renderInline(node: ArticleInline, index: number): ReactNode {
   if (node.type === 'hardBreak') return <br key={`break-${index}`} />
+
   const content = textWithAutomaticLinks(node.text, `text-${index}`)
   return <span key={`text-${index}`}>{applyMarks(content, node.marks, `text-${index}`)}</span>
 }
@@ -65,11 +100,9 @@ function renderInlineContent(content: ArticleInline[] | undefined) {
   return (content ?? []).map(renderInline)
 }
 
-function renderListItem(item: { content: ArticleBlock[] }, index: number) {
-  return <li key={`item-${index}`}>{item.content.map((block, childIndex) => renderBlock(block, childIndex))}</li>
-}
+function renderBlock(block: ArticleBlock, index: number, keyPrefix = ''): ReactNode {
+  const key = keyPrefix ? `${keyPrefix}-${index}` : `${index}`
 
-function renderBlock(block: ArticleBlock, index: number): ReactNode {
   switch (block.type) {
     case 'paragraph': {
       const first = block.content?.length === 1 ? block.content[0] : null
@@ -77,42 +110,99 @@ function renderBlock(block: ArticleBlock, index: number): ReactNode {
 
       if (youtubeUrl) {
         return (
-          <div key={`youtube-${index}`} className="article-inline-video">
+          <figure key={`youtube-${key}`} className="article-inline-video">
             <iframe
               src={youtubeUrl}
-              title="Video YouTube"
+              title="Video YouTube dalam artikel"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
             />
-          </div>
+            <figcaption>Video YouTube</figcaption>
+          </figure>
         )
       }
 
-      return <p key={`paragraph-${index}`}>{renderInlineContent(block.content)}</p>
+      return (
+        <p key={`paragraph-${key}`} className="article-content-paragraph">
+          {renderInlineContent(block.content)}
+        </p>
+      )
     }
+
     case 'heading': {
       const Tag = `h${block.level}` as 'h1' | 'h2' | 'h3'
-      return <Tag key={`heading-${index}`}>{renderInlineContent(block.content)}</Tag>
+
+      return (
+        <Tag
+          id={headingId(block.content, index)}
+          key={`heading-${key}`}
+          className={`article-content-heading article-content-heading-${block.level}`}
+        >
+          {renderInlineContent(block.content)}
+        </Tag>
+      )
     }
+
     case 'bulletList':
-      return <ul key={`bullet-${index}`}>{block.content.map(renderListItem)}</ul>
+      return (
+        <ul key={`bullet-${key}`}>
+          {block.content.map((item, itemIndex) => (
+            <li key={`bullet-item-${key}-${itemIndex}`}>
+              {item.content.map((child, childIndex) => renderBlock(child, childIndex, `bullet-${key}-${itemIndex}`))}
+            </li>
+          ))}
+        </ul>
+      )
+
     case 'orderedList':
-      return <ol key={`ordered-${index}`}>{block.content.map(renderListItem)}</ol>
+      return (
+        <ol key={`ordered-${key}`}>
+          {block.content.map((item, itemIndex) => (
+            <li key={`ordered-item-${key}-${itemIndex}`}>
+              {item.content.map((child, childIndex) => renderBlock(child, childIndex, `ordered-${key}-${itemIndex}`))}
+            </li>
+          ))}
+        </ol>
+      )
+
     case 'blockquote':
-      return <blockquote key={`quote-${index}`}>{block.content.map((child, childIndex) => renderBlock(child, childIndex))}</blockquote>
+      return (
+        <blockquote key={`quote-${key}`}>
+          <span className="article-quote-mark" aria-hidden="true">“</span>
+          <div>{block.content.map((child, childIndex) => renderBlock(child, childIndex, `quote-${key}`))}</div>
+        </blockquote>
+      )
+
     case 'image': {
       const width = block.attrs.width ? { maxWidth: `${block.attrs.width}px` } : undefined
-      return <figure key={`image-${index}`} className={`article-inline-image align-${block.attrs.alignment ?? 'center'}`} style={width}>
-        <img src={block.attrs.src} alt={block.attrs.alt} loading="lazy" />
-        {block.attrs.caption && <figcaption>{block.attrs.caption}</figcaption>}
-      </figure>
+
+      return (
+        <figure
+          key={`image-${key}`}
+          className={`article-inline-image align-${block.attrs.alignment ?? 'center'}`}
+          style={width}
+        >
+          <img
+            src={block.attrs.src}
+            alt={block.attrs.alt}
+            loading="lazy"
+            decoding="async"
+          />
+          {block.attrs.caption && <figcaption>{block.attrs.caption}</figcaption>}
+        </figure>
+      )
     }
+
     case 'horizontalRule':
-      return <hr key={`rule-${index}`} />
+      return <hr key={`rule-${key}`} aria-hidden="true" />
   }
 }
 
 export default function ArticleContentRenderer({ document }: { document: ArticleDocument }) {
-  return <div className="article-content-renderer">{document.content.map(renderBlock)}</div>
+  return (
+    <div className="article-content-renderer">
+      {document.content.map((block, index) => renderBlock(block, index))}
+    </div>
+  )
 }
