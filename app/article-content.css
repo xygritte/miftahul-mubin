@@ -413,12 +413,156 @@
   position: sticky;
   top: 122px;
   align-self: start;
-  padding-top: 92px;
+  padding-top: 46px;
+  min-width: 0;
+}
+
+.article-page .article-sidebar-section {
+  margin: 0 0 30px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--mm-line);
+}
+
+.article-page .article-sidebar-section-head {
+  margin-bottom: 14px;
+}
+
+.article-page .article-sidebar-section-head .eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--mm-gold);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.article-page .article-sidebar-section-head h2,
+.article-page .article-sidebar-section-head h3 {
+  margin: 0;
+  color: var(--mm-text-strong);
+  font-family: var(--mm-font-display);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.article-page .article-sidebar-section-head h2 {
+  max-width: 12ch;
+  font-size: 24px;
+}
+
+.article-page .article-sidebar-section-head h3 {
+  font-size: 17px;
+}
+
+.article-page .article-sidebar-subhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+  color: var(--mm-text-strong);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.article-page .article-sidebar-subhead a {
+  color: var(--mm-green);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+}
+
+.article-page .article-sidebar-latest-group + .article-sidebar-latest-group {
+  margin-top: 22px;
+}
+
+.article-page .article-sidebar-news-list,
+.article-page .article-sidebar-islamic-list {
+  display: grid;
+  border-top: 1px solid var(--mm-line);
+}
+
+.article-page .article-sidebar-news-item {
+  display: grid;
+  grid-template-columns: 18px 66px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--mm-line);
+  color: var(--mm-text-secondary);
+  text-decoration: none;
+}
+
+.article-page .article-sidebar-news-item img {
+  width: 66px;
+  height: 50px;
+  object-fit: cover;
+  background: var(--mm-surface-2);
+}
+
+.article-page .article-sidebar-item-index {
+  padding-top: 2px;
+  color: var(--mm-muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.article-page .article-sidebar-item-copy {
+  min-width: 0;
+}
+
+.article-page .article-sidebar-item-copy strong {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--mm-text);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.36;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.article-page .article-sidebar-item-copy small {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--mm-muted);
+  font-size: 8px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.article-page .article-sidebar-news-item:hover strong,
+.article-page .article-sidebar-islamic-item:hover strong {
+  color: var(--mm-green);
+}
+
+.article-page .article-sidebar-islamic-item {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--mm-line);
+  color: var(--mm-text-secondary);
+  text-decoration: none;
+}
+
+.article-page .article-sidebar-islamic-item > svg {
+  margin-top: 3px;
+  color: var(--mm-green);
 }
 
 .article-page .article-context-card {
-  margin: 0;
-  padding: 0;
+  margin: 0 0 24px;
+  padding: 0 0 2px;
   background: transparent;
   border: 0;
   box-shadow: none;
@@ -429,18 +573,12 @@
   display: block;
   width: 34px;
   height: 2px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   background: var(--mm-gold);
 }
 
-.article-page .article-context-card h2 {
-  max-width: 14ch;
-  margin: 7px 0 20px;
-  color: var(--mm-text-strong);
-  font-family: var(--mm-font-display);
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 1.15;
+.article-page .article-context-card .article-sidebar-section-head {
+  margin-bottom: 11px;
 }
 
 .article-page .article-sidebar-links {
@@ -451,13 +589,13 @@
 
 .article-page .article-sidebar-links a {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 9px;
-  padding: 12px 0;
+  gap: 8px;
+  padding: 9px 0;
   border-bottom: 1px solid var(--mm-line);
   color: var(--mm-text-secondary);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-decoration: none;
   counter-increment: article-nav;
@@ -466,9 +604,8 @@
 .article-page .article-sidebar-links a::before {
   content: counter(article-nav, decimal-leading-zero);
   color: var(--mm-muted);
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 800;
-  letter-spacing: .08em;
 }
 
 .article-page .article-sidebar-links a svg {
@@ -479,12 +616,23 @@
   color: var(--mm-green);
 }
 
+.article-page .article-sidebar-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  color: var(--mm-green);
+  font-size: 9px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
 .article-page .article-sidebar-note {
   display: grid;
   grid-template-columns: 18px minmax(0, 1fr);
   gap: 9px;
-  margin-top: 26px;
-  padding-top: 18px;
+  margin-top: 0;
+  padding-top: 16px;
   border-top: 1px solid var(--mm-line);
 }
 
@@ -495,8 +643,43 @@
 .article-page .article-sidebar-note p {
   margin: 0;
   color: var(--mm-muted);
-  font-size: 10px;
+  font-size: 9px;
   line-height: 1.65;
+}
+
+@media (max-width: 700px) {
+  .article-page .article-sidebar {
+    padding-top: 0;
+  }
+
+  .article-page .article-sidebar-section {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+  }
+
+  .article-page .article-sidebar-section-head h2 {
+    font-size: 22px;
+  }
+
+  .article-page .article-sidebar-news-item {
+    grid-template-columns: 20px 76px minmax(0, 1fr);
+    gap: 9px;
+    padding-block: 10px;
+  }
+
+  .article-page .article-sidebar-news-item img {
+    width: 76px;
+    height: 56px;
+  }
+
+  .article-page .article-sidebar-item-copy strong {
+    font-size: 11px;
+    -webkit-line-clamp: 2;
+  }
+
+  .article-page .article-sidebar-item-copy small {
+    font-size: 9px;
+  }
 }
 
 .article-page .article-layout-empty {
